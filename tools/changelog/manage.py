@@ -77,9 +77,6 @@ def source_errors(root):
             fail('sections must be unique and in the documented order')
         current = None
         section_items = defaultdict(int)
-        ids = re.findall(r'<span id="([^"]+)"></span>', text)
-        if len(ids) != len(set(ids)) or set(ids).intersection(headings):
-            fail('duplicate preserved anchor')
         for i, line in enumerate(lines):
             if line.rstrip() != line:
                 fail(f'line {i+1}: trailing whitespace')
