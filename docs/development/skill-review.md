@@ -12,7 +12,7 @@
 | 4 | 剑士／十字军／皇家卫士／帝国卫士 | 70 个技能代码审查完成，修复并完成自动验证 |
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 57 个技能代码审查完成，修复并完成自动验证 |
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 89 个技能代码审查完成，修复并完成自动验证 |
-| 7 | 魔法师／贤者／妖术师／元素大师 | 待审查 |
+| 7 | 魔法师／贤者／妖术师／元素大师 | 93 个技能代码审查完成，修复并完成自动验证 |
 | 8 | 商人／炼金术师／基因学者／生物学者 | 待审查 |
 | 9 | 服事／武僧／修罗／审判官 | 待审查 |
 | 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 待审查 |
@@ -631,3 +631,125 @@
 | 6506 | `MT_RUSH_STRIKE` | `rushstrike.cpp` | 双手斧、突进／范围和伤害倍率 |
 | 6507 | `MT_POWERFUL_SWING` | `powerfulswing.cpp` | 双手斧、范围／命中、等级倍率 |
 | 6508 | `MT_ENERGY_CANNONADE` | `energycannonade.cpp` | 机甲、范围／命中、等级倍率 |
+
+## 7. 贤者／妖术师线
+
+### 范围与依据
+
+已逐项核对 Mage、Mage_High、Sage、Professor、Sorcerer、Sorcerer_T、Elemental_Master 的 93 个去重技能：技能树、数据库目标／资源／状态、工厂与独立实现、被动／战斗／状态／地面单位共享路径；继承法师技能沿用第 2 线审查并复核本线联动。另审查随机技能的 13 个派生技能、五属性元素爆破及元素精灵自身的 57 个技能入口，追踪召唤、模式、行动／跟随、资源消耗、到期与移除清理。客户端核对元数据、自动念咒选择、随机技能下发入口、效果阶段及资源。
+
+### 明确问题与修复
+
+- 精灵恢复与温暖之风使用宽整数计算 HP／SP 百分比，保留火精灵治疗加成和赤月反转。
+- 精灵召唤的亲和加成与高级精灵加成使用宽整数；持久化和战斗属性按实际字段范围钳制，低 SP 不再使负攻击转成巨大无符号攻击。
+- 元素分析校验窗口模式、施法等级和转换原料方向，拒绝零消耗与超量产出；避免反向兑换、数量回绕及失败前错误扣材料。
+- 自动念咒的展示列表和提交共用等级解锁规则，最低触发等级为 1，保留灵魂链接和已学等级限制。
+- 修复 29 个精灵辅助技能解除状态时交换主人／精灵状态类型的问题；再次施放可清理双方对应状态，也处理仅一侧仍保留状态的情况。
+- 地震术、钻石星尘接入原生效果，精神冲击波持续效果归属地面单位；钻石风暴、大地驱动使用地面坐标，五属性元素爆破启动动画与逐目标命中分离。
+
+### 验证与边界
+
+- 生产 C++ 提取回归通过 UBSan：17 种精灵 × 三种尺寸、普通／高属性和低 SP，精灵恢复、温暖之风五级／加成／治疗反转，四属性双向元素分析与非法模式／原料／产量，自动念咒十级解锁和灵魂链接／已学等级限制。
+- 30 个精灵辅助技能实际方法回归覆盖开启、再次关闭、单侧状态残留及非精灵来源，保留无关状态；其中水幕原本正确，作为对照保留。
+- 客户端四组定向测试 24 项通过；60 个 STR 和 889 个纹理／音效经 Gateway 读取验证。
+- 服务端完整构建通过；完整 PWA 已构建并核对 Gateway 产物 `mvb2zm9s`。未重启地图服务，不将代码回归声称为逐技能真人战斗验收。
+- 致盲迷雾数据库 MaxLevel=5，职业技能树和客户端均为 1，正常学习上限一致，未改官方生成源。
+- 保留既有实现边界：随机技能中的 Gravity 无实际效果；部分早期精灵效果仍缺独立动画。本次没有按推测补齐官方公式或宣称全部动画已还原。
+
+### 逐技能记录
+
+| ID | 技能 | 主要实现 | 核对内容 |
+| --- | --- | --- | --- |
+| 9 | `MG_SRECOVERY` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 10 | `MG_SIGHT` | `sight.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 11 | `MG_NAPALMBEAT` | `napalmbeat.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 12 | `MG_SAFETYWALL` | `safetywall.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 13 | `MG_SOULSTRIKE` | `soulstrike.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 14 | `MG_COLDBOLT` | `coldbolt.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 15 | `MG_FROSTDIVER` | `frostdiver.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 16 | `MG_STONECURSE` | `stonecurse.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 17 | `MG_FIREBALL` | `fireball.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 18 | `MG_FIREWALL` | `firewall.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 19 | `MG_FIREBOLT` | `firebolt.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 20 | `MG_LIGHTNINGBOLT` | `lightningbolt.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 21 | `MG_THUNDERSTORM` | `thunderstorm.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 90 | `WZ_EARTHSPIKE` | `earthspike.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 91 | `WZ_HEAVENDRIVE` | `heavensdrive.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 93 | `WZ_ESTIMATION` | `sense.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 157 | `MG_ENERGYCOAT` | `energycoat.cpp` | 继承第 2 线法师共享审查；复核本线自动念咒／魔法拳／精灵联动 |
+| 274 | `SA_ADVANCEDBOOK` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 书籍攻击／ASPD 被动 |
+| 275 | `SA_CASTCANCEL` | `castcancel.cpp` | 自身施法中断、原技能 SP 与施法状态清理 |
+| 276 | `SA_MAGICROD` | `magicrod.cpp` | 吸收窗口、魔法来源与 SP 恢复 |
+| 277 | `SA_SPELLBREAKER` | `spellbreaker.cpp` | 目标施法状态、Boss 概率及中断恢复 |
+| 278 | `SA_FREECAST` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 施法移动／攻击速度与结束重算 |
+| 279 | `SA_AUTOSPELL` | `hindsight.cpp` | 列表与提交共用解锁规则，最低触发等级 1；灵魂链接及已学等级 |
+| 280 | `SA_FLAMELAUNCHER` | `endowblaze.cpp` | 属性赋予、目标武器／材料、持续时间及状态 |
+| 281 | `SA_FROSTWEAPON` | `endowtsunami.cpp` | 属性赋予、目标武器／材料、持续时间及状态 |
+| 282 | `SA_LIGHTNINGLOADER` | `endowtornado.cpp` | 属性赋予、目标武器／材料、持续时间及状态 |
+| 283 | `SA_SEISMICWEAPON` | `endowquake.cpp` | 属性赋予、目标武器／材料、持续时间及状态 |
+| 284 | `SA_DRAGONOLOGY` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | INT 与龙族伤害／抗性 |
+| 285 | `SA_VOLCANO` | `volcano.cpp` | 属性场效果、重放免材料、剩余时间、互斥和移出清理 |
+| 286 | `SA_DELUGE` | `deluge.cpp` | 属性场效果、重放免材料、剩余时间、互斥和移出清理 |
+| 287 | `SA_VIOLENTGALE` | `whirlwind.cpp` | 属性场效果、重放免材料、剩余时间、互斥和移出清理 |
+| 288 | `SA_LANDPROTECTOR` | `magneticearth.cpp` | 地面阻挡、互相消除、忽略技能与退出清理 |
+| 289 | `SA_DISPELL` | `dispell.cpp` | 目标／职业／机甲限制、成功率及可清除状态 |
+| 290 | `SA_ABRACADABRA` | `hocuspocus.cpp` | 随机数据库、等级限制、临时技能下发与派生目标选择 |
+| 373 | `PF_HPCONVERSION` | `indulge.cpp` | 实际生命要求、HP 消耗及 SP 回复 |
+| 374 | `PF_SOULCHANGE` | `soulexhale.cpp` | 双方当前 SP、玩家／魔物分支及免疫 |
+| 375 | `PF_SOULBURN` | `soulsiphon.cpp` | 概率、失败反噬及当前 SP 伤害 |
+| 402 | `PF_MINDBREAKER` | `mindbreaker.cpp` | 目标限制、MDEF／MATK 状态与失败反馈 |
+| 403 | `PF_MEMORIZE` | `StatusSkillImpl` | 五次施法计数、变动咏唱与状态清理 |
+| 404 | `PF_FOGWALL` | `blindingmist.cpp` | 地面布局、致盲／攻击失败、属性场重叠及移出清理 |
+| 405 | `PF_SPIDERWEB` | `fiberlock.cpp` | 地面捕获、三层引用、持续时间与销毁清理 |
+| 482 | `PF_DOUBLECASTING` | `StatusSkillImpl` | 概率、三种箭系魔法的追加施放 |
+| 1007 | `SA_CREATECON` | `createelementalconverter.cpp` | 制作菜单、材料、四属性配方及生产入口 |
+| 1008 | `SA_ELEMENTWATER` | `elementalchangewater.cpp` | 属性转换目标、材料、成功率及对应防御属性 |
+| 1017 | `SA_ELEMENTGROUND` | `elementalchangeearth.cpp` | 属性转换目标、材料、成功率及对应防御属性 |
+| 1018 | `SA_ELEMENTFIRE` | `elementalchangefire.cpp` | 属性转换目标、材料、成功率及对应防御属性 |
+| 1019 | `SA_ELEMENTWIND` | `elementalchangewind.cpp` | 属性转换目标、材料、成功率及对应防御属性 |
+| 2443 | `SO_FIREWALK` | `firewalk.cpp` | 步行生成地面单位、最大步数、伤害及状态结束 |
+| 2444 | `SO_ELECTRICWALK` | `electricwalk.cpp` | 步行生成地面单位、最大步数、伤害及状态结束 |
+| 2445 | `SO_SPELLFIST` | `spellfist.cpp` | 仅中断三种箭系咏唱、次数与普攻触发 |
+| 2446 | `SO_EARTHGRAVE` | `earthgrave.cpp` | 地面范围、石化状态、倍率及原生地面／命中动画 |
+| 2447 | `SO_DIAMONDDUST` | `diamonddust.cpp` | 地面范围、结晶状态与原生咏唱／地面动画 |
+| 2448 | `SO_POISON_BUSTER` | `poisonbuster.cpp` | 毒状态条件、属性倍率与范围 |
+| 2449 | `SO_PSYCHIC_WAVE` | `psychicwave.cpp` | 地面伤害周期、精灵属性变换及单位动画清理 |
+| 2450 | `SO_CLOUD_KILL` | `cloudkill.cpp` | 区域持续伤害、毒状态、唯一组与删除 |
+| 2451 | `SO_STRIKING` | `striking.cpp` | 攻击增益、周期 SP 及终止条件 |
+| 2452 | `SO_WARMER` | `warmer.cpp` | 目标限制、地面治疗与火精灵加成；修复高 HP 溢出 |
+| 2453 | `SO_VACUUM_EXTREME` | `vacuumextreme.cpp` | 地面坐标、逐目标拉取、免疫及后延迟 |
+| 2454 | `SO_VARETYR_SPEAR` | `varetyrspear.cpp` | 物理／魔法倍率、范围及眩晕 |
+| 2455 | `SO_ARRULLO` | `arrullo.cpp` | 深睡眠目标与概率 |
+| 2456 | `SO_EL_CONTROL` | `spiritcontrol.cpp` | 模式与解除、技能条件及双侧状态清理 |
+| 2457 | `SO_SUMMON_AGNI` | `summonfirespiritagni.cpp` | 三级精灵、材料／SP、属性、召唤替换／持续时间和 AI |
+| 2458 | `SO_SUMMON_AQUA` | `summonwaterspiritaqua.cpp` | 三级精灵、材料／SP、属性、召唤替换／持续时间和 AI |
+| 2459 | `SO_SUMMON_VENTUS` | `summonwindspiritventus.cpp` | 三级精灵、材料／SP、属性、召唤替换／持续时间和 AI |
+| 2460 | `SO_SUMMON_TERA` | `summonearthspirittera.cpp` | 三级精灵、材料／SP、属性、召唤替换／持续时间和 AI |
+| 2461 | `SO_EL_ACTION` | `elementalaction.cpp` | 精灵存在、距离追踪、消耗与命令攻击 |
+| 2462 | `SO_EL_ANALYSIS` | `fourspiritanalysis.cpp` | 两级转换方向、原料与窗口校验、产量边界及失败消耗 |
+| 2463 | `SO_EL_SYMPATHY` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | HP／SP 加成及召唤 SP 减免；修复属性回绕 |
+| 2464 | `SO_EL_CURE` | `spiritrecovery.cpp` | 消耗主人当前 HP／SP 10% 并恢复精灵；宽整数计算 |
+| 2465 | `SO_FIRE_INSIGNIA` | `fireinsignia.cpp` | 等级对应属性增益、周期回复／伤害、地面互斥与移出清理 |
+| 2466 | `SO_WATER_INSIGNIA` | `waterinsignia.cpp` | 等级对应属性增益、周期回复／伤害、地面互斥与移出清理 |
+| 2467 | `SO_WIND_INSIGNIA` | `windinsignia.cpp` | 等级对应属性增益、周期回复／伤害、地面互斥与移出清理 |
+| 2468 | `SO_EARTH_INSIGNIA` | `earthinsignia.cpp` | 等级对应属性增益、周期回复／伤害、地面互斥与移出清理 |
+| 5008 | `SO_ELEMENTAL_SHIELD` | `elementalshield.cpp` | 消耗精灵、队伍目标、霸邪／光壁与清理 |
+| 5014 | `ALL_FULL_THROTTLE` | `StatusSkillImpl` | 沿用前线共享恢复／属性／周期消耗与副作用审查 |
+| 5365 | `EM_MAGIC_BOOK_M` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 书籍要求与五属性魔法增伤 |
+| 5366 | `EM_SPELL_ENCHANTING` | `StatusSkillImpl` | 自身 S.MATK 状态、持续时间及刷新 |
+| 5367 | `EM_ACTIVITY_BURN` | `activityburn.cpp` | 目标 AP 消耗、成功率与反馈 |
+| 5368 | `EM_INCREASING_ACTIVITY` | `increasingactivity.cpp` | 目标 AP 恢复、队伍／自身规则 |
+| 5369 | `EM_DIAMOND_STORM` | `diamondstorm.cpp` | 地面范围与倍率；原生效果改由坐标通知播放 |
+| 5370 | `EM_LIGHTNING_LAND` | `lightningland.cpp` | 地面周期伤害、单位与状态联动 |
+| 5371 | `EM_VENOM_SWAMP` | `venomswamp.cpp` | 地面周期伤害、毒状态与单位清理 |
+| 5372 | `EM_CONFLAGRATION` | `conflagration.cpp` | 地面周期伤害、火属性与单位清理 |
+| 5373 | `EM_TERRA_DRIVE` | `terradrive.cpp` | 地面范围、倍率及咏唱／地面／命中原生效果 |
+| 5374 | `EM_ELEMENTAL_SPIRIT_M` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 高级精灵属性加成；字段边界及真实战斗属性转写 |
+| 5375 | `EM_SUMMON_ELEMENTAL_ARDOR` | `summonelementalardor.cpp` | 前置精灵／材料、替换、属性与技能模式、维持 SP／跟随／清理 |
+| 5376 | `EM_SUMMON_ELEMENTAL_DILUVIO` | `summonelementaldiluvio.cpp` | 前置精灵／材料、替换、属性与技能模式、维持 SP／跟随／清理 |
+| 5377 | `EM_SUMMON_ELEMENTAL_PROCELLA` | `summonelementalprocella.cpp` | 前置精灵／材料、替换、属性与技能模式、维持 SP／跟随／清理 |
+| 5378 | `EM_SUMMON_ELEMENTAL_TERREMOTUS` | `summonelementalterremotus.cpp` | 前置精灵／材料、替换、属性与技能模式、维持 SP／跟随／清理 |
+| 5379 | `EM_SUMMON_ELEMENTAL_SERPENS` | `summonelementalserpens.cpp` | 前置精灵／材料、替换、属性与技能模式、维持 SP／跟随／清理 |
+| 5380 | `EM_ELEMENTAL_BUSTER` | `elementalbuster.cpp` | 精灵属性分派、AP、五种派生倍率；启动／命中动画分离 |
+| 5381 | `EM_ELEMENTAL_VEIL` | `elementalveil.cpp` | 精灵目标、隐身状态与同步 |
+| 6517 | `EM_PSYCHIC_STREAM` | `psychicstream.cpp` | 目标／范围、延迟路径、元素状态倍率与表现 |
