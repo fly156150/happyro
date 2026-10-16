@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | 1 | 弓箭手／猎人／神射手／游侠／风鹰 | 代码审查完成，修复并完成自动验证 |
 | 2 | 魔法师／巫师／大法师／至高法师 | 78 个技能代码审查完成，修复并完成自动验证 |
-| 3 | 服事／牧师／大主教／枢机主教 | 待审查 |
+| 3 | 服事／牧师／大主教／枢机主教 | 77 个技能代码审查完成，修复并完成自动验证 |
 | 4 | 剑士／十字军／皇家卫士／帝国卫士 | 待审查 |
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 待审查 |
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 待审查 |
@@ -224,3 +224,113 @@
 | 6516 | Energy Conversion `AG_ENERGY_CONVERSION` | `energyconversion.cpp` | 核对满 SP 失败及 SP 恢复 |
 
 最终验证：55 个 STR、640 张纹理及 2 个音效通过 Gateway 读取校验；修改源码 ESLint、完整 PWA、map-server 与文档站构建通过，Gateway 已提供 `mvazsyos`。服务端仅编译，未重启在线地图服务；本轮没有逐技能实机战斗验收。
+
+
+## 3. 牧师线
+
+### 范围与依据
+
+完成 Acolyte、Priest、High_Priest、Arch_Bishop、Arch_Bishop_T、Cardinal 的 77 个去重技能代码审查，包含一转、进阶二转、三转、四转、继承技能及双重圣光／Arbitrium 派生入口。77 项客户端常量、生成名称及最高等级与当前服务端数据库全部一致。
+
+核对技能树、目标／资源／武器／队伍条件、技能工厂与独立实现、通用状态实现，以及 skill.cpp／battle.cpp／status.cpp 的被动、状态周期、地面单位、消耗及伤害路径；客户端核对共用目标／封包／状态图标／技能效果和地面单位路径。
+
+### 修复
+
+- 普通治愈术正确识别玩家受益者，恢复配置开启后的治疗职业经验；治愈术及高阶治愈术反射后读取实际受益者的赤月状态。
+- 复活术与牺牲祈福按职业等级差计算职业经验，经验乘法先转换为浮点；牺牲祈福仅累计实际复活成功的人数，全部失败不再错误降施法者生命值为 1。
+- 群体治疗人数加成、Renovatio 持续恢复、圣树 HP／SP 百分比及不死目标即死概率使用宽整数计算，避免高数值溢出。
+- 圣树按地面技能时间计算三秒恢复／五秒显隐周期，不再由目标人数推进共享计数。
+- Lauda Agnus／Ramus 概率边界由实际 71%／81%／91% 修正为配置的 70%／80%／90%，四级仍为 100%。
+- 圣体降福检查协助者的实时 SP，而非施法者的存档 SP。
+- 补齐群体祝福、加速、霸邪、两种净化增益和圣典的受益者效果，Dilectio 的施法／受益者分层效果，以及气流风暴的地面单位和命中效果；修正 Renovatio 音效文件名。
+
+### 验证与限制
+
+- `priest-healing.test.mjs` 执行生产 C++ 方法／表达式，覆盖治疗经验、反射、复活等级差、全失败与部分成功、群体治疗上限、持续恢复、100 个随机取值逐级概率、实时协助者 SP 及不死目标概率；UBSan 通过。
+- `epiclesis.test.mjs` 执行生产地面作用分支，验证 1／2／3／5／12 人、中途进入／离开、非玩家／不死目标、HP／SP 上界和赤月反转；模拟外围每目标一秒节流，UBSan 通过。
+- 客户端效果路由、四转技能与地面单位 19 项测试通过；31 个 STR、250 个依赖文件经 Gateway 读取验证无缺失。
+- 修改源码 ESLint、完整 PWA（mvb0etnr）及 Gateway 检查通过；map-server 与文档站编译通过。未重启在线服务，也未逐技能进行真实浏览器战斗验收。
+- 群体祝福／加速／霸邪复用对应基础技能视觉；Renewal 圣殿依赖新状态图标反馈，不误当旧地面无敌领域。部分旧技能特效仍简化，不宣称完整复刻官方动画。
+- Dilectio／Mediale 的受益者中心治疗、Silentium 等级规则和部分四转系数保留当前服务端实现；上游 TODO 与官方数值一致性不凭猜测改动。尚未声称逐技能官方数值验收。
+
+### 逐技能清单
+
+| ID | 技能 | 实现 | 核验结果 |
+| --- | --- | --- | --- |
+| 9 | 增加SP恢复 `MG_SRECOVERY` | `status.cpp／battle.cpp／skill.cpp` | SP 恢复、坐姿及高数值钳制；继承巫师线共用路径 |
+| 12 | 暗之障壁 `MG_SAFETYWALL` | `safetywall.cpp` | 蓝矿消耗、格子互斥、近战拦截及单位清理；继承共用路径 |
+| 22 | 天使之护 `AL_DP` | `status.cpp／battle.cpp／skill.cpp` | 只对魔物的不死／恶魔伤害减免 |
+| 23 | 恶魔克星 `AL_DEMONBANE` | `status.cpp／battle.cpp／skill.cpp` | 不死／恶魔魔物的攻击修炼加成 |
+| 24 | 光猎 `AL_RUWACH` | `ruwach.cpp` | 自身侦测状态、周期显隐及周围敌人攻击 |
+| 25 | 光之障壁 `AL_PNEUMA` | `pneuma.cpp` | 远程物理拦截、地面互斥与离开范围清理 |
+| 26 | 瞬间移动 `AL_TELEPORT` | `teleport.cpp` | 地图／决斗限制、随机或存档点选择、取消封包 |
+| 27 | 传送之阵 `AL_WARP` | `warpportal.cpp` | 记忆点、选择菜单、蓝矿消耗与传送门人数／寿命；菜单跳过空地图槽 |
+| 28 | 治愈术 `AL_HEAL` | `heal.cpp` | 修复玩家治疗经验及反射后的赤月目标；不死攻击、机甲与狂暴限制 |
+| 29 | 敏捷提升 `AL_INCAGI` | `incagi.cpp` | HP／SP 消耗、机甲限制、变不死目标的攻击分支 |
+| 30 | 敏捷下降 `AL_DECAGI` | `decagi.cpp` | 敌对目标、成功率、状态覆盖及成功封包 |
+| 31 | Aqua Benedicta `AL_HOLYWATER` | `holywater.cpp` | 水域／空瓶、圣水制作与成功／失败反馈 |
+| 32 | Signum Crucis `AL_CRUCIS` | `crucis.cpp` | 范围敌人及不死／恶魔状态限制 |
+| 33 | Angelus `AL_ANGELUS` | `angelus.cpp` | 自身／同图范围内队伍增益分派 |
+| 34 | Blessing `AL_BLESSING` | `blessing.cpp` | 属性增益、不死／恶魔及玩家变不死分支 |
+| 35 | Cure `AL_CURE` | `cure.cpp` | 沉默、黑暗、混乱和伤口状态解除及免疫反馈 |
+| 54 | 复活术 `ALL_RESURRECTION` | `resurrection.cpp` | 死亡／禁复活／地图限制；修复职业经验及不死即死概率溢出 |
+| 65 | 钝器修炼 `PR_MACEMASTERY` | `status.cpp／battle.cpp／skill.cpp` | 钝器攻击与 Renewal 暴击加成的武器限制 |
+| 66 | 牺牲祈福 `PR_IMPOSITIO` | `impositiomanus.cpp` | Renewal 自身／队伍状态与攻击增益 |
+| 67 | 牺牲祈福 `PR_SUFFRAGIUM` | `suffragium.cpp` | Renewal 自身／队伍状态、咏唱减免 |
+| 68 | 圣水洗礼 `PR_ASPERSIO` | `aspersio.cpp` | 圣水消耗、武器属性及不死目标攻击分支 |
+| 69 | 圣体降福 `PR_BENEDICTIO` | `bssacramenti.cpp` | 相邻协助者、圣属性护甲及不死攻击；修复协助者实时 SP 检查 |
+| 70 | 光耀之堂 `PR_SANCTUARY` | `sanctuary.cpp` | 地面持续治疗／不死攻击、目标上限与赤月反转 |
+| 71 | 缓慢中毒 `PR_SLOWPOISON` | `StatusSkillImpl` | 通用状态入口、缓毒状态与毒状态周期路径 |
+| 72 | 状态恢复 `PR_STRECOVERY` | `statusrecovery.cpp` | 身体异常解除、不死致盲与魔物目标重置 |
+| 73 | 凯里艾勒松 `PR_KYRIE` | `kyrieeleison.cpp` | 盾容量、攻击次数和状态覆盖 |
+| 74 | 赞美诗 `PR_MAGNIFICAT` | `magnificat.cpp` | 同图队伍范围及 SP 恢复状态 |
+| 75 | 荣耀 `PR_GLORIA` | `gloria.cpp` | 同图队伍范围及 LUK 增益 |
+| 76 | 神圣法典 `PR_LEXDIVINA` | `lexdivina.cpp` | 沉默切换、已沉默友军与延时状态入口 |
+| 77 | 退散不死 `PR_TURNUNDEAD` | `turnundead.cpp` | 不死与 Boss 免疫、失败伤害；修复高生命值概率乘法溢出 |
+| 78 | 永恒法典 `PR_LEXAETERNA` | `StatusSkillImpl` | 通用状态施加及下一次伤害放大／消耗 |
+| 79 | 大驱魔术 `PR_MAGNUS` | `magnusexorcismus.cpp` | 蓝矿、地面周期伤害、不死／恶魔加成及单位效果 |
+| 156 | Holy Light `AL_HOLYLIGHT` | `holylight.cpp` | 魔法攻击、灵魂状态伤害与 SP 消耗联动 |
+| 361 | Assumptio `HP_ASSUMPTIO` | `assumptio.cpp` | 禁止对魔物施加、通用状态及防御修正 |
+| 362 | Basilica `HP_BASILICA` | `basilica.cpp` | Renewal 为自身增益，非旧地面无敌领域；核对新状态图标与攻击加成 |
+| 363 | Meditatio `HP_MEDITATIO` | `status.cpp／battle.cpp／skill.cpp` | 最大 SP、自然恢复与治疗加成 |
+| 481 | 魔力充能 `HP_MANARECHARGE` | `status.cpp／battle.cpp／skill.cpp` | SP 消耗减免及下限钳制 |
+| 1014 | 牺牲祈福 `PR_REDEMPTIO` | `redemptio.cpp` | 同图死者复活、失败目标排除、成功计数及职业经验 |
+| 2038 | 朱迪克斯 `AB_JUDEX` | `judex.cpp` | 范围魔法伤害、等级倍率与目标反馈 |
+| 2039 | 安琪拉 `AB_ANCILLA` | `ancilla.cpp` | 携带数量上限、SP 百分比及制造物品反馈 |
+| 2040 | 阿多拉穆斯 `AB_ADORAMUS` | `adoramus.cpp` | 协助者／蓝矿、圣属性及圣子中性转换、地领格伤害限制 |
+| 2041 | 克莱门提亚 `AB_CLEMENTIA` | `crementia.cpp` | 已学祝福与职业等级派生状态等级；补齐群体受益者效果 |
+| 2042 | 坎托·坎迪杜斯 `AB_CANTO` | `cantocandidus.cpp` | 已学加速与职业等级派生状态等级；补齐群体受益者效果 |
+| 2043 | 群体治愈 `AB_CHEAL` | `coluceoheal.cpp` | 队伍范围、机甲／狂暴限制；修复人数增益溢出 |
+| 2044 | 圣灵降临 `AB_EPICLESIS` | `epiclesis.cpp` | 初次复活、周期恢复与显隐；修复多人计时及 HP／SP 乘法溢出 |
+| 2045 | 祷告 `AB_PRAEFATIO` | `praefatio.cpp` | 队伍人数参与护盾状态，补齐受益者效果 |
+| 2046 | 祈祷 `AB_ORATIO` | `oratio.cpp` | 周围敌人概率减圣抗及施放反馈 |
+| 2047 | 羔羊赞歌 `AB_LAUDAAGNUS` | `laudaagnus.cpp` | 清除异常与未感染者增益；修复概率边界并补齐增益效果 |
+| 2048 | 枝条赞歌 `AB_LAUDARAMUS` | `laudaramus.cpp` | 清除异常与未感染者增益；修复概率边界并补齐增益效果 |
+| 2050 | 新生 `AB_RENOVATIO` | `renovatio.cpp` | 队伍状态、五秒恢复及赤月；修复高生命值溢出与音效路径 |
+| 2051 | 高级治愈 `AB_HIGHNESSHEAL` | `highnessheal.cpp` | 治疗系数、反射、不死攻击；修复反射后的状态目标 |
+| 2052 | 清除 `AB_CLEARANCE` | `clearance.cpp` | 队伍／魔物、成功率、免疫、不可清除状态及脚本效果清理 |
+| 2053 | 赎罪 `AB_EXPIATIO` | `StatusSkillImpl` | 物理／魔法防御忽略状态，状态图标反馈 |
+| 2054 | 双重光 `AB_DUPLELIGHT` | `StatusSkillImpl` | 普通近战双独立触发，核对 MELEE／MAGIC 派生方法与倍率 |
+| 2057 | Silentium `AB_SILENTIUM` | `silentium.cpp` | 范围敌人复用沉默分派，不自行猜测上游未定等级规则 |
+| 2515 | Secrament `AB_SECRAMENT` | `StatusSkillImpl` | 固定咏唱减免及原生圣典效果 |
+| 5011 | 奉献礼 `AB_OFFERTORIUM` | `StatusSkillImpl` | 治疗增益、额外 SP 消耗和异常清理 |
+| 5014 | 全力推进 `ALL_FULL_THROTTLE` | `StatusSkillImpl` | 共用属性／恢复、周期消耗及结束副作用，继承前线核验 |
+| 5072 | 责骂 `AB_VITUPERATUM` | `vituperatum.cpp` | 蓝矿、范围敌人及天使之怒状态分派 |
+| 5073 | 契约 `AB_CONVENIO` | `convenio.cpp` | 队长权限、同图存活队员、拒绝召唤设置与禁传送地图 |
+| 5268 | 修复 `CD_REPARATIO` | `reparatio.cpp` | 仅玩家目标、免疫及当前最大生命值恢复 |
+| 5269 | 中级祷言 `CD_MEDIALE_VOTUM` | `medialevotum.cpp` | 队伍目标状态、两秒周期及受益者范围治疗调用 |
+| 5270 | 钝器书精通 `CD_MACE_BOOK_M` | `status.cpp／battle.cpp／skill.cpp` | 钝器／书的体型加成和主动技能倍率关联 |
+| 5271 | 锐利生命 `CD_ARGUTUS_VITA` | `StatusSkillImpl` | 队伍目标、MRES 忽略状态 |
+| 5272 | 锐利武器 `CD_ARGUTUS_TELUM` | `StatusSkillImpl` | 队伍目标、RES 忽略状态 |
+| 5273 | 裁决 `CD_ARBITRIUM` | `arbitrium.cpp` | 范围魔法倍率和圣属性修炼；同时检查保留的 ATK 派生实现 |
+| 5275 | 临在之锋 `CD_PRESENS_ACIES` | `StatusSkillImpl` | 队伍目标及暴击伤害属性增益 |
+| 5276 | 忠诚之魂 `CD_FIDUS_ANIMUS` | `status.cpp／battle.cpp／skill.cpp` | 圣魔法属性与四转主动技能的被动加成 |
+| 5277 | 释放 `CD_EFFLIGO` | `effligo.cpp` | AP／武器限制、不死／恶魔加成及命中效果 |
+| 5278 | 能力 `CD_COMPETENTIA` | `competentia.cpp` | AP 消耗、队伍 HP／SP 恢复及攻击属性增益 |
+| 5279 | 气流风暴 `CD_PNEUMATICUS_PROCELLA` | `pneumaticusprocella.cpp` | AP、地面周期和伤害；补齐单位与受击原生效果 |
+| 5280 | 恩爱治愈 `CD_DILECTIO_HEAL` | `dilectioheal.cpp` | 队伍受益者中心治疗、施法与受益者分层特效 |
+| 5281 | 信仰 `CD_RELIGIO` | `StatusSkillImpl` | STA／WIS／SPL 三项属性状态 |
+| 5282 | 祝福 `CD_BENEDICTUM` | `StatusSkillImpl` | POW／CON／CRT 三项属性状态 |
+| 5283 | 请求 `CD_PETITIO` | `petitio.cpp` | 钝器／书限制、范围攻击及修炼倍率 |
+| 5284 | 框架 `CD_FRAMEN` | `framen.cpp` | 范围魔法、不死／恶魔加成及施放／命中分派 |
+| 6518 | Divinus Flos `CD_DIVINUS_FLOS` | `divinusflos.cpp` | 范围魔法、圣子属性转换与原生分层效果 |
