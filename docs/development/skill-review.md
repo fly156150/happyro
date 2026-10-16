@@ -9,7 +9,7 @@
 | 1 | 弓箭手／猎人／神射手／游侠／风鹰 | 代码审查完成，修复并完成自动验证 |
 | 2 | 魔法师／巫师／大法师／至高法师 | 78 个技能代码审查完成，修复并完成自动验证 |
 | 3 | 服事／牧师／大主教／枢机主教 | 77 个技能代码审查完成，修复并完成自动验证 |
-| 4 | 剑士／十字军／皇家卫士／帝国卫士 | 待审查 |
+| 4 | 剑士／十字军／皇家卫士／帝国卫士 | 70 个技能代码审查完成，修复并完成自动验证 |
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 待审查 |
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 待审查 |
 | 7 | 魔法师／贤者／妖术师／元素大师 | 待审查 |
@@ -334,3 +334,100 @@
 | 5283 | 请求 `CD_PETITIO` | `petitio.cpp` | 钝器／书限制、范围攻击及修炼倍率 |
 | 5284 | 框架 `CD_FRAMEN` | `framen.cpp` | 范围魔法、不死／恶魔加成及施放／命中分派 |
 | 6518 | Divinus Flos `CD_DIVINUS_FLOS` | `divinusflos.cpp` | 范围魔法、圣子属性转换与原生分层效果 |
+
+
+## 4. 十字军线
+
+### 范围与依据
+
+完成 Swordman、Crusader、Paladin、Royal_Guard、Royal_Guard_T、Imperial_Guard 的 70 个去重技能代码审查，涵盖一至四转、进阶二转及继承技能。70 项客户端 ID、名称与最高等级均与当前服务端一致。核对技能树和数据库的目标、武器、盾牌、资源、姿态条件，技能工厂、独立方法、通用状态，以及伤害、被动、周期、地面单位、保护继承与反射路径。旧版 Overbrand 派生攻击已非当前主技能调用，不恢复已移除的旧流程。
+
+### 修复
+
+- 守护者之盾容量改用宽整数；超大物理伤害击破屏障后保留实际剩余伤害，避免原始伤害先截断导致减伤过量。保留原有魔法攻击消耗屏障但不吸收魔法伤害的语义。
+- 盾牌法术 HP／SP 恢复、灵感周期消耗和舍命攻击 9% 自损使用宽整数，保留原百分比及取整次序。
+- 终极牺牲单人施法也将施法者剩余 HP 降至 1，与当前技能说明及组队分支一致；队友不承担施法者的扣血。
+- 攻击姿态的状态刷新标记改为 P.ATK／S.MATK／DEF，使开启与结束立即更新对应属性。
+- 补齐放逐攻击、烙印、创世之光、大地毁灭和守护者之盾对应原生效果；范围成功动画与每个目标命中动画分离，范围动画固定在施放位置。
+
+### 验证与限制
+
+- `crusader-barrier.test.mjs` 提取生产 C++ 方法验证屏障容量、连续攻击、超 INT_MAX 破盾伤害、魔法伤害语义、资源百分比、单人／组队终极牺牲和反复切换攻击姿态；UBSan 通过。
+- 客户端技能通知路由测试及共用四转效果／地面效果测试通过。39 个 STR 和 474 个依赖经 Gateway 读取验证，无缺失。
+- 完整 PWA 构建及 Gateway 核验通过（`mvb15a7c`），map-server 构建通过；没有重启在线地图服务。
+- 这是完整职业线的代码审查，不是 70 个技能逐个实机战斗验收。部分旧三转动画仍简化；未把未知方向素材全部叠加，也不宣称完整复刻官方动画。四转公式中上游未确认的 POW 系数等保留现有规则，不凭猜测修改。
+
+### 逐技能清单
+
+| ID | 技能 | 实现 | 核验结果 |
+| --- | --- | --- | --- |
+| 2 | 剑术修炼 `SM_SWORD` | `status.cpp／battle.cpp／skill.cpp` | 短剑／单手剑武器限制及修炼伤害 |
+| 3 | 双手剑修炼 `SM_TWOHAND` | `status.cpp／battle.cpp／skill.cpp` | 双手剑修炼伤害及武器限制 |
+| 4 | 增加HP恢复 `SM_RECOVERY` | `status.cpp／battle.cpp／skill.cpp` | 自然恢复、生命值比例及恢复量钳制 |
+| 5 | 狂击 `SM_BASH` | `SkillCustomBash` | 武器限制、命中修正、伤害及致命攻击联动 |
+| 6 | 挑衅 `SM_PROVOKE` | `provoke.cpp` | 目标免疫、成功率、攻击／防御状态 |
+| 7 | 怒爆 `SM_MAGNUM` | `magnum.cpp` | 自身范围火属性、击退及攻击状态；沿用已修复固定位置动画 |
+| 8 | 钢铁之心 `SM_ENDURE` | `StatusSkillImpl` | 次数／持续时间、地图限制及牺牲保护继承 |
+| 22 | 天使之护 `AL_DP` | `status.cpp／battle.cpp／skill.cpp` | 继承服事线：不死／恶魔减伤 |
+| 23 | 恶魔克星 `AL_DEMONBANE` | `status.cpp／battle.cpp／skill.cpp` | 继承服事线：不死／恶魔伤害修炼 |
+| 28 | 治愈术 `AL_HEAL` | `heal.cpp` | 继承牧师线修复：治疗、反射、不死攻击及经验 |
+| 35 | Cure `AL_CURE` | `cure.cpp` | 继承服事线：异常清除及成功反馈 |
+| 55 | 矛术修炼 `KN_SPEARMASTERY` | `status.cpp／battle.cpp／skill.cpp` | 长矛限制、骑乘与未骑乘修炼差异 |
+| 63 | 骑乘大嘴鸟 `KN_RIDING` | `status.cpp／battle.cpp／skill.cpp` | 继承骑士共用骑乘检查及骑乘管理入口 |
+| 64 | 骑兵修炼 `KN_CAVALIERMASTERY` | `status.cpp／battle.cpp／skill.cpp` | 骑乘攻速惩罚及技能等级修正 |
+| 144 | 移动 HP 恢复 `SM_MOVINGRECOVERY` | `status.cpp／battle.cpp／skill.cpp` | 行走恢复标记和恢复调度 |
+| 145 | 致命一击 `SM_FATALBLOW` | `status.cpp／battle.cpp／skill.cpp` | 狂击命中后的眩晕等级条件 |
+| 146 | 自动狂暴 `SM_AUTOBERSERK` | `autoberserk.cpp` | 低生命值触发及自动挑衅清理 |
+| 248 | 信仰 `CR_TRUST` | `status.cpp／battle.cpp／skill.cpp` | 最大 HP 及圣属性抗性被动 |
+| 249 | 防御 `CR_AUTOGUARD` | `StatusSkillImpl` | 盾牌限制、格挡概率、牺牲保护继承及状态结束 |
+| 250 | 惩击 `CR_SHIELDCHARGE` | `smite.cpp` | 盾牌、击退及眩晕附加效果 |
+| 251 | 盾牌回旋 `CR_SHIELDBOOMERANG` | `shieldboomerang.cpp` | 盾牌重量／精炼、远程攻击及命中 |
+| 252 | 盾牌反射 `CR_REFLECTSHIELD` | `shieldreflect.cpp` | 盾牌、反射伤害限制与保护继承 |
+| 253 | 圣十字攻击 `CR_HOLYCROSS` | `holycross.cpp` | 双手矛倍率分支、圣属性及致盲 |
+| 254 | 圣十字审判 `CR_GRANDCROSS` | `grandcross.cpp` | 地面布局、施法期间移动限制、伤害及自损 |
+| 255 | 舍命攻击 `CR_DEVOTION` | `sacrifice.cpp` | 目标职业／等级／数量、距离断开与防御状态继承 |
+| 256 | 灵魂坚韧 `CR_PROVIDENCE` | `resistantsouls.cpp` | 目标职业限制、恶魔／圣属性减伤 |
+| 257 | 防御光环 `CR_DEFENDER` | `StatusSkillImpl` | 盾牌、远程物理减伤、攻速及保护继承 |
+| 258 | 长枪加速术 `CR_SPEARQUICKEN` | `StatusSkillImpl` | 长矛条件、攻速／暴击／回避状态 |
+| 367 | Gloria Domini `PA_PRESSURE` | `gloriadomini.cpp` | 目标魔法伤害与成功反馈 |
+| 368 | Martyr's Reckoning `PA_SACRIFICE` | `martyrsreckoning.cpp` | 攻击次数与最大生命值伤害；修复 9% 自损溢出 |
+| 369 | Battle Chant `PA_GOSPEL` | `battlechant.cpp` | 领域切换、受益／敌对分派、周期消耗及清理 |
+| 480 | 盾牌连击 `PA_SHIELDCHAIN` | `shieldchain.cpp` | 盾牌、五段伤害和命中倍率 |
+| 1002 | 缩小 `CR_SHRINK` | `StatusSkillImpl` | 自动防御联动、击退及免疫检查 |
+| 2307 | 加农矛 `LG_CANNONSPEAR` | `cannonspear.cpp` | 长矛、范围伤害和暴击倍率；现有效果仍简化 |
+| 2308 | 驱逐点 `LG_BANISHINGPOINT` | `banishingpoint.cpp` | 长矛和狂击加成；补齐原生命中效果 |
+| 2309 | 踩踏 `LG_TRAMPLE` | `trample.cpp` | 陷阱范围搜索、解除及触发分支 |
+| 2310 | 盾牌猛击 `LG_SHIELDPRESS` | `shieldpress.cpp` | 盾牌条件、重量／精炼及伤害 |
+| 2311 | 反射伤害减免 `LG_REFLECTDAMAGE` | `StatusSkillImpl` | 当前版本反射减伤、盾牌与周期 SP 消耗 |
+| 2312 | 精准攻击 `LG_PINPOINTATTACK` | `pinpointattack.cpp` | 突进位置、地图限制、破坏／异常分支 |
+| 2313 | 先锋之力 `LG_FORCEOFVANGUARD` | `forceofvanguard.cpp` | 开关、周期消耗、受击能量球及上限 |
+| 2314 | 狂怒爆发 `LG_RAGEBURST` | `rageburst.cpp` | 要求已有能量球，记录并消耗球数后计算伤害 |
+| 2315 | 盾牌法术 `LG_SHIELDSPELL` | `shieldspell.cpp` | 盾牌、三级不同状态；修复 HP／SP 周期恢复溢出 |
+| 2316 | 超越突破 `LG_EXEEDBREAK` | `StatusSkillImpl` | 武器重量与等级、下次普通攻击及状态消耗 |
+| 2317 | 超级烙印 `LG_OVERBRAND` | `overbrand.cpp` | 当前自身范围技能及月斩联动；补齐咏唱／命中效果 |
+| 2318 | 威望 `LG_PRESTIGE` | `StatusSkillImpl` | 属性参与魔法回避、盾防御及状态互斥 |
+| 2319 | 结盟 `LG_BANDING` | `banding.cpp` | 范围人数、周期 SP、地面状态及清理 |
+| 2320 | 月斩 `LG_MOONSLASHER` | `moonslasher.cpp` | 范围攻击、坐下／延迟及烙印准备状态 |
+| 2321 | 创世之光 `LG_RAYOFGENESIS` | `rayofgenesis.cpp` | 范围魔法、灵感条件；区域与命中视觉分离 |
+| 2322 | 虔诚 `LG_PIETY` | `piety.cpp` | 圣水消耗、受益目标周围队友及护甲圣属性 |
+| 2323 | 大地驱动 `LG_EARTHDRIVE` | `earthdrive.cpp` | 盾牌、范围伤害和地面清除；补齐区域／命中效果 |
+| 2324 | 赫斯珀洛斯之光 `LG_HESPERUSLIT` | `hesperuslit.cpp` | 当前长矛攻击及等级倍率，不恢复旧人数门槛 |
+| 2325 | 灵感 `LG_INSPIRATION` | `StatusSkillImpl` | 异常清理、属性增益及周期自损；修复资源溢出 |
+| 5013 | 王者恩典 `LG_KINGS_GRACE` | `kingsgrace.cpp` | 自身／队伍及非对战地图公会目标、周期恢复与离域清理 |
+| 5014 | 全力推进 `ALL_FULL_THROTTLE` | `StatusSkillImpl` | 继承共用审查：恢复、属性、消耗及结束副作用 |
+| 5255 | 防御姿态 `IG_GUARD_STANCE` | `StatusSkillImpl` | 盾牌、防御／攻击修正及攻击姿态互斥 |
+| 5256 | 守护者之盾 `IG_GUARDIAN_SHIELD` | `guardianshield.cpp` | 姿态与 AP、队伍屏障；修复容量／破盾伤害并补齐效果 |
+| 5257 | 反弹之盾 `IG_REBOUND_SHIELD` | `StatusSkillImpl` | 防御姿态、牺牲保护转移伤害减免及上限 |
+| 5258 | 盾牌修炼 `IG_SHIELD_MASTERY` | `status.cpp／battle.cpp／skill.cpp` | 装备盾牌时 RES 加成及攻击技能修炼关联 |
+| 5259 | 矛剑修炼 `IG_SPEAR_SWORD_M` | `status.cpp／battle.cpp／skill.cpp` | 指定剑／矛命中加成及技能修炼关联 |
+| 5260 | 攻击姿态 `IG_ATTACK_STANCE` | `StatusSkillImpl` | 防御减益与双攻击增益；修复切换时属性不刷新 |
+| 5261 | 终极牺牲 `IG_ULTIMATE_SACRIFICE` | `ultimatesacrifice.cpp` | 姿态、单人／队伍、复活与地图限制；修复单人不扣至 1 HP |
+| 5262 | 神圣盾牌 `IG_HOLY_SHIELD` | `StatusSkillImpl` | 盾牌、减伤与圣魔法加成、状态刷新 |
+| 5263 | 大审判 `IG_GRAND_JUDGEMENT` | `grandjudgement.cpp` | 长矛／姿态／AP、种族倍率与施法者矛伤状态 |
+| 5264 | 审判十字 `IG_JUDGEMENT_CROSS` | `judgementcross.cpp` | AP、魔法倍率、种族与修炼加成 |
+| 5265 | 盾牌射击 `IG_SHIELD_SHOOTING` | `shieldshooting.cpp` | 盾牌条件、伤害和自身盾牌力量状态 |
+| 5266 | 过度斩击 `IG_OVERSLASH` | `overslash.cpp` | 攻击姿态、范围攻击及修炼加成 |
+| 5267 | 十字雨 `IG_CROSS_RAIN` | `crossrain.cpp` | 地面范围／周期／互斥、圣盾倍率与单位清理 |
+| 6503 | 光辉长矛 `IG_RADIANT_SPEAR` | `radiantspear.cpp` | 单手矛／攻击姿态、范围伤害与矛伤加成 |
+| 6504 | 帝国十字 `IG_IMPERIAL_CROSS` | `imperialcross.cpp` | 攻击姿态、矛伤联动与命中通知 |
+| 6505 | 帝国压力 `IG_IMPERIAL_PRESSURE` | `imperialpressure.cpp` | 范围魔法、防御姿态圣属性转换及修炼加成 |
