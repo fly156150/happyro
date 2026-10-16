@@ -14,7 +14,7 @@
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 89 个技能代码审查完成，修复并完成自动验证 |
 | 7 | 魔法师／贤者／妖术师／元素大师 | 93 个技能代码审查完成，修复并完成自动验证 |
 | 8 | 商人／炼金术师／基因学者／生物学者 | 71 个主技能及 58 个生命体技能代码审查完成，修复并完成自动验证 |
-| 9 | 服事／武僧／修罗／审判官 | 待审查 |
+| 9 | 服事／武僧／修罗／审判官 | 78 个主技能代码审查完成，修复并完成自动验证 |
 | 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 待审查 |
 | 11 | 弓箭手／诗人、舞娘／宫廷乐师、漫游舞者／吟游诗人、咏唱舞姬 | 待审查 |
 
@@ -922,3 +922,110 @@
 | 8057 | `MH_HEILIGE_PFERD` | 主动：工厂、对应实现与状态／地面／伤害分支 |
 | 8058 | `MH_GOLDENE_TONE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
 | 8059 | `MH_BLAZING_LAVA` | 被动：属性计算与技能前置 |
+
+## 9. 武僧／修罗线
+
+### 范围与依据
+
+从 Acolyte、Acolyte_High、Monk、Champion、Sura、Sura_T、Inquisitor 提取 78 个去重主技能。全部 ID、名称和等级与客户端一致。继承服事路径沿用第 3 线；本线独立实现、状态技能、被动、气弹计时器／消耗、连招开启／结束、延迟攻击、印记和阶段要求逐项核对。另检查新月肘击派生反击及闪光连击三个定时阶段。
+
+客户端检查技能动作、球体／位移／束缚通知、效果配置与运行时 BSON：本机 BSON 未提供这批审判官基础技能的效果映射，因此不能将自动加载视为已有表现。新增显式原生效果使用成功／命中／地面阶段，保持目标与施法者区分。
+
+### 明确问题与修复
+
+- 地狱之门（`SR_GATEOFHELL`）SP 伤害系数原本在整数除法后赋给浮点变量，1–4 级和 6–9 级丢失中间加成。改为宽整数百分比计算，普通施放和连招均保留每级 20% 的增量。
+- 拳套箭的延迟击退方向原本使用全局变量，多人交错施放、移动或前一击清空后会互相干扰。方向随各次定时攻击保存，通过攻击入口传递到击退处理；撞墙追加保留不再击退的规则。
+- 诅咒圆环目标状态结束原本只在最后一个目标解除时通知客户端。改为每个目标结束都解除束缚表现，施法者消失也能清理；群体释放共用这个路径，不重复通知。
+- 旋风腿由受击者逐次旋转改为施法者成功施放时旋转一次。虎炮、狂暴爆破、狮子吼的启动动画与逐目标命中分离；虎炮普通施放和闪光连击共用一次成功通知。
+- 补齐大缠崩坠、地狱之门、虎炮、狂暴爆破、狮子吼及审判官信念／印记／阶段攻击等可用原生 STR；雷光弹使用明确地面位置，避免每目标重复播放地面音效。
+
+### 验证与限制
+
+- 服务端生产 C++ 提取回归通过 UBSan：地狱之门十级、普通／连招与极高 SP；两人反向交错施放、移动、撞墙追加；诅咒圆环逐个解除／施法者消失；虎炮普通／连招和逐目标调用。
+- 21 项客户端测试通过，覆盖施法者／受击者归属、范围启动不重复、阶段攻击目标、雷光弹地面坐标、一次性效果固定位置及既有四转效果。
+- 48 个 STR、663 个关联资源通过 Gateway 读取与结构检查，客户端 ESLint 通过；完整 PWA、map-server 和文档构建在提交前核对。
+- 未重启地图服务，没有宣称逐技能真人战斗、人工听音或全部官方效果已还原。部分旧技能仍只有动作／音效／状态图标，本轮不以无关动画代替。
+- 保留上游公式的不确定项，包括大缠崩坠等 STR／AGI 系数及新技能未知 POW 系数。Power Velocity 现有实现最多补到五气弹并清空施法者，描述为转移全部；高于五气弹时的产品规则需要单独确认，本轮未据文案擅改上限或消耗。
+
+### 逐技能记录
+
+| ID | 技能 | 主要实现 | 核验内容 |
+| --- | --- | --- | --- |
+| 22 | `AL_DP` | `shared/passive` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 23 | `AL_DEMONBANE` | `shared/passive` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 24 | `AL_RUWACH` | `ruwach.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 25 | `AL_PNEUMA` | `pneuma.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 26 | `AL_TELEPORT` | `teleport.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 27 | `AL_WARP` | `warpportal.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 28 | `AL_HEAL` | `heal.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 29 | `AL_INCAGI` | `incagi.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 30 | `AL_DECAGI` | `decagi.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 31 | `AL_HOLYWATER` | `holywater.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 32 | `AL_CRUCIS` | `crucis.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 33 | `AL_ANGELUS` | `angelus.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 34 | `AL_BLESSING` | `blessing.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 35 | `AL_CURE` | `cure.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 156 | `AL_HOLYLIGHT` | `holylight.cpp` | 沿用第 3 线服事继承审查；目标、资源、恢复／增益和通用窗口 |
+| 259 | `MO_IRONHAND` | `shared/passive` | 空手／拳套武器类型与攻击被动加成 |
+| 260 | `MO_SPIRITSRECOVERY` | `shared/passive` | 坐下 HP／SP 恢复、百分比与恢复字段边界 |
+| 261 | `MO_CALLSPIRITS` | `summonspiritsphere.cpp` | 气弹数量／计时器、潜龙升天上限与实体通知 |
+| 262 | `MO_ABSORBSPIRITS` | `absorbspiritsphere.cpp` | 自身／敌方气弹与灵符、枪手排除、魔物成功率与 SP 回复 |
+| 263 | `MO_TRIPLEATTACK` | `ragingtrifectablow.cpp` | 普攻触发率、倍率、连招目标与后续技能窗口 |
+| 264 | `MO_BODYRELOCATION` | `snap.cpp` | 可达位置、位移通知、爆气免气弹与阿修罗冷却 |
+| 265 | `MO_DODGE` | `shared/passive` | 回避被动加成与实际字段钳制 |
+| 266 | `MO_INVESTIGATE` | `occultimpaction.cpp` | 气弹消耗、真剑百破加成、延迟伤害与状态解除 |
+| 267 | `MO_FINGEROFFENSIVE` | `throwspiritsphere.cpp` | 气弹消耗、真剑百破加成、延迟伤害与状态解除 |
+| 268 | `MO_STEELBODY` | `StatusSkillImpl` | 减伤、移动／攻击限制、状态初始化与结束 |
+| 269 | `MO_BLADESTOP` | `StatusSkillImpl` | 双侧状态关联、攻击触发、Boss 持续时间与双方解除 |
+| 270 | `MO_EXPLOSIONSPIRITS` | `StatusSkillImpl` | 暴击增益、自然 SP 恢复限制与灵魂链接例外 |
+| 271 | `MO_EXTREMITYFIST` | `asurastrike.cpp` | 爆气／连招／气弹条件、SP 清空、伤害上限及失败移动／消耗 |
+| 272 | `MO_CHAINCOMBO` | `ragingquadrupleblow.cpp` | 前置连招、气弹／SP、拳套和点穴加成、技能窗口与追加控制 |
+| 273 | `MO_COMBOFINISH` | `ragingthrust.cpp` | 前置连招、气弹／SP、拳套和点穴加成、技能窗口与追加控制 |
+| 370 | `CH_PALMSTRIKE` | `ragingpalmstrike.cpp` | 延迟命中、隐匿与击退分支、伤害倍率 |
+| 371 | `CH_TIGERFIST` | `glacierfist.cpp` | 前置连招、气弹／SP、拳套和点穴加成、技能窗口与追加控制 |
+| 372 | `CH_CHAINCRUSH` | `chaincrushcombo.cpp` | 前置连招、气弹／SP、拳套和点穴加成、技能窗口与追加控制 |
+| 401 | `CH_SOULCOLLECT` | `zen.cpp` | 气弹数量／计时器、潜龙升天上限与实体通知 |
+| 1015 | `MO_KITRANSLATION` | `kitranslation.cpp` | 队伍／目标职业和气弹上限、成功时手动转移数量 |
+| 1016 | `MO_BALKYOUNG` | `kiexplosion.cpp` | 主目标伤害、周边击退／眩晕和范围标记 |
+| 2326 | `SR_DRAGONCOMBO` | `dragoncombo.cpp` | 连招目标、追加状态、后续虎炮／地狱之门窗口及倍率 |
+| 2327 | `SR_SKYNETBLOW` | `skynetblow.cpp` | 自身范围、逐目标伤害／控制、一次性启动与逐目标命中；旋风腿旋转施法者 |
+| 2328 | `SR_EARTHSHAKER` | `earthshaker.cpp` | 隐匿目标倍率、解除、Boss／守护者条件和范围动作 |
+| 2329 | `SR_FALLENEMPIRE` | `fallenempire.cpp` | 连招目标、追加状态、后续虎炮／地狱之门窗口及倍率 |
+| 2330 | `SR_TIGERCANNON` | `tigercannon.cpp` | HP／SP 比例、连招倍率、范围；普通施放和闪光连击共用一次启动通知 |
+| 2332 | `SR_RAMPAGEBLASTER` | `rampageblaster.cpp` | 自身范围、逐目标伤害／控制、一次性启动与逐目标命中；旋风腿旋转施法者 |
+| 2333 | `SR_CRESCENTELBOW` | `StatusSkillImpl` | 受击反击概率、上限、派生通知、自损与解除 |
+| 2334 | `SR_CURSEDCIRCLE` | `cursedcircle.cpp` | 气弹／目标上限、Boss 排除、双侧状态；修复逐目标解除通知 |
+| 2335 | `SR_LIGHTNINGWALK` | `StatusSkillImpl` | 远程非魔法触发、移动位置、方向与消耗状态 |
+| 2336 | `SR_KNUCKLEARROW` | `knucklearrow.cpp` | 冲刺、延迟击退与撞墙追加；改为每次施放独立保存方向 |
+| 2337 | `SR_WINDMILL` | `windmill.cpp` | 自身范围、逐目标伤害／控制、一次性启动与逐目标命中；旋风腿旋转施法者 |
+| 2338 | `SR_RAISINGDRAGON` | `raisingdragon.cpp` | HP／SP 加成、气弹扩容、低 HP 和到期恢复上限 |
+| 2340 | `SR_ASSIMILATEPOWER` | `assimilatepower.cpp` | 自身与对战目标、枪手排除、气弹／灵符吸收及百分比 SP 回复 |
+| 2341 | `SR_POWERVELOCITY` | `powervelocity.cpp` | 要求气弹、目标数量上限与转移；保留现有规则，文案与高气弹数量语义待另行确认 |
+| 2343 | `SR_GATEOFHELL` | `gateofhell.cpp` | 连招条件、额外 HP／SP 伤害；修复逐等级 SP 加成整数截断 |
+| 2344 | `SR_GENTLETOUCH_QUIET` | `gentletouchquiet.cpp` | 目标、沉默／净化、战场治疗限制与恢复量 |
+| 2345 | `SR_GENTLETOUCH_CURE` | `gentletouchcure.cpp` | 目标、沉默／净化、战场治疗限制与恢复量 |
+| 2346 | `SR_GENTLETOUCH_ENERGYGAIN` | `StatusSkillImpl` | 攻击／受击气弹、攻速／生命恢复、点穴互斥与伤害联动 |
+| 2347 | `SR_GENTLETOUCH_CHANGE` | `StatusSkillImpl` | 攻击／受击气弹、攻速／生命恢复、点穴互斥与伤害联动 |
+| 2348 | `SR_GENTLETOUCH_REVITALIZE` | `StatusSkillImpl` | 攻击／受击气弹、攻速／生命恢复、点穴互斥与伤害联动 |
+| 2517 | `SR_HOWLINGOFLION` | `howlingoflion.cpp` | 自身范围、逐目标伤害／控制、一次性启动与逐目标命中；旋风腿旋转施法者 |
+| 2518 | `SR_RIDEINLIGHTNING` | `rideinlightening.cpp` | 气弹、地面坐标、多段与范围倍率；地面通知播放一次 |
+| 5009 | `SR_FLASHCOMBO` | `flashcombo.cpp` | 三阶段定时器、目标距离／消失、已学等级、动作限制与虎炮联动 |
+| 5014 | `ALL_FULL_THROTTLE` | `shared/passive` | 沿用共享恢复、属性增益、周期消耗及结束副作用审查 |
+| 5238 | `IQ_POWERFUL_FAITH` | `StatusSkillImpl` | ATK／P.ATK、HP／RES、攻速／命中状态与三种增益互斥 |
+| 5239 | `IQ_FIRM_FAITH` | `StatusSkillImpl` | ATK／P.ATK、HP／RES、攻速／命中状态与三种增益互斥 |
+| 5240 | `IQ_WILL_OF_FAITH` | `shared/passive` | 拳套要求、不死／恶魔种族攻击与抗性被动 |
+| 5241 | `IQ_OLEUM_SANCTUM` | `oleumsanctum.cpp` | 自身范围、圣油／强化状态、POW／种族倍率及启动／命中原生效果 |
+| 5242 | `IQ_SINCERE_FAITH` | `StatusSkillImpl` | ATK／P.ATK、HP／RES、攻速／命中状态与三种增益互斥 |
+| 5243 | `IQ_MASSIVE_F_BLASTER` | `massiveflameblaster.cpp` | 自身范围、圣油／强化状态、POW／种族倍率及启动／命中原生效果 |
+| 5244 | `IQ_EXPOSION_BLASTER` | `explosionblaster.cpp` | 自身范围、圣油／强化状态、POW／种族倍率及启动／命中原生效果 |
+| 5245 | `IQ_FIRST_BRAND` | `firstbrand.cpp` | 目标印记、阶段状态前置、更新／互斥和范围；目标启动与命中分离 |
+| 5246 | `IQ_FIRST_FAITH_POWER` | `StatusSkillImpl` | 阶段增益互斥、后续技能解锁、气弹免耗联动与启动动画 |
+| 5247 | `IQ_JUDGE` | `StatusSkillImpl` | 阶段增益互斥、后续技能解锁、气弹免耗联动与启动动画 |
+| 5248 | `IQ_SECOND_FLAME` | `secondflame.cpp` | 目标印记、阶段状态前置、更新／互斥和范围；目标启动与命中分离 |
+| 5249 | `IQ_SECOND_FAITH` | `secondfaith.cpp` | 目标印记、阶段状态前置、更新／互斥和范围；目标启动与命中分离 |
+| 5250 | `IQ_SECOND_JUDGEMENT` | `secondjudgement.cpp` | 目标印记、阶段状态前置、更新／互斥和范围；目标启动与命中分离 |
+| 5251 | `IQ_THIRD_PUNISH` | `thirdpunish.cpp` | 第二印记与阶段条件、气弹补充／多段、HP／POW 倍率、印记结束与范围动画 |
+| 5252 | `IQ_THIRD_FLAME_BOMB` | `thirdflamebomb.cpp` | 第二印记与阶段条件、气弹补充／多段、HP／POW 倍率、印记结束与范围动画 |
+| 5253 | `IQ_THIRD_CONSECRATION` | `thirdconsecration.cpp` | 第二印记与阶段条件、气弹补充／多段、HP／POW 倍率、印记结束与范围动画 |
+| 5254 | `IQ_THIRD_EXOR_FLAME` | `StatusSkillImpl` | 阶段增益互斥、后续技能解锁、气弹免耗联动与启动动画 |
+| 6519 | `IQ_BLAZING_FLAME_BLAST` | `blazingflameblast.cpp` | 目标命中、强化状态倍率、AP／POW 与原生效果阶段 |
