@@ -11,7 +11,7 @@
 | 3 | 服事／牧师／大主教／枢机主教 | 77 个技能代码审查完成，修复并完成自动验证 |
 | 4 | 剑士／十字军／皇家卫士／帝国卫士 | 70 个技能代码审查完成，修复并完成自动验证 |
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 57 个技能代码审查完成，修复并完成自动验证 |
-| 6 | 商人／铁匠／机甲神匠／机甲大师 | 待审查 |
+| 6 | 商人／铁匠／机甲神匠／机甲大师 | 89 个技能代码审查完成，修复并完成自动验证 |
 | 7 | 魔法师／贤者／妖术师／元素大师 | 待审查 |
 | 8 | 商人／炼金术师／基因学者／生物学者 | 待审查 |
 | 9 | 服事／武僧／修罗／审判官 | 待审查 |
@@ -513,3 +513,121 @@
 | 5293 | `SHC_ENCHANTING_SHADOW` | `StatusSkillImpl` | 普通攻击概率产生暗影伤口、计时器与层数清理 |
 | 5294 | `SHC_FATAL_SHADOW_CROW` | `fatalshadowcrow.cpp` | AP、突进、范围、种族加成及暗黑之爪等级 |
 | 6511 | `SHC_CROSS_SLASH` | `crossslash.cpp` | 范围攻击、暗影超越倍率和自身状态 |
+
+## 6. 铁匠／机匠线
+
+### 范围与依据
+
+已逐项审查 Merchant、Merchant_High、Blacksmith、Whitesmith、Mechanic（含进阶／机甲变体）、Meister（含机甲变体）的 89 个去重技能，以及岩浆喷发 DOT 派生技能。核对技能数据库目标／资源／状态要求、工厂和全部独立主动实现；追踪制造／精炼／维修／属性石菜单、价格、手推车、机甲过热、被动伤害和属性、ABR 召唤／跟随／清理共享逻辑。客户端核对技能选择和制作／维修／精炼回包、三转效果、地面单位、四转施放与命中阶段。
+
+### 明确问题与修复
+
+- 机甲修复按战斗实时最大 HP 计算，避免使用只在基础重算时更新的存档最大 HP。
+- 自爆伤害的 SP＋VIT、乘法和等级缩放使用宽整数；手推车终结的重量乘法使用宽整数，合法的自定义容量不再使伤害倍率溢出。
+- ABR 的生命及攻击计算使用宽整数，攻击／防御／命中／回避按字段范围钳制；无限型追加生命及攻击也不再回绕，保留现有公式。
+- 魔法诱饵先验证所选属性，再扣除一次属性石；修复原有连续两次扣除和非法属性选择先扣材料的问题。
+- 斧踏、冲击震荡的整套启动动画只在成功通知播放，保留各目标命中动画，避免范围命中重复叠加。
+
+### 验证与边界
+
+- 生产 C++ 代码提取回归通过 UBSan：五级修复及实时 HP／存档不一致，非机甲／非玩家拒绝；普通／10 亿／UINT_MAX SP 与多等级自爆；普通及极高属性 ABR／无限型；三种手推车容量、空载／半载／满载和十级终结；四种属性石、单颗／多颗、非法属性、缺材料及扣除失败。
+- 四组客户端定向测试共 16 项通过，包含两项新增的成功／多目标命中阶段回归。
+- Gateway 实际资源读取确认 38 个相关 STR 及 582 个纹理／音效存在，STR 结构可解析。
+- 服务端和 `--all` 完整 PWA 构建通过（构建标识 `mvb2izo7`）。未重启地图服务，不将代码回归声称为逐技能真人战斗验收。
+- 收购商店官方客户端元数据 MaxLv=2，服务端为 1；客户端升级按钮与可选施放等级使用服务端字段，因此不直接改写官方生成源。
+- 保留已有实现限制：攻击装置公式、制造装置成功率和 ABR 属性存在上游自定义／待确认标记；手推车终结专用旧效果仍未实现，部分二转效果只有音效，三种 ABR 召唤没有独立施放 STR 配置。它们不等于服务端技能失效，也不以推测补写官方公式或声称动画完全还原。
+- 装备维修也可由道具触发，不能加上必须学会技能的硬性检查；本轮未以旧窗口的存在单独推断可利用问题。
+
+### 逐技能记录
+
+| ID | 技能 | 主要实现 | 核对内容 |
+| --- | --- | --- | --- |
+| 36 | `MC_INCCARRY` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 最大负重加成与重新计算 |
+| 37 | `MC_DISCOUNT` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 购买价格折扣、十级修正与最低售价 |
+| 38 | `MC_OVERCHARGE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 出售加价、十级修正与最低售价 |
+| 39 | `MC_PUSHCART` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 安装技能要求、卸下清理、物品同步和移速惩罚 |
+| 40 | `MC_IDENTIFY` | `itemappraisal.cpp` | 鉴定列表、物品索引复核及取消 |
+| 41 | `MC_VENDING` | `skill_vending.cpp` | 手推车要求、开店状态与物品 ID 保存 |
+| 42 | `MC_MAMMONITE` | `mammonite.cpp` | 目标倍率、金币消耗与不公平交易减免 |
+| 94 | `BS_IRON` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 配方技能等级、材料、DEX／LUK／职业等级与矿石制作率 |
+| 95 | `BS_STEEL` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 配方技能等级、材料、DEX／LUK／职业等级与矿石制作率 |
+| 96 | `BS_ENCHANTEDSTONE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 配方技能等级、材料、DEX／LUK／职业等级与矿石制作率 |
+| 97 | `BS_ORIDEOCON` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 高等级武器制作可选成功率加成 |
+| 98 | `BS_DAGGER` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 对应武器配方、技能与材料复核、属性石／星角及锻造率 |
+| 99 | `BS_SWORD` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 对应武器配方、技能与材料复核、属性石／星角及锻造率 |
+| 100 | `BS_TWOHANDSWORD` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 对应武器配方、技能与材料复核、属性石／星角及锻造率 |
+| 101 | `BS_AXE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 对应武器配方、技能与材料复核、属性石／星角及锻造率 |
+| 102 | `BS_MACE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 对应武器配方、技能与材料复核、属性石／星角及锻造率 |
+| 103 | `BS_KNUCKLE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 对应武器配方、技能与材料复核、属性石／星角及锻造率 |
+| 104 | `BS_SPEAR` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 对应武器配方、技能与材料复核、属性石／星角及锻造率 |
+| 105 | `BS_HILTBINDING` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | STR、攻击与队伍增益时长加成 |
+| 106 | `BS_FINDINGORE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 第一拾取权角色触发矿石组掉落 |
+| 107 | `BS_WEAPONRESEARCH` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 武器攻击、命中与锻造成功率 |
+| 108 | `BS_REPAIRWEAPON` | `weaponrepair.cpp` | 破损列表、距离、取消与材料；维修道具不要求学习技能 |
+| 109 | `BS_SKINTEMPER` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 无属性与火属性抗性 |
+| 110 | `BS_HAMMERFALL` | `hammerfall.cpp` | 地面范围、武器条件与眩晕 |
+| 111 | `BS_ADRENALINE` | `adrenalinerush.cpp` | 队伍武器筛选、本人及队友不同加成 |
+| 112 | `BS_WEAPONPERFECT` | `weaponperfection.cpp` | 队伍增益、体型修正和持续时间 |
+| 113 | `BS_OVERTHRUST` | `powerthrust.cpp` | 本人／队友倍率、武器条件及 Renewal 破坏规则 |
+| 114 | `BS_MAXIMIZE` | `StatusSkillImpl` | 最大武器攻击、周期 SP 与状态终止 |
+| 153 | `MC_CARTREVOLUTION` | `cartrevolution.cpp` | 手推车重量倍率、范围与击退 |
+| 154 | `MC_CHANGECART` | `changecart.cpp` | 已有手推车与外观选择 |
+| 155 | `MC_LOUD` | `crazyuproar.cpp` | 自身 STR 状态和成功通知 |
+| 384 | `WS_MELTDOWN` | `StatusSkillImpl` | 武器／铠甲破坏概率、攻击类型与例外技能 |
+| 387 | `WS_CARTBOOST` | `StatusSkillImpl` | 手推车要求、速度及减速互斥 |
+| 459 | `BS_ADRENALINE2` | `advancedadrenalinerush.cpp` | 扩大武器范围和队伍增益 |
+| 477 | `WS_WEAPONREFINE` | `upgradeweapon.cpp` | 等级／精炼上限、材料、成功率单位与成功／破坏回包 |
+| 485 | `WS_CARTTERMINATION` | `carttermination.cpp` | 加速状态、金币和眩晕；修复自定义容量的倍率乘法溢出 |
+| 486 | `WS_OVERTHRUSTMAX` | `StatusSkillImpl` | 金币消耗、最高攻击增益与持续时间 |
+| 1012 | `BS_UNFAIRLYTRICK` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | Renewal 金钱攻击与手推车终结消耗减免 |
+| 1013 | `BS_GREED` | `greed.cpp` | 范围拾取与地图／物品权限 |
+| 2255 | `NC_MADOLICENCE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 机甲职业／技能要求、攻击及机甲移速 |
+| 2256 | `NC_BOOSTKNUCKLE` | `boostknuckle.cpp` | 机甲、DEX 倍率及投射／命中阶段 |
+| 2257 | `NC_PILEBUNKER` | `pilebunker.cpp` | 机甲／装备要求、命中后解除状态 |
+| 2258 | `NC_VULCANARM` | `vulcanarm.cpp` | 子弹消耗、范围与原生动画 |
+| 2259 | `NC_FLAMELAUNCHER` | `flamelauncher.cpp` | 工具／燃料、范围配置与火属性命中 |
+| 2260 | `NC_COLDSLOWER` | `coldslower.cpp` | 地面范围、燃料／液体弹药及冰冻／结冰 |
+| 2261 | `NC_ARMSCANNON` | `armcannon.cpp` | 炮弹属性／燃料、体型倍率与 ABR 双炮加成 |
+| 2262 | `NC_ACCELERATION` | `StatusSkillImpl` | 加速器／燃料、机甲专用移速 |
+| 2263 | `NC_HOVERING` | `StatusSkillImpl` | 悬浮装置／燃料与状态 |
+| 2264 | `NC_F_SIDESLIDE` | `frontsideslide.cpp` | 前进方向、移动限制与位置同步 |
+| 2265 | `NC_B_SIDESLIDE` | `backsideslide.cpp` | 后退方向、移动限制与位置同步 |
+| 2266 | `NC_MAINFRAME` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | DEF、机甲过热阈值与冷却 |
+| 2267 | `NC_SELFDESTRUCTION` | `selfdestruction.cpp` | 卸下机甲、范围、SP 清空及地面单位清理；修复伤害宽整数 |
+| 2268 | `NC_SHAPESHIFT` | `StatusSkillImpl` | 四级分别选择属性和对应材料 |
+| 2269 | `NC_EMERGENCYCOOL` | `emergencycool.cpp` | 按冷却装置选择降温值 |
+| 2270 | `NC_INFRAREDSCAN` | `infraredscan.cpp` | 隐身检测、范围与回避下降 |
+| 2271 | `NC_ANALYZE` | `analyze.cpp` | 燃料、目标 DEF/MDEF 下降与通知 |
+| 2272 | `NC_MAGNETICFIELD` | `magneticfield.cpp` | 自身与敌人状态、周期 SP 和失效清理 |
+| 2273 | `NC_NEUTRALBARRIER` | `neutralbarrier.cpp` | 开关、随身地面单位和状态清理 |
+| 2274 | `NC_STEALTHFIELD` | `stealthfield.cpp` | 开关、随身地面单位和状态清理 |
+| 2275 | `NC_REPAIR` | `repair.cpp` | 修理材料及目标机甲条件；修复实时最大 HP 取值 |
+| 2276 | `NC_TRAININGAXE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 斧／钝器分别计算命中和伤害 |
+| 2277 | `NC_RESEARCHFE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 火／地属性目标攻击与魔物防御加成 |
+| 2278 | `NC_AXEBOOMERANG` | `axeboomerang.cpp` | 斧要求、距离／重量倍率及飞行效果 |
+| 2279 | `NC_POWERSWING` | `powerswing.cpp` | 击晕、追加攻击及 ABR 战士段数加成 |
+| 2280 | `NC_AXETORNADO` | `axetornado.cpp` | 斧、范围与施放成功动画 |
+| 2281 | `NC_SILVERSNIPER` | `fawsilversniper.cpp` | 工具／材料、召唤数量、存活时间和 FAW 属性 |
+| 2282 | `NC_MAGICDECOY` | `fawmagicdecoy.cpp` | 四种属性选择、列表与召唤；修复重复扣石及非法选择先扣材料 |
+| 2283 | `NC_DISJOINT` | `fawremoval.cpp` | FAW 目标类型、拆除及失败反馈 |
+| 2535 | `ALL_BUYING_STORE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 许可证、开店列表；客户端元数据差异不突破服务端等级 |
+| 2544 | `MC_CARTDECORATE` | `decoratecart.cpp` | 手推车要求和装饰选择 |
+| 5006 | `NC_MAGMA_ERUPTION` | `magmaeruption.cpp` | 首击、延迟地面单位、DOT 派生技能及单位销毁 |
+| 5014 | `ALL_FULL_THROTTLE` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 沿用前线共享恢复／属性／周期消耗与副作用审查 |
+| 5295 | `MT_AXE_STOMP` | `axestomp.cpp` | 斧要求、双手斧段数、状态及 POW 倍率；启动动画与每个命中分离 |
+| 5296 | `MT_RUSH_QUAKE` | `rushquake.cpp` | AP、突进／击退、种族及自身增益；启动动画与每个命中分离 |
+| 5297 | `MT_M_MACHINE` | `manufacturemachine.cpp` | 配方书、制作窗口、材料／技能复核和产量 |
+| 5298 | `MT_A_MACHINE` | `attackmachine.cpp` | 等级差限制、周期攻击／强制站立及 POW 倍率 |
+| 5299 | `MT_D_MACHINE` | `StatusSkillImpl` | 胶囊、DEF／RES 增益与状态通知 |
+| 5300 | `MT_TWOAXEDEF` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 双手斧及按目标体型减伤 |
+| 5301 | `MT_ABR_M` | `skill.cpp／status.cpp／battle.cpp／pc.cpp` | 召唤 HP／攻击／防御／命中／回避；修复实际字段溢出 |
+| 5302 | `MT_SUMMON_ABR_BATTLE_WARIOR` | `abrbattlewarior.cpp` | 胶囊／AP、同类数量限制、召唤状态／时长、随行／主人死亡清理及属性钳制 |
+| 5303 | `MT_SUMMON_ABR_DUAL_CANNON` | `abrdualcannon.cpp` | 胶囊／AP、同类数量限制、召唤状态／时长、随行／主人死亡清理及属性钳制 |
+| 5304 | `MT_SUMMON_ABR_MOTHER_NET` | `abrmothernet.cpp` | 胶囊／AP、同类数量限制、召唤状态／时长、随行／主人死亡清理及属性钳制 |
+| 5305 | `MT_SUMMON_ABR_INFINITY` | `abrinfinity.cpp` | 胶囊／AP、同类数量限制、召唤状态／时长、随行／主人死亡清理及属性钳制 |
+| 6002 | `MT_SPARK_BLASTER` | `sparkblaster.cpp` | 机甲、范围、等级／POW 及成功动画 |
+| 6003 | `MT_TRIPLE_LASER` | `triplelaser.cpp` | 机甲、命中段数与倍率 |
+| 6004 | `MT_MIGHTY_SMASH` | `mightysmash.cpp` | 斧、范围、状态加成及成功动画 |
+| 6506 | `MT_RUSH_STRIKE` | `rushstrike.cpp` | 双手斧、突进／范围和伤害倍率 |
+| 6507 | `MT_POWERFUL_SWING` | `powerfulswing.cpp` | 双手斧、范围／命中、等级倍率 |
+| 6508 | `MT_ENERGY_CANNONADE` | `energycannonade.cpp` | 机甲、范围／命中、等级倍率 |
