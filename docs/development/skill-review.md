@@ -13,7 +13,7 @@
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 57 个技能代码审查完成，修复并完成自动验证 |
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 89 个技能代码审查完成，修复并完成自动验证 |
 | 7 | 魔法师／贤者／妖术师／元素大师 | 93 个技能代码审查完成，修复并完成自动验证 |
-| 8 | 商人／炼金术师／基因学者／生物学者 | 待审查 |
+| 8 | 商人／炼金术师／基因学者／生物学者 | 71 个主技能及 58 个生命体技能代码审查完成，修复并完成自动验证 |
 | 9 | 服事／武僧／修罗／审判官 | 待审查 |
 | 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 待审查 |
 | 11 | 弓箭手／诗人、舞娘／宫廷乐师、漫游舞者／吟游诗人、咏唱舞姬 | 待审查 |
@@ -753,3 +753,172 @@
 | 5380 | `EM_ELEMENTAL_BUSTER` | `elementalbuster.cpp` | 精灵属性分派、AP、五种派生倍率；启动／命中动画分离 |
 | 5381 | `EM_ELEMENTAL_VEIL` | `elementalveil.cpp` | 精灵目标、隐身状态与同步 |
 | 6517 | `EM_PSYCHIC_STREAM` | `psychicstream.cpp` | 目标／范围、延迟路径、元素状态倍率与表现 |
+
+## 8. 炼金术师／基因学者线
+
+### 范围与依据
+
+从 Merchant、Merchant_High、Alchemist、Creator、Genetic、Genetic_T、Biolo 提取 71 个去重主技能。继承商人技能沿用第 6 线；逐项核对主技能定义、工厂分派、独立实现、制作／地面／状态共享路径。另核对四属性酸化、疯狂野草、地狱植物、火焰扩张派生路径及全部 58 个生命体技能（包括被动和新增技能）。生命体继续检查召回、复活、保存／加载、技能冷却、亲密度、气球、模式与连招条件。
+
+客户端核对技能 ID／等级、伤害与成功通知、地面单位、状态／召唤实体，以及桌面材料选择和触屏材料菜单。71 个主技能仅通用开店技能 `ALL_BUYING_STORE` 存在此前已记录的显示等级差异；58 个生命体技能的名称、ID 和等级全部对应。
+
+### 明确问题与修复
+
+- 浓缩药水辅助的治疗量、施法增益与 H.Plus 使用宽整数，写回和治疗前钳制，避免高属性或高加成变成负数。
+- 仿生植物 HP 与攻击乘法使用宽整数，防御／命中／回避钳制到实际字段范围，地狱树额外属性也不再回绕。
+- 生命体召回和复活仅同步原冷却计时器的实际剩余时间，不再把计时器编号当毫秒重启冷却。
+- 材料转换在匹配配方前校验真实库存、数量和重复索引；大量产出分批进入背包或沿原规则掉落，避免 16 位数量回绕和循环异常。
+- 花岗岩铠甲结束扣血至少保留 1 HP，修复等于扣血量时死亡；连续破碎组合的 HP／SP 消耗用宽整数。召唤军团只补充缺少的数量，不再超过技能上限。
+- 桌面材料清单使用独立背包副本，取消不再污染本地数量；共用材料窗口正确传递元素分析两种模式和标题。
+- 四属性酸化的持续伤害补齐真实派生技能 ID 和受击效果，不重复播放主技能启动动画。补齐手推车龙卷风、手推车炮、手推车加速、曼陀罗花嚎叫及荆棘墙施放的原生资源。
+- 新增生命体攻击接入原生命中资源；The One Fighter Rises 和 Heilige Pferd 按成功通知在施法者播放一次，Goldene Tone 在受益主人播放，避免范围伤害重复叠加。
+
+### 验证与限制
+
+- 32 项客户端测试通过：四属性酸化派生、范围启动／命中分离、地面坐标、生命体效果目标、材料副本与转换模式、四转效果回归。
+- 服务端生产 C++ 提取测试通过 UBSan，覆盖治疗／植物数值、冷却同步、材料数量／重复索引／大批量产出、花岗岩铠甲、连续破碎组合及召唤军团数量；完整 map-server 编译成功。
+- 63 个 STR、704 个关联资源通过本机 Gateway 读取与结构验证，未发现缺失。客户端 ESLint 通过；完整 PWA 构建和 Gateway 产物校验记录在本次工作产物中。
+- 本轮没有重启地图服务，也未逐技能进行真实战斗或人工听音。不能将代码审查／资源可读等同于所有动画与官方完全一致。
+- 旧程序式效果仍有缺口：疯狂野草、恶魔火焰及扩张、地狱植物、Silent Breeze、Magma Flow 等旧效果表引用尚未实现；荆棘墙施放已接入，但持续墙体渲染仍有缺口。毒雾、熔岩滑动和火山灰有一次性地面动画，不能据此宣称完整持续阶段。以上均记录为表现限制，不以无关技能动画替代。
+- 服务端仿生植物属性、部分生命体新技能倍率和仿生制药成功率仍有上游未知公式／暂定实现；不凭猜测更改平衡数值。
+
+### 主技能逐项记录
+
+| ID | 技能 | 实现入口 | 核验内容 |
+| --- | --- | --- | --- |
+| 36 | `MC_INCCARRY` | `shared/passive` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 37 | `MC_DISCOUNT` | `shared/passive` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 38 | `MC_OVERCHARGE` | `shared/passive` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 39 | `MC_PUSHCART` | `shared/passive` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 40 | `MC_IDENTIFY` | `itemappraisal.cpp` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 41 | `MC_VENDING` | `skill_vending.cpp` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 42 | `MC_MAMMONITE` | `mammonite.cpp` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 153 | `MC_CARTREVOLUTION` | `cartrevolution.cpp` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 154 | `MC_CHANGECART` | `changecart.cpp` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 155 | `MC_LOUD` | `crazyuproar.cpp` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 226 | `AM_AXEMASTERY` | `shared/passive` | 武器类型、攻击／命中被动加成 |
+| 227 | `AM_LEARNINGPOTION` | `shared/passive` | 制作成功率与药水治疗／使用加成 |
+| 228 | `AM_PHARMACY` | `preparepotion.cpp` | 制作菜单、配方、材料扣除、数量与成功／失败产出 |
+| 229 | `AM_DEMONSTRATION` | `bomb.cpp` | 材料与目标、伤害倍率、破坏装备／地面周期路径 |
+| 230 | `AM_ACIDTERROR` | `acidterror.cpp` | 材料与目标、伤害倍率、破坏装备／地面周期路径 |
+| 231 | `AM_POTIONPITCHER` | `aidpotion.cpp` | 目标职业／队伍限制、材料、治疗或加速状态 |
+| 232 | `AM_CANNIBALIZE` | `summonflora.cpp` | 召唤实体、材料、主人关联、数量与持续时间 |
+| 233 | `AM_SPHEREMINE` | `summonmarinesphere.cpp` | 召唤实体、材料、主人关联、数量与持续时间 |
+| 234 | `AM_CP_WEAPON` | `alchemicalweapon.cpp` | 对应装备部位保护、材料、目标和状态初始化／解除 |
+| 235 | `AM_CP_SHIELD` | `synthesizedshield.cpp` | 对应装备部位保护、材料、目标和状态初始化／解除 |
+| 236 | `AM_CP_ARMOR` | `syntheticarmor.cpp` | 对应装备部位保护、材料、目标和状态初始化／解除 |
+| 237 | `AM_CP_HELM` | `biochemicalhelm.cpp` | 对应装备部位保护、材料、目标和状态初始化／解除 |
+| 238 | `AM_BIOETHICS` | `shared/passive` | 生命体技能前置与允许创建条件 |
+| 243 | `AM_CALLHOMUN` | `callhomunculus.cpp` | 生命体创建／休息／复活、材料与状态；修复冷却重复启动 |
+| 244 | `AM_REST` | `vaporize.cpp` | 生命体创建／休息／复活、材料与状态；修复冷却重复启动 |
+| 247 | `AM_RESURRECTHOMUN` | `homunculusresurrection.cpp` | 生命体创建／休息／复活、材料与状态；修复冷却重复启动 |
+| 446 | `AM_BERSERKPITCHER` | `aidberserkpotion.cpp` | 目标职业／队伍限制、材料、治疗或加速状态 |
+| 478 | `CR_SLIMPITCHER` | `aidcondensedpotion.cpp` | 范围治疗、受益目标与战场限制；修复高属性和增益溢出 |
+| 479 | `CR_FULLPROTECTION` | `fullprotection.cpp` | 对应装备部位保护、材料、目标和状态初始化／解除 |
+| 490 | `CR_ACIDDEMONSTRATION` | `aciddemonstration.cpp` | 材料与目标、伤害倍率、破坏装备／地面周期路径 |
+| 496 | `AM_TWILIGHT1` | `twilightalchemy1.cpp` | 制作菜单、配方、材料扣除、数量与成功／失败产出 |
+| 497 | `AM_TWILIGHT2` | `twilightalchemy2.cpp` | 制作菜单、配方、材料扣除、数量与成功／失败产出 |
+| 498 | `AM_TWILIGHT3` | `twilightalchemy3.cpp` | 制作菜单、配方、材料扣除、数量与成功／失败产出 |
+| 2474 | `GN_TRAINING_SWORD` | `shared/passive` | 武器类型、攻击／命中被动加成 |
+| 2475 | `GN_REMODELING_CART` | `shared/passive` | 车重、伤害／命中加成及手推车状态要求 |
+| 2476 | `GN_CART_TORNADO` | `carttornado.cpp` | 手推车、弹药、倍率、范围与命中；补齐原生效果并分离启动／命中 |
+| 2477 | `GN_CARTCANNON` | `cartcannon.cpp` | 手推车、弹药、倍率、范围与命中；补齐原生效果并分离启动／命中 |
+| 2478 | `GN_CARTBOOST` | `StatusSkillImpl` | 手推车限制、速度状态与一次性增益动画 |
+| 2479 | `GN_THORNS_TRAP` | `thorntrap.cpp` | 地面布局、捕获／击退、命中次数、火焰转换与单位清理；补齐荆棘墙施放动画 |
+| 2480 | `GN_BLOOD_SUCKER` | `StatusSkillImpl` | 攻击触发概率、武器伤害回血与状态持续时间 |
+| 2481 | `GN_SPORE_EXPLOSION` | `sporeexplosion.cpp` | 延时范围伤害、抗性状态与倍率 |
+| 2482 | `GN_WALLOFTHORN` | `wallofthorns.cpp` | 地面布局、捕获／击退、命中次数、火焰转换与单位清理；补齐荆棘墙施放动画 |
+| 2483 | `GN_CRAZYWEED` | `crazyweed.cpp` | 地面延迟、随机范围、派生伤害与地面单位清除 |
+| 2485 | `GN_DEMONIC_FIRE` | `demonicfire.cpp` | 地面周期、五种扩张分支、材料及原单位替换／持续时间 |
+| 2486 | `GN_FIRE_EXPANSION` | `fireexpansion.cpp` | 地面周期、五种扩张分支、材料及原单位替换／持续时间 |
+| 2490 | `GN_HELLS_PLANT` | `hellsplant.cpp` | 主人状态周期驱动派生伤害、跟随范围与结束清理 |
+| 2492 | `GN_MANDRAGORA` | `howlingofmandragora.cpp` | 范围／免疫／重复状态、概率与 SP 扣除；原生施法动画 |
+| 2494 | `GN_CHANGEMATERIAL` | `changematerial.cpp` | 配方与库存校验、桌面／触屏材料选择；修复重复索引、超量和产出回绕 |
+| 2495 | `GN_MIX_COOKING` | `mixcooking.cpp` | 制作菜单、配方、材料扣除、数量与成功／失败产出 |
+| 2497 | `GN_S_PHARMACY` | `specialpharmacy.cpp` | 制作菜单、配方、材料扣除、数量与成功／失败产出 |
+| 2535 | `ALL_BUYING_STORE` | `shared/passive` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 2544 | `MC_CARTDECORATE` | `decoratecart.cpp` | 沿用第 6 线的商人继承、物品／手推车与通用窗口审查 |
+| 5003 | `GN_ILLUSIONDOPING` | `illusiondoping.cpp` | 范围、命中／幻觉状态与材料 |
+| 5014 | `ALL_FULL_THROTTLE` | `shared/passive` | 沿用已审共享恢复、属性、周期消耗与结束副作用 |
+| 5336 | `BO_BIONIC_PHARMACY` | `bionicpharmacy.cpp` | 制作菜单、配方、材料扣除、数量与成功／失败产出 |
+| 5337 | `BO_BIONICS_M` | `shared/passive` | 召唤属性／主人增益、数量、AI 与持续时间；修复高属性数值回绕 |
+| 5338 | `BO_THE_WHOLE_PROTECTION` | `thewholeprotection.cpp` | 对应装备部位保护、材料、目标和状态初始化／解除 |
+| 5339 | `BO_ADVANCE_PROTECTION` | `advanceprotection.cpp` | 对应装备部位保护、材料、目标和状态初始化／解除 |
+| 5340 | `BO_ACIDIFIED_ZONE_WATER` | `acidifiedzonewater.cpp` | 属性、范围／地面周期、派生伤害；补齐派生 ID 命中特效 |
+| 5341 | `BO_ACIDIFIED_ZONE_GROUND` | `acidifiedzoneground.cpp` | 属性、范围／地面周期、派生伤害；补齐派生 ID 命中特效 |
+| 5342 | `BO_ACIDIFIED_ZONE_WIND` | `acidifiedzonewind.cpp` | 属性、范围／地面周期、派生伤害；补齐派生 ID 命中特效 |
+| 5343 | `BO_ACIDIFIED_ZONE_FIRE` | `acidifiedzonefire.cpp` | 属性、范围／地面周期、派生伤害；补齐派生 ID 命中特效 |
+| 5344 | `BO_WOODENWARRIOR` | `woodenwarrior.cpp` | 召唤属性／主人增益、数量、AI 与持续时间；修复高属性数值回绕 |
+| 5345 | `BO_WOODEN_FAIRY` | `woodenfairy.cpp` | 召唤属性／主人增益、数量、AI 与持续时间；修复高属性数值回绕 |
+| 5346 | `BO_CREEPER` | `creeper.cpp` | 召唤属性／主人增益、数量、AI 与持续时间；修复高属性数值回绕 |
+| 5347 | `BO_RESEARCHREPORT` | `StatusSkillImpl` | 研究报告状态、持续时间与攻击倍率联动 |
+| 5348 | `BO_HELLTREE` | `helltree.cpp` | 召唤属性／主人增益、数量、AI 与持续时间；修复高属性数值回绕 |
+| 6005 | `BO_EXPLOSIVE_POWDER` | `explosivepowder.cpp` | 目标／范围、AP／材料、倍率、状态及四转效果映射 |
+| 6006 | `BO_MAYHEMIC_THORNS` | `mayhemicthorns.cpp` | 目标／范围、AP／材料、倍率、状态及四转效果映射 |
+| 6509 | `BO_MYSTERY_POWDER` | `mysterypowder.cpp` | 目标／范围、AP／材料、倍率、状态及四转效果映射 |
+| 6510 | `BO_DUST_EXPLOSION` | `dustexplosion.cpp` | 目标／范围、AP／材料、倍率、状态及四转效果映射 |
+
+### 生命体逐项范围
+
+下列 58 个技能均核对定义、工厂／被动或状态实现与客户端元数据。主动实现集中在 `src/map/skills/homunculus/`；被动在 `status.cpp`，连招和消耗在 `homunculus.cpp`，地面单位和持续状态在 `skill.cpp`／`status.cpp`。
+
+| ID | 技能 | 类型／核验入口 |
+| --- | --- | --- |
+| 8001 | `HLIF_HEAL` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8002 | `HLIF_AVOID` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8003 | `HLIF_BRAIN` | 被动：属性计算与技能前置 |
+| 8004 | `HLIF_CHANGE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8005 | `HAMI_CASTLE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8006 | `HAMI_DEFENCE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8007 | `HAMI_SKIN` | 被动：属性计算与技能前置 |
+| 8008 | `HAMI_BLOODLUST` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8009 | `HFLI_MOON` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8010 | `HFLI_FLEET` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8011 | `HFLI_SPEED` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8012 | `HFLI_SBR44` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8013 | `HVAN_CAPRICE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8014 | `HVAN_CHAOTIC` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8015 | `HVAN_INSTRUCT` | 被动：属性计算与技能前置 |
+| 8016 | `HVAN_EXPLOSION` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8018 | `MH_SUMMON_LEGION` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8019 | `MH_NEEDLE_OF_PARALYZE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8020 | `MH_POISON_MIST` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8021 | `MH_PAIN_KILLER` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8022 | `MH_LIGHT_OF_REGENE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8023 | `MH_OVERED_BOOST` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8024 | `MH_ERASER_CUTTER` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8025 | `MH_XENO_SLASHER` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8026 | `MH_SILENT_BREEZE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8027 | `MH_STYLE_CHANGE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8028 | `MH_SONIC_CRAW` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8029 | `MH_SILVERVEIN_RUSH` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8030 | `MH_MIDNIGHT_FRENZY` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8031 | `MH_STAHL_HORN` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8032 | `MH_GOLDENE_FERSE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8033 | `MH_STEINWAND` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8034 | `MH_HEILIGE_STANGE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8035 | `MH_ANGRIFFS_MODUS` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8036 | `MH_TINDER_BREAKER` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8037 | `MH_CBC` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8038 | `MH_EQC` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8039 | `MH_MAGMA_FLOW` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8040 | `MH_GRANITIC_ARMOR` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8041 | `MH_LAVA_SLIDE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8042 | `MH_PYROCLASTIC` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8043 | `MH_VOLCANIC_ASH` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8044 | `MH_BLAST_FORGE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8045 | `MH_TEMPERING` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8046 | `MH_CLASSY_FLUTTER` | 被动：属性计算与技能前置 |
+| 8047 | `MH_TWISTER_CUTTER` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8048 | `MH_ABSOLUTE_ZEPHYR` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8049 | `MH_BRUSHUP_CLAW` | 被动：属性计算与技能前置 |
+| 8050 | `MH_BLAZING_AND_FURIOUS` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8051 | `MH_THE_ONE_FIGHTER_RISES` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8052 | `MH_POLISHING_NEEDLE` | 被动：属性计算与技能前置 |
+| 8053 | `MH_TOXIN_OF_MANDARA` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8054 | `MH_NEEDLE_STINGER` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8055 | `MH_LICHT_GEHORN` | 被动：属性计算与技能前置 |
+| 8056 | `MH_GLANZEN_SPIES` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8057 | `MH_HEILIGE_PFERD` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8058 | `MH_GOLDENE_TONE` | 主动：工厂、对应实现与状态／地面／伤害分支 |
+| 8059 | `MH_BLAZING_LAVA` | 被动：属性计算与技能前置 |
