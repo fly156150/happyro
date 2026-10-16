@@ -16,7 +16,7 @@
 | 8 | 商人／炼金术师／基因学者／生物学者 | 71 个主技能及 58 个生命体技能代码审查完成，修复并完成自动验证 |
 | 9 | 服事／武僧／修罗／审判官 | 78 个主技能代码审查完成，修复并完成自动验证 |
 | 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 74 个主技能代码审查完成，含遗留涂鸦功能缺口 |
-| 11 | 弓箭手／诗人、舞娘／宫廷乐师、漫游舞者／吟游诗人、咏唱舞姬 | 待审查 |
+| 11 | 弓箭手／诗人、舞娘／宫廷乐师、漫游舞者／吟游诗人、咏唱舞姬 | 85 个主技能代码审查完成，修复并完成自动验证 |
 
 ## 1. 猎人线
 
@@ -1134,3 +1134,116 @@
 | 6513 | `ABC_CHASING_BREAK` | `chasingbreak.cpp` | 移动位置／失败、追击状态、多段／范围与 AP／属性倍率 |
 | 6514 | `ABC_CHASING_SHOT` | `chasingshot.cpp` | 移动位置／失败、追击状态、多段／范围与 AP／属性倍率 |
 | 6515 | `ABC_ABYSS_FLAME` | `abyssflame.cpp` | 自身范围与主目标派生、魔法剑修炼、SPL、通知和独立派生技能 ID |
+
+## 11. 诗人／舞娘双分支
+
+### 范围与依据
+
+包含 Archer、Archer_High、Bard、Dancer、Clown、Gypsy、Minstrel、Wanderer、Minstrel_T、Wanderer_T、Troubadour、Trouvere 的 85 个去重主技能，逐项核对定义、76 个相关实现文件、共享歌曲／搭档／状态逻辑，另覆盖残响旧派生、严重暴雨周期、玫瑰绽放派生和混音自然结束攻击。
+
+客户端有两处命名差异而非封包 ID 错误：服务端 `BA_FROSTJOKER` 对应客户端 `BA_FROSTJOKE`（318），`CG_SPECIALSINGER` 对应生成信息 `SKID_CG_SPECIALSINGER`（5068）。全部技能 ID／等级一致，没有为内部名称差异添加兼容别名。
+
+### 明确问题与修复
+
+- 音乐插曲、爪哇岛小夜曲、普隆德拉进行曲原本单人分支只加状态，不记录最后歌曲、也无成功通知。现在单人和组队共用记录／通知入口，保留各自目标范围和搭档增益，回顾可正确重唱。
+- 魔力之歌先给施法者恢复，再通过包含自己的队伍遍历恢复一次，造成组队施法者重复恢复。递归传播跳过已处理的施法者，队员各处理一次。
+- 魔力之歌启动恢复和沉睡周期恢复先用宽整数计算百分比，避免高 HP／SP 回绕。
+- 命运塔罗牌失败边界由 `>` 改为 `>=`，各等级恢复正确的 8% 增量；恶魔牌诅咒的成功率与技能等级参数原本传反，改为 100% 基础成功率并保留正常状态抗性。
+- 本机 BSON 无 TR 技能映射，补齐交响乐、克瓦希尔奏鸣曲、尼夫海姆安魂曲、普隆德拉进行曲与金属狂怒的现有原生 STR，分别接成功／命中阶段，不伪装持续光环。
+
+### 验证与限制
+
+- `tests/bard-song.test.mjs` 提取实际生产方法，验证三种歌曲单人／组队、搭档标志、记录与一次通知；魔力之歌每人一次，塔罗牌 0–99 随机全边界、恶魔诅咒参数，以及高 HP／SP，C++ UBSan 通过。
+- 四转资源与阶段 9 项测试通过；42 个 STR、420 个依赖贴图从 Gateway 校验，未发现缺失。
+- 完整客户端 `--all`、map-server、文档构建和 Gateway 产物检查。未重启服务、未逐技能多人实战或人工听音。
+- 上游仍有若干未定规则（课程加成、部分四转异常成功率、金属狂怒 SPL 等）；未凭猜测更改平衡。旧程序特效和连续舞台表现不代表全部与官方一致；人偶控制仍按现有 8 位属性片段上限，不扩展规则。
+
+### 逐技能清单
+
+| ID | 技能 | 实现入口 | 核验重点 |
+| --- | --- | --- | --- |
+| 43 | `AC_OWL` | `passive` | 继承弓箭手路径，沿用猎人线；本次核对箭矢、射程与动作入口 |
+| 44 | `AC_VULTURE` | `passive` | 继承弓箭手路径，沿用猎人线；本次核对箭矢、射程与动作入口 |
+| 45 | `AC_CONCENTRATION` | `concentration.cpp` | 继承弓箭手路径，沿用猎人线；本次核对箭矢、射程与动作入口 |
+| 46 | `AC_DOUBLE` | `doublestrafe.cpp` | 继承弓箭手路径，沿用猎人线；本次核对箭矢、射程与动作入口 |
+| 47 | `AC_SHOWER` | `arrowshower.cpp` | 继承弓箭手路径，沿用猎人线；本次核对箭矢、射程与动作入口 |
+| 147 | `AC_MAKINGARROW` | `makingarrow.cpp` | 继承弓箭手路径，沿用猎人线；本次核对箭矢、射程与动作入口 |
+| 148 | `AC_CHARGEARROW` | `chargearrow.cpp` | 继承弓箭手路径，沿用猎人线；本次核对箭矢、射程与动作入口 |
+| 304 | `BD_ADAPTATION` | `amp.cpp` | Renewal 增益／重演入口、上次歌曲、已学技能、SP 折扣与施放条件 |
+| 305 | `BD_ENCORE` | `encore.cpp` | Renewal 增益／重演入口、上次歌曲、已学技能、SP 折扣与施放条件 |
+| 306 | `BD_LULLABY` | `lullaby.cpp` | Renewal 即时范围歌曲、队伍／敌对、搭档与疲劳、状态／额外效果及互斥 |
+| 307 | `BD_RICHMANKIM` | `mentalsensing.cpp` | Renewal 即时范围歌曲、队伍／敌对、搭档与疲劳、状态／额外效果及互斥 |
+| 308 | `BD_ETERNALCHAOS` | `downtempo.cpp` | Renewal 即时范围歌曲、队伍／敌对、搭档与疲劳、状态／额外效果及互斥 |
+| 309 | `BD_DRUMBATTLEFIELD` | `battletheme.cpp` | Renewal 即时范围歌曲、队伍／敌对、搭档与疲劳、状态／额外效果及互斥 |
+| 310 | `BD_RINGNIBELUNGEN` | `harmoniclick.cpp` | Renewal 即时范围歌曲、队伍／敌对、搭档与疲劳、状态／额外效果及互斥 |
+| 311 | `BD_ROKISWEIL` | `classicalpluck.cpp` | Renewal 即时范围歌曲、队伍／敌对、搭档与疲劳、状态／额外效果及互斥 |
+| 312 | `BD_INTOABYSS` | `powerchord.cpp` | Renewal 即时范围歌曲、队伍／敌对、搭档与疲劳、状态／额外效果及互斥 |
+| 313 | `BD_SIEGFRIED` | `acousticrhythm.cpp` | Renewal 即时范围歌曲、队伍／敌对、搭档与疲劳、状态／额外效果及互斥 |
+| 315 | `BA_MUSICALLESSON` | `passive` | 武器／性别条件、攻击／攻速／SP／恢复／P.ATK 与 S.MATK 被动 |
+| 316 | `BA_MUSICALSTRIKE` | `melodystrike.cpp` | 乐器／鞭、箭矢、伤害段数、等级倍率与弹道 |
+| 317 | `BA_DISSONANCE` | `unchainedserenade.cpp` | Renewal 即时攻击歌曲与减 SP，范围目标／状态，保留未定属性规则 |
+| 318 | `BA_FROSTJOKER` | `unbarringoctave.cpp` | 三秒定时范围、目标队伍概率与持续时间、冰冻／眩晕抗性 |
+| 319 | `BA_WHISTLE` | `perfecttablature.cpp` | Renewal 即时歌曲与状态计算／互斥；不将旧地面舞台当必需施放路径 |
+| 320 | `BA_ASSASSINCROSS` | `impressiveriff.cpp` | Renewal 即时歌曲与状态计算／互斥；不将旧地面舞台当必需施放路径 |
+| 321 | `BA_POEMBRAGI` | `magicstrings.cpp` | Renewal 即时歌曲与状态计算／互斥；不将旧地面舞台当必需施放路径 |
+| 322 | `BA_APPLEIDUN` | `songoflutie.cpp` | Renewal 即时歌曲与状态计算／互斥；不将旧地面舞台当必需施放路径 |
+| 323 | `DC_DANCINGLESSON` | `passive` | 武器／性别条件、攻击／攻速／SP／恢复／P.ATK 与 S.MATK 被动 |
+| 324 | `DC_THROWARROW` | `slingingarrow.cpp` | 乐器／鞭、箭矢、伤害段数、等级倍率与弹道 |
+| 325 | `DC_UGLYDANCE` | `hipshaker.cpp` | Renewal 即时攻击歌曲与减 SP，范围目标／状态，保留未定属性规则 |
+| 326 | `DC_SCREAM` | `dazzler.cpp` | 三秒定时范围、目标队伍概率与持续时间、冰冻／眩晕抗性 |
+| 327 | `DC_HUMMING` | `focusballet.cpp` | Renewal 即时歌曲与状态计算／互斥；不将旧地面舞台当必需施放路径 |
+| 328 | `DC_DONTFORGETME` | `slowgrace.cpp` | Renewal 即时歌曲与状态计算／互斥；不将旧地面舞台当必需施放路径 |
+| 329 | `DC_FORTUNEKISS` | `ladyluck.cpp` | Renewal 即时歌曲与状态计算／互斥；不将旧地面舞台当必需施放路径 |
+| 330 | `DC_SERVICEFORYOU` | `gypsyskiss.cpp` | Renewal 即时歌曲与状态计算／互斥；不将旧地面舞台当必需施放路径 |
+| 394 | `CG_ARROWVULCAN` | `vulcanarrow.cpp` | 乐器／鞭、箭矢、伤害段数、等级倍率与弹道 |
+| 395 | `CG_MOONLIT` | `shelteringbliss.cpp` | 地面群组、搭档施放、双方关联和群组结束 |
+| 396 | `CG_MARIONETTE` | `marionettecontrol.cpp` | 性别／职业／状态限制、双方关联、属性打包与上限、距离和解除 |
+| 488 | `CG_HERMODE` | `wandofhermode.cpp` | Renewal 范围歌曲，对非自身友方清除对应增益 |
+| 489 | `CG_TAROTCARD` | `tarotcardoffate.cpp` | 十四种牌、成功消费、随机概率与状态参数；修复成功率多 1% 和恶魔诅咒参数顺序 |
+| 1010 | `BA_PANGVOICE` | `pangvoice.cpp` | Renewal 玩家／魔物目标、种族、异常与成功通知 |
+| 1011 | `DC_WINKCHARM` | `winkofcharm.cpp` | Renewal 玩家／魔物目标、种族、异常与成功通知 |
+| 2350 | `WA_SWING_DANCE` | `swingdance.cpp` | 单人／队伍范围、课程等级、状态初始化及能力刷新 |
+| 2351 | `WA_SYMPHONY_OF_LOVER` | `symphonyoflovers.cpp` | 单人／队伍范围、课程等级、状态初始化及能力刷新 |
+| 2352 | `WA_MOONLIT_SERENADE` | `moonlitserenade.cpp` | 单人／队伍范围、课程等级、状态初始化及能力刷新 |
+| 2381 | `MI_RUSH_WINDMILL` | `windmillrushattack.cpp` | 单人／队伍范围、课程等级、状态初始化及能力刷新 |
+| 2382 | `MI_ECHOSONG` | `echosong.cpp` | 单人／队伍范围、课程等级、状态初始化及能力刷新 |
+| 2383 | `MI_HARMONIZE` | `harmonize.cpp` | 对非自身施放时同步双方状态，属性降低与持续时间 |
+| 2412 | `WM_LESSON` | `passive` | 武器／性别条件、攻击／攻速／SP／恢复／P.ATK 与 S.MATK 被动 |
+| 2413 | `WM_METALICSOUND` | `metallicsound.cpp` | 魔法倍率、课程／混音联动、箭矢属性／消费及范围派发 |
+| 2414 | `WM_REVERBERATION` | `reverberation.cpp` | 魔法倍率、课程／混音联动、箭矢属性／消费及范围派发 |
+| 2418 | `WM_SEVERE_RAINSTORM` | `severerainstorm.cpp` | 地面周期、派生物理命中、乐器／鞭倍率与期间装备限制 |
+| 2419 | `WM_POEMOFNETHERWORLD` | `poemofthenetherworld.cpp` | 地面目标、免疫／GVG／队伍条件、触发后单位结束 |
+| 2420 | `WM_VOICEOFSIREN` | `voiceofsiren.cpp` | 范围魅惑、职业／课程成功率、来源记录与目标关系 |
+| 2421 | `WM_DEADHILLHERE` | `valleyofdeath.cpp` | 仅死亡玩家、以 SP 换 HP、复活与资源同步 |
+| 2422 | `WM_LULLABY_DEEPSLEEP` | `deepsleeplullaby.cpp` | 成功率、INT／等级减时与周期 HP／SP 恢复；修复百分比回绕 |
+| 2423 | `WM_SIRCLEOFNATURE` | `circleofnaturessound.cpp` | 合唱资格、自己先启动／队伍传播、课程增益、互斥和持续时间 |
+| 2424 | `WM_RANDOMIZESPELL` | `improvisedsong.cpp` | 成功率与合唱状态清除；保留现行技能规则 |
+| 2425 | `WM_GLOOMYDAY` | `gloomyday.cpp` | 目标已学技能分支、特定攻击增益／减益与状态参数 |
+| 2426 | `WM_GREAT_ECHO` | `greatecho.cpp` | 地面范围、搭档检索与消费、伤害加成和课程倍率 |
+| 2427 | `WM_SONG_OF_MANA` | `songofmana.cpp` | 启动 SP 恢复和队伍传播；施法者只恢复一次，高 SP 使用宽整数 |
+| 2428 | `WM_DANCE_WITH_WUG` | `dancewithawarg.cpp` | 合唱资格、自己先启动／队伍传播、课程增益、互斥和持续时间 |
+| 2429 | `WM_SOUND_OF_DESTRUCTION` | `soundofdestruction.cpp` | 范围／玩家／敌对、成功率、状态互斥、属性和周期副作用 |
+| 2430 | `WM_SATURDAY_NIGHT_FEVER` | `saturdaynightfever.cpp` | 范围／玩家／敌对、成功率、状态互斥、属性和周期副作用 |
+| 2431 | `WM_LERADS_DEW` | `leradsdew.cpp` | 合唱资格、自己先启动／队伍传播、课程增益、互斥和持续时间 |
+| 2432 | `WM_MELODYOFSINK` | `melodyofsink.cpp` | 范围／玩家／敌对、成功率、状态互斥、属性和周期副作用 |
+| 2433 | `WM_BEYOND_OF_WARCRY` | `warcryofbeyond.cpp` | 范围／玩家／敌对、成功率、状态互斥、属性和周期副作用 |
+| 2434 | `WM_UNLIMITED_HUMMING_VOICE` | `unlimitedhummingvoice.cpp` | 合唱资格、自己先启动／队伍传播、课程增益、互斥和持续时间 |
+| 5007 | `WM_FRIGG_SONG` | `friggssong.cpp` | 单人／队伍、自身覆盖、HP 增益与每秒恢复 |
+| 5014 | `ALL_FULL_THROTTLE` | `passive` | 沿用共享恢复、属性增益、周期消耗及结束副作用审查 |
+| 5068 | `CG_SPECIALSINGER` | `skilledspecialsinger.cpp` | 仅解除合奏疲劳；客户端名称不同但 ID／等级一致 |
+| 5349 | `TR_STAGE_MANNER` | `passive` | 武器／性别条件、攻击／攻速／SP／恢复／P.ATK 与 S.MATK 被动 |
+| 5350 | `TR_RETROSPECTION` | `retrospection.cpp` | 已学技能复查、上次歌曲记录、SP 折扣和 AP 联动 |
+| 5351 | `TR_MYSTIC_SYMPHONY` | `StatusSkillImpl` | 状态施放、AP、后续攻击／合奏限制联动；补原生启动资源 |
+| 5352 | `TR_KVASIR_SONATA` | `StatusSkillImpl` | 状态施放、AP、后续攻击／合奏限制联动；补原生启动资源 |
+| 5353 | `TR_ROSEBLOSSOM` | `roseblossom.cpp` | 命中后种子状态、定时派生范围、混音和种族／CON 倍率 |
+| 5355 | `TR_RHYTHMSHOOTING` | `rhythmshooting.cpp` | 范围／段数、混音与交响乐、属性倍率、箭矢属性／消费和 AP；补金属狂怒效果 |
+| 5356 | `TR_METALIC_FURY` | `metallicfury.cpp` | 范围／段数、混音与交响乐、属性倍率、箭矢属性／消费和 AP；补金属狂怒效果 |
+| 5357 | `TR_SOUNDBLEND` | `soundblend.cpp` | 初始攻击与状态、自然结束派生、其他攻击解除和箭矢属性 |
+| 5358 | `TR_GEF_NOCTURN` | `geffenianocturn.cpp` | 记录歌曲、异性同队四转搭档、敌方范围及状态／概率；补尼夫海姆原生效果 |
+| 5359 | `TR_ROKI_CAPRICCIO` | `rokicapriccio.cpp` | 记录歌曲、异性同队四转搭档、敌方范围及状态／概率；补尼夫海姆原生效果 |
+| 5360 | `TR_AIN_RHAPSODY` | `ainrhapsody.cpp` | 记录歌曲、异性同队四转搭档、敌方范围及状态／概率；补尼夫海姆原生效果 |
+| 5361 | `TR_MUSICAL_INTERLUDE` | `musicalinterlude.cpp` | 单人／队伍增益和搭档加成；修复单人不记录歌曲／无成功通知，补普隆德拉进行曲效果 |
+| 5362 | `TR_JAWAII_SERENADE` | `jawaiiserenade.cpp` | 单人／队伍增益和搭档加成；修复单人不记录歌曲／无成功通知，补普隆德拉进行曲效果 |
+| 5363 | `TR_NIPELHEIM_REQUIEM` | `nipelheimrequiem.cpp` | 记录歌曲、异性同队四转搭档、敌方范围及状态／概率；补尼夫海姆原生效果 |
+| 5364 | `TR_PRON_MARCH` | `pronmarch.cpp` | 单人／队伍增益和搭档加成；修复单人不记录歌曲／无成功通知，补普隆德拉进行曲效果 |
+| 6521 | `TR_RHYTHMICAL_WAVE` | `rhythmicalwave.cpp` | 范围／段数、混音与交响乐、属性倍率、箭矢属性／消费和 AP；补金属狂怒效果 |
