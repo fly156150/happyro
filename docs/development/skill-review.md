@@ -15,7 +15,7 @@
 | 7 | 魔法师／贤者／妖术师／元素大师 | 93 个技能代码审查完成，修复并完成自动验证 |
 | 8 | 商人／炼金术师／基因学者／生物学者 | 71 个主技能及 58 个生命体技能代码审查完成，修复并完成自动验证 |
 | 9 | 服事／武僧／修罗／审判官 | 78 个主技能代码审查完成，修复并完成自动验证 |
-| 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 待审查 |
+| 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 74 个主技能代码审查完成，含遗留涂鸦功能缺口 |
 | 11 | 弓箭手／诗人、舞娘／宫廷乐师、漫游舞者／吟游诗人、咏唱舞姬 | 待审查 |
 
 ## 1. 猎人线
@@ -1033,3 +1033,104 @@
 | 5253 | `IQ_THIRD_CONSECRATION` | `thirdconsecration.cpp` | 第二印记与阶段条件、气弹补充／多段、HP／POW 倍率、印记结束与范围动画 |
 | 5254 | `IQ_THIRD_EXOR_FLAME` | `StatusSkillImpl` | 阶段增益互斥、后续技能解锁、气弹免耗联动与启动动画 |
 | 6519 | `IQ_BLAZING_FLAME_BLAST` | `blazingflameblast.cpp` | 目标命中、强化状态倍率、AP／POW 与原生效果阶段 |
+
+## 10. 流氓／魅影追踪者线
+
+### 范围与依据
+
+从 Thief、Thief_High、Rogue、Stalker、Shadow_Chaser、Shadow_Chaser_T、Abyss_Chaser 提取 74 项主技能，全部 ID／名称／等级与客户端一致。逐项检查技能定义、工厂分派及 57 个相关实现文件；继承能力结合先前盗贼、剑士、弓箭手路径核对。共享检查包括复制／保持、自动暗影法术列表及提交、脱装保护、禁锢双侧状态、隐匿周期、面具状态、地面陷阱与深渊球生命周期。派生连锁反应射击、来自深渊与深渊火焰也纳入。
+
+### 明确问题与修复
+
+- 近身禁锢的目标结束时错误递减施法者状态的技能等级（val1），而非目标计数（val2），导致第一个目标解除就释放全部目标。改为递减正确计数，最后一个目标结束才解除施法者。
+- 暗影形态把敌对判定当布尔值使用，漏掉返回 -1 的非敌对目标；改为仅允许正值，关系失效后停止转伤并清理关联。
+- 隐身术高 SP 周期消耗先在 32 位相乘，可能回绕；改为宽整数百分比计算。
+- 自动暗影法术选择提交重新检查待选状态、所学等级、存活和交易状态；所有路径先清除等待用的停止状态，取消不弹失败，拒绝失效窗口继续创建增益。
+- 深渊匕首启动动画改为成功通知播放一次，不随每个受击者重复。欧米伽深渊打击大范围动画使用选定地面坐标，不逐目标重复；不幸冲击启动效果放在施法者，保留目标命中。
+
+### 验证与限制
+
+- `tests/rogue-state.test.mjs` 执行提取的实际 C++ 选择／解除／消耗路径，覆盖 1–10 级、取消、交易、死亡、重置／复制失效、多个禁锢目标、三种敌对结果和 UINT32_MAX SP，UBSan 通过。
+- FourthJobEffects 与 MonkEffectRouting 共 22 项回归通过；深渊追踪者 38 个 STR、592 个贴图依赖均可从 Gateway 获取且结构有效。
+- 完整 map-server、PWA（`--all`）和文档构建；未重启服务、未逐技能实战或人工听音。
+- 遗留涂鸦系列不是完整可用功能：`RG_FLAGGRAFFITI` 缺专属服务端实现，涂鸦客户端没有完整文字输入／地面显示。本轮记录缺口，不自行发明城旗规则；不能据“已审查”宣称这些技能已补完。
+- 部分旧技能只有状态／动作或不完整程序特效；背刺命中率、致命威胁 AGI 与深渊自动触发率仍有上游规则 TODO，未推测修改平衡。
+
+### 逐技能清单
+
+| ID | 技能 | 实现入口 | 核验重点 |
+| --- | --- | --- | --- |
+| 2 | `SM_SWORD` | `passive` | 沿用剑士／猎人继承路径；武器、射程、箭矢与陷阱目标 |
+| 44 | `AC_VULTURE` | `passive` | 沿用剑士／猎人继承路径；武器、射程、箭矢与陷阱目标 |
+| 46 | `AC_DOUBLE` | `passive` | 沿用剑士／猎人继承路径；武器、射程、箭矢与陷阱目标 |
+| 48 | `TF_DOUBLE` | `doubleattack.cpp` | 沿用刺客线盗贼审查；本次重新核对技能定义与继承入口 |
+| 49 | `TF_MISS` | `passive` | 沿用刺客线盗贼审查；本次重新核对技能定义与继承入口 |
+| 50 | `TF_STEAL` | `steal.cpp` | 沿用刺客线盗贼审查；本次重新核对技能定义与继承入口 |
+| 51 | `TF_HIDING` | `hiding.cpp` | 沿用刺客线盗贼审查；本次重新核对技能定义与继承入口 |
+| 52 | `TF_POISON` | `envenom.cpp` | 沿用刺客线盗贼审查；本次重新核对技能定义与继承入口 |
+| 53 | `TF_DETOXIFY` | `detoxify.cpp` | 沿用刺客线盗贼审查；本次重新核对技能定义与继承入口 |
+| 124 | `HT_REMOVETRAP` | `passive` | 沿用剑士／猎人继承路径；武器、射程、箭矢与陷阱目标 |
+| 149 | `TF_SPRINKLESAND` | `sandattack.cpp` | 沿用刺客线盗贼审查；本次重新核对技能定义与继承入口 |
+| 150 | `TF_BACKSLIDING` | `backslide.cpp` | 沿用刺客线盗贼审查；本次重新核对技能定义与继承入口 |
+| 151 | `TF_PICKSTONE` | `findstone.cpp` | 沿用刺客线盗贼审查；本次重新核对技能定义与继承入口 |
+| 152 | `TF_THROWSTONE` | `stonefling.cpp` | 沿用刺客线盗贼审查；本次重新核对技能定义与继承入口 |
+| 210 | `RG_SNATCHER` | `passive` | 普通攻击偷窃、商店折扣、同坐人数或隐匿移动的共享被动路径 |
+| 211 | `RG_STEALCOIN` | `mug.cpp` | 目标必须为未被抢劫的非免疫魔物；成功率、收益和同步 |
+| 212 | `RG_BACKSTAP` | `backstab.cpp` | 贴身位置、刀／弓倍率、方向、隐匿解除与追加眩晕 |
+| 213 | `RG_TUNNELDRIVE` | `passive` | 普通攻击偷窃、商店折扣、同坐人数或隐匿移动的共享被动路径 |
+| 214 | `RG_RAID` | `sightlessmind.cpp` | 隐匿前置、范围标记、目标状态和施法后解除隐匿 |
+| 215 | `RG_STRIPWEAPON` | `divestweapon.cpp` | 脱装概率、时间、装备位置、化学保护／影装保护与失败通知 |
+| 216 | `RG_STRIPSHIELD` | `divestshield.cpp` | 脱装概率、时间、装备位置、化学保护／影装保护与失败通知 |
+| 217 | `RG_STRIPARMOR` | `divestarmor.cpp` | 脱装概率、时间、装备位置、化学保护／影装保护与失败通知 |
+| 218 | `RG_STRIPHELM` | `divesthelm.cpp` | 脱装概率、时间、装备位置、化学保护／影装保护与失败通知 |
+| 219 | `RG_INTIMIDATE` | `snatch.cpp` | 延迟带走、目标消失／死亡、地图传送限制和就近空格 |
+| 220 | `RG_GRAFFITI` | `scribble.cpp` | 涂鸦地面单位与文字存储、已有涂鸦限制和清理；客户端文字入口／显示仍未完整支持 |
+| 221 | `RG_FLAGGRAFFITI` | `passive` | 遗留技能定义存在，但没有服务端专属施放实现；记录限制，不推测城旗涂改规则 |
+| 222 | `RG_CLEANER` | `remover.cpp` | 涂鸦地面单位与文字存储、已有涂鸦限制和清理；客户端文字入口／显示仍未完整支持 |
+| 223 | `RG_GANGSTER` | `passive` | 普通攻击偷窃、商店折扣、同坐人数或隐匿移动的共享被动路径 |
+| 224 | `RG_COMPULSION` | `passive` | 普通攻击偷窃、商店折扣、同坐人数或隐匿移动的共享被动路径 |
+| 225 | `RG_PLAGIARISM` | `passive` | 复制资格、状态开关、等级上限、双槽去重、替换和持久化 |
+| 389 | `ST_CHASEWALK` | `stealth.cpp` | 关闭免耗、定时 SP、行走／STR 增益及灵魂链接 |
+| 390 | `ST_REJECTSWORD` | `counterinstinct.cpp` | 武器类型、反击概率、减伤与反击次数结束 |
+| 475 | `ST_PRESERVE` | `StatusSkillImpl` | 复制资格、状态开关、等级上限、双槽去重、替换和持久化 |
+| 476 | `ST_FULLSTRIP` | `divestall.cpp` | 脱装概率、时间、装备位置、化学保护／影装保护与失败通知 |
+| 1005 | `RG_CLOSECONFINE` | `closeconfine.cpp` | 目标与施法者关联、计数和解除；修复将等级误当目标数递减 |
+| 2284 | `SC_FATALMENACE` | `fatalmenace.cpp` | 范围／箭矢、刀额外命中、AGI／等级倍率及命中率 |
+| 2285 | `SC_REPRODUCE` | `reproduce.cpp` | 复制资格、状态开关、等级上限、双槽去重、替换和持久化 |
+| 2286 | `SC_AUTOSHADOWSPELL` | `autoshadowspell.cpp` | 复制技能列表、取消、交易／死亡／重置失效、触发等级与消费；补选择时校验及状态清理 |
+| 2287 | `SC_SHADOWFORM` | `shadowform.cpp` | 双侧关联、距离／地图／死亡、转伤计数；修复非敌对目标判定 |
+| 2288 | `SC_TRIANGLESHOT` | `triangleshot.cpp` | 范围／箭矢、刀额外命中、AGI／等级倍率及命中率 |
+| 2289 | `SC_BODYPAINT` | `bodypainting.cpp` | 范围显隐、解除状态、盲目和攻速减益 |
+| 2290 | `SC_INVISIBILITY` | `invisibility.cpp` | 开关、SP 周期和属性／攻速／暴击；修复大 SP 乘法回绕 |
+| 2291 | `SC_DEADLYINFECT` | `StatusSkillImpl` | 双方攻击触发、免疫和可传播状态、剩余计时复制 |
+| 2292 | `SC_ENERVATION` | `masqueradeenervation.cpp` | 材料、Boss 排除、状态重复、能力／负重抗性、气弹／随行解除与 SP 等对应效果 |
+| 2293 | `SC_GROOMY` | `masqueradegloomy.cpp` | 材料、Boss 排除、状态重复、能力／负重抗性、气弹／随行解除与 SP 等对应效果 |
+| 2294 | `SC_IGNORANCE` | `masqueradeignorance.cpp` | 材料、Boss 排除、状态重复、能力／负重抗性、气弹／随行解除与 SP 等对应效果 |
+| 2295 | `SC_LAZINESS` | `masqueradelaziness.cpp` | 材料、Boss 排除、状态重复、能力／负重抗性、气弹／随行解除与 SP 等对应效果 |
+| 2296 | `SC_UNLUCKY` | `masqueradeunlucky.cpp` | 材料、Boss 排除、状态重复、能力／负重抗性、气弹／随行解除与 SP 等对应效果 |
+| 2297 | `SC_WEAKNESS` | `masqueradeweakness.cpp` | 材料、Boss 排除、状态重复、能力／负重抗性、气弹／随行解除与 SP 等对应效果 |
+| 2298 | `SC_STRIPACCESSARY` | `stripaccessory.cpp` | 脱装概率、时间、装备位置、化学保护／影装保护与失败通知 |
+| 2299 | `SC_MANHOLE` | `manhole.cpp` | 材料、范围／数量、地面触发、地图限制、陷阱目标、状态与单位清理 |
+| 2300 | `SC_DIMENSIONDOOR` | `dimensiondoor.cpp` | 材料、范围／数量、地面触发、地图限制、陷阱目标、状态与单位清理 |
+| 2301 | `SC_CHAOSPANIC` | `chaospanic.cpp` | 材料、范围／数量、地面触发、地图限制、陷阱目标、状态与单位清理 |
+| 2302 | `SC_MAELSTROM` | `maelstrom.cpp` | 材料、范围／数量、地面触发、地图限制、陷阱目标、状态与单位清理 |
+| 2303 | `SC_BLOODYLUST` | `bloodylust.cpp` | 材料、范围／数量、地面触发、地图限制、陷阱目标、状态与单位清理 |
+| 2304 | `SC_FEINTBOMB` | `feintbomb.cpp` | 地面单位、后退、诱饵／定时爆炸或夹子；失败与材料条件 |
+| 5010 | `SC_ESCAPE` | `emergencyescape.cpp` | 地面单位、后退、诱饵／定时爆炸或夹子；失败与材料条件 |
+| 5014 | `ALL_FULL_THROTTLE` | `passive` | 沿用共享恢复、属性增益、周期消耗及结束副作用审查 |
+| 5311 | `ABC_DAGGER_AND_BOW_M` | `passive` | 武器类型、体型加成数组、双持和魔法修炼 |
+| 5312 | `ABC_MAGIC_SWORD_M` | `passive` | 武器类型、体型加成数组、双持和魔法修炼 |
+| 5313 | `ABC_STRIP_SHADOW` | `stripshadow.cpp` | 脱装概率、时间、装备位置、化学保护／影装保护与失败通知 |
+| 5314 | `ABC_ABYSS_DAGGER` | `abyssdagger.cpp` | 范围伤害与自身增益；启动动画从逐目标命中移至成功通知 |
+| 5315 | `ABC_UNLUCKY_RUSH` | `unluckyrush.cpp` | 突进、追加不幸、追击加成；启动效果明确位于施法者 |
+| 5316 | `ABC_CHAIN_REACTION_SHOT` | `chainreactionshot.cpp` | 主／派生范围、延迟参数、箭矢与追击倍率 |
+| 5317 | `ABC_FROM_THE_ABYSS` | `fromtheabyss.cpp` | 深渊球创建／补充／消耗／结束、普攻派生与自动地面技能联动 |
+| 5318 | `ABC_ABYSS_SLAYER` | `StatusSkillImpl` | AP、持续时间、P.ATK／S.MATK 与命中刷新 |
+| 5319 | `ABC_ABYSS_STRIKE` | `omegaabyssstrike.cpp` | 地面范围、种族与 SPL 倍率；启动动画固定于选定地面，保留命中特效 |
+| 5320 | `ABC_DEFT_STAB` | `deftstab.cpp` | 范围／多段、概率追加、武器／箭矢、AP 与 POW／CON 倍率 |
+| 5321 | `ABC_ABYSS_SQUARE` | `abysssquare.cpp` | 地面周期、施法者在范围内时双倍段数、魔法剑联动与实体生命周期 |
+| 5322 | `ABC_FRENZY_SHOT` | `frenzyshot.cpp` | 范围／多段、概率追加、武器／箭矢、AP 与 POW／CON 倍率 |
+| 6512 | `ABC_HIT_AND_SLIDING` | `hitandsliding.cpp` | 移动位置／失败、追击状态、多段／范围与 AP／属性倍率 |
+| 6513 | `ABC_CHASING_BREAK` | `chasingbreak.cpp` | 移动位置／失败、追击状态、多段／范围与 AP／属性倍率 |
+| 6514 | `ABC_CHASING_SHOT` | `chasingshot.cpp` | 移动位置／失败、追击状态、多段／范围与 AP／属性倍率 |
+| 6515 | `ABC_ABYSS_FLAME` | `abyssflame.cpp` | 自身范围与主目标派生、魔法剑修炼、SPL、通知和独立派生技能 ID |
