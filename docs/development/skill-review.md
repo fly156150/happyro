@@ -10,7 +10,7 @@
 | 2 | 魔法师／巫师／大法师／至高法师 | 78 个技能代码审查完成，修复并完成自动验证 |
 | 3 | 服事／牧师／大主教／枢机主教 | 77 个技能代码审查完成，修复并完成自动验证 |
 | 4 | 剑士／十字军／皇家卫士／帝国卫士 | 70 个技能代码审查完成，修复并完成自动验证 |
-| 5 | 盗贼／刺客／十字斩首者／暗影十字 | 待审查 |
+| 5 | 盗贼／刺客／十字斩首者／暗影十字 | 57 个技能代码审查完成，修复并完成自动验证 |
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 待审查 |
 | 7 | 魔法师／贤者／妖术师／元素大师 | 待审查 |
 | 8 | 商人／炼金术师／基因学者／生物学者 | 待审查 |
@@ -431,3 +431,85 @@
 | 6503 | 光辉长矛 `IG_RADIANT_SPEAR` | `radiantspear.cpp` | 单手矛／攻击姿态、范围伤害与矛伤加成 |
 | 6504 | 帝国十字 `IG_IMPERIAL_CROSS` | `imperialcross.cpp` | 攻击姿态、矛伤联动与命中通知 |
 | 6505 | 帝国压力 `IG_IMPERIAL_PRESSURE` | `imperialpressure.cpp` | 范围魔法、防御姿态圣属性转换及修炼加成 |
+
+## 5. 刺客线
+
+### 范围与依据
+
+完成 Thief、Thief_High、Assassin、Assassin_Cross、Guillotine_Cross、Guillotine_Cross_T、Shadow_Cross 的 57 个去重技能代码审查。57 项客户端 ID、内部名称和最高等级一致。逐项核对技能工厂及独立实现，并追踪被动双持／拳刃、隐身／侦测、毒药制作与菜单、技能条件与消耗、状态周期、伤害／地面单位及派生攻击路径。
+
+### 修复
+
+- 剧毒首次扣血、普通毒／魔法蘑菇周期伤害及毒素 SP 消耗避免乘法溢出；毒素／失魂恢复、吸血末端不再先将 HP／SP 窄化为有符号整数。
+- 武器格挡在命中和未命中两条路径均限定近战物理，不再误触发于远程物理或近距离非物理攻击。
+- 涂毒菜单提交时复核存活、技能等级及当前武器；先检查毒药类型再消耗物品，阻止重置、降级、死亡或换装后的旧窗口请求。
+- 幻觉行走取消独立方法的重复扣血，数据库统一最大 HP 的 10%，由通用施法结束检查及消耗负责；生命值不足时不先扣 SP。通用 HP 百分比计算使用宽整数并钳制。
+- 舞动之刃仅在成功启动时播放启动动画；滚动切割的旋转只作用施法者，不再旋转受击者。补齐十字冲击、反击斩、滚动切割、十字撕裂斩原生效果，范围效果与受击通知分离。
+
+### 验证与限制
+
+- `assassin-poison.test.mjs` 提取生产表达式、涂毒方法和幻觉行走类执行 C++／UBSan 回归：HP／SP 边界、六种攻击类型／距离组合、概率边界、八种毒药选择与失效菜单、满血／半血／生命不足及单次消耗。
+- 客户端通知路由与四转效果共 13 项测试通过；18 个 STR 和 280 个依赖经 Gateway 读取验证无缺失。完整 PWA／map-server／文档构建、源码 ESLint 和 changelog 检查通过，Gateway 已核验提供 `mvb1u2ze`。
+- 未重启在线服务，也未进行 57 个技能逐个实机战斗验收。毒烟、毒液印记等旧三转效果仍简化；没有以空视觉映射断言服务端技能无效，也没有猜测或叠加所有方向素材。灵魂破坏等公式中的上游未确认注释保留，不声称官方数值完整复刻。
+
+### 逐技能清单
+
+| ID | 技能 | 实现 | 核验结果 |
+| --- | --- | --- | --- |
+| 48 | `TF_DOUBLE` | `doubleattack.cpp` | 短剑／装备赋予的二连、概率及拳刃副手联动 |
+| 49 | `TF_MISS` | `status.cpp／battle.cpp／skill.cpp` | 一转与二转回避加成、移动速度及数值钳制 |
+| 50 | `TF_STEAL` | `steal.cpp` | 偷窃目标、物品获取与失败反馈 |
+| 51 | `TF_HIDING` | `hiding.cpp` | 状态切换、持续消耗、侦测与攻击限制 |
+| 52 | `TF_POISON` | `envenom.cpp` | 物理命中及中毒概率；共用毒周期宽整数修复 |
+| 53 | `TF_DETOXIFY` | `detoxify.cpp` | 普通毒及剧毒解除、目标反馈 |
+| 132 | `AS_RIGHT` | `status.cpp／battle.cpp／skill.cpp` | 双持主手倍率、武器与职业条件 |
+| 133 | `AS_LEFT` | `status.cpp／battle.cpp／skill.cpp` | 双持副手倍率、单独左手武器分支 |
+| 134 | `AS_KATAR` | `status.cpp／battle.cpp／skill.cpp` | 拳刃修炼与武器限制 |
+| 135 | `AS_CLOAKING` | `cloaking.cpp` | 低等级贴墙条件、切换、SP 与侦测 |
+| 136 | `AS_SONICBLOW` | `sonicblow.cpp` | 拳刃、目标半血加成、音速加速命中与眩晕 |
+| 137 | `AS_GRIMTOOTH` | `grimtooth.cpp` | 隐藏／拳刃条件、范围伤害和普通魔物减速 |
+| 138 | `AS_ENCHANTPOISON` | `enchantpoison.cpp` | 队伍目标、毒属性和失败反馈 |
+| 139 | `AS_POISONREACT` | `StatusSkillImpl` | 毒属性格挡与伤害增益阶段、反击次数和状态消耗 |
+| 140 | `AS_VENOMDUST` | `venomdust.cpp` | 红矿、地面单位、敌人范围与中毒 |
+| 141 | `AS_SPLASHER` | `venomsplasher.cpp` | 状态免疫、延迟爆炸、搜索／伤害范围与二次资源消耗抑制 |
+| 149 | `TF_SPRINKLESAND` | `sandattack.cpp` | 倍率及玩家／魔物致盲概率 |
+| 150 | `TF_BACKSLIDING` | `backslide.cpp` | 后退方向、移动限制与位置通知 |
+| 151 | `TF_PICKSTONE` | `findstone.cpp` | 负重、制造石头、满包反馈及配置掉落 |
+| 152 | `TF_THROWSTONE` | `stonefling.cpp` | 石头消耗、固定伤害、先眩晕再致盲 |
+| 376 | `ASC_KATAR` | `status.cpp／battle.cpp／skill.cpp` | Renewal 拳刃伤害倍率、非旧版卡片倍率分支 |
+| 378 | `ASC_EDP` | `enchantdeadlypoison.cpp` | 毒药、持续时间受新毒研究影响及武器攻击加成 |
+| 379 | `ASC_BREAKER` | `souldestroyer.cpp` | Renewal 物理倍率、STR／INT 和等级缩放 |
+| 406 | `ASC_METEORASSAULT` | `meteorassault.cpp` | 自身范围攻击、随机异常及成功通知 |
+| 407 | `ASC_CDP` | `createdeadlypoison.cpp` | 材料核验、DEX／LUK 制作率与结果反馈 |
+| 1003 | `AS_SONICACCEL` | `status.cpp／battle.cpp／skill.cpp` | 音速投掷命中修正的被动入口 |
+| 1004 | `AS_VENOMKNIFE` | `throwvenomknife.cpp` | 毒刃弹药消耗、倍率及必中毒状态请求 |
+| 2021 | `GC_VENOMIMPRESS` | `StatusSkillImpl` | 目标状态、毒抗下降及结束清理；旧视觉仍简化 |
+| 2022 | `GC_CROSSIMPACT` | `crossimpact.cpp` | 目标附近移动检查、失败反馈；补齐命中效果 |
+| 2023 | `GC_DARKILLUSION` | `darkillusion.cpp` | 突进及概率追加十字冲击 |
+| 2024 | `GC_RESEARCHNEWPOISON` | `status.cpp／battle.cpp／skill.cpp` | 配方等级、产量与毒药持续时间；确认提交时再次校验 |
+| 2025 | `GC_CREATENEWPOISON` | `createnewpoison.cpp` | 制作窗口、材料／等级复核、产量与成功率 |
+| 2026 | `GC_ANTIDOTE` | `antidote.cpp` | 解毒剂消耗、八种新毒状态清除 |
+| 2027 | `GC_POISONINGWEAPON` | `poisoningweapon.cpp` | 毒药选择、伤害附毒与自身增益；修复旧窗口和扣物品顺序 |
+| 2028 | `GC_WEAPONBLOCKING` | `StatusSkillImpl` | 周期 SP、概率及反击窗口；修复误格挡远程／非物理 |
+| 2029 | `GC_COUNTERSLASH` | `counterslash.cpp` | 反击窗口、AGI／转职前职业等级倍率；补齐范围效果 |
+| 2030 | `GC_WEAPONCRUSH` | `weaponcrush.cpp` | 反击条件、脱卸目标装备与失败反馈 |
+| 2031 | `GC_VENOMPRESSURE` | `venompressure.cpp` | 涂毒要求、命中／伤害、传毒概率与涂毒状态消耗 |
+| 2032 | `GC_POISONSMOKE` | `poisonsmoke.cpp` | 已有涂毒、地面保存毒种与等级、概率施毒；视觉仍简化 |
+| 2033 | `GC_CLOAKINGEXCEED` | `cloakingexceed.cpp` | 切换／取消、SP、受击次数、Boss 侦测及允许的破隐技能 |
+| 2034 | `GC_PHANTOMMENACE` | `phantommenace.cpp` | 隐藏敌人伤害、暗影形态解除分支与范围通知 |
+| 2035 | `GC_HALLUCINATIONWALK` | `hallucinationwalk.cpp` | 修复重复扣 HP；统一最大 HP 的 10%，不足时不先扣 SP |
+| 2036 | `GC_ROLLINGCUTTER` | `rollingcutter.cpp` | 拳刃、十层计数及范围伤害；旋转仅作用施法者，补齐范围效果 |
+| 2037 | `GC_CROSSRIPPERSLASHER` | `crossripperslasher.cpp` | 拳刃／旋转计数要求、AGI 和计数倍率；补齐命中效果 |
+| 5001 | `GC_DARKCROW` | `darkclaw.cpp` | 伤害及未命中也施加的近战易伤 |
+| 5014 | `ALL_FULL_THROTTLE` | `status.cpp／battle.cpp／skill.cpp` | 沿用前线共用审查：恢复、属性、周期消耗及副作用 |
+| 5285 | `SHC_SHADOW_EXCEED` | `StatusSkillImpl` | AP 消耗、状态与其他四转技能倍率联动 |
+| 5286 | `SHC_DANCING_KNIFE` | `dancingknife.cpp` | 短剑、周期范围伤害、换装解除；启动视觉不按命中重复 |
+| 5287 | `SHC_SAVAGE_IMPACT` | `savageimpact.cpp` | 拳刃、隐匿额外段数、突进及暗影超越加成 |
+| 5288 | `SHC_SHADOW_SENSE` | `status.cpp／battle.cpp／skill.cpp` | 武器类型区分暴击、回避及属性钳制 |
+| 5289 | `SHC_ETERNAL_SLASH` | `eternalslash.cpp` | 反击窗口、五层连击、状态续期和伤害段数 |
+| 5290 | `SHC_POTENT_VENOM` | `StatusSkillImpl` | 致命毒药前置状态与 RES 穿透 |
+| 5291 | `SHC_SHADOW_STAB` | `shadowstab.cpp` | 解除普通／超越隐匿、物理倍率和命中通知 |
+| 5292 | `SHC_IMPACT_CRATER` | `impactcrater.cpp` | 自身状态、范围攻击及 POW／等级倍率 |
+| 5293 | `SHC_ENCHANTING_SHADOW` | `StatusSkillImpl` | 普通攻击概率产生暗影伤口、计时器与层数清理 |
+| 5294 | `SHC_FATAL_SHADOW_CROW` | `fatalshadowcrow.cpp` | AP、突进、范围、种族加成及暗黑之爪等级 |
+| 6511 | `SHC_CROSS_SLASH` | `crossslash.cpp` | 范围攻击、暗影超越倍率和自身状态 |
