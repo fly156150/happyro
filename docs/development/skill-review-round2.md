@@ -9,7 +9,7 @@
 | 1 | 弓箭手／猎人／神射手／游侠／风鹰 | 68 个技能代码复查完成，回归与编译通过 |
 | 2 | 魔法师／巫师／大法师／至高法师 | 78 个技能及派生入口复查完成，修复与验证通过 |
 | 3 | 服事／牧师／大主教／枢机主教 | 77 个技能及派生入口复查完成，修复与验证通过 |
-| 4 | 剑士／十字军／皇家卫士／帝国卫士 | 待复查 |
+| 4 | 剑士／十字军／皇家卫士／帝国卫士 | 70 个技能及共享路径复查完成，修复与验证通过 |
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 待复查 |
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 待复查 |
 | 7 | 魔法师／贤者／妖术师／元素大师 | 待复查 |
@@ -347,3 +347,105 @@ node tests/hunter-status.test.mjs ../../work/skill-review/hunter-status-test --n
 | 5283 | 请求 `CD_PETITIO` | SkillPetitio |
 | 5284 | 框架 `CD_FRAMEN` | SkillFramen |
 | 6518 | Divinus Flos `CD_DIVINUS_FLOS` | SkillDivinusFlos |
+
+## 十字军线复查结果
+
+从当前 Swordman、Crusader、Paladin、Royal_Guard、Royal_Guard_T、Imperial_Guard 技能树重新提取 70 个技能。复查全部独立实现、通用状态、被动、盾牌／武器／姿态／AP 条件、保护继承与伤害转移、反射、地面周期和状态清理；一转与继承的服事技能同时覆盖。旧 Overbrand 派生入口已经不在当前主技能调用链，未重新启用旧实现。
+
+### 已复现并修复：先开防御再施放保护时失效
+
+牺牲保护（`CR_DEVOTION`）继承已有防御状态时，原代码传入零值的 `val2`，同时设置 `SCSTART_NOAVOID`。自动防御和防御光环在该标志下跳过重新计算，因此被保护者的格挡概率／远程物理减伤变成零；防御光环的攻速修正也未继承。若先施放保护再开启防御技能，另一条分派路径会传入正确数值，导致操作顺序影响结果。
+
+现在继承已计算的 `val2`，防御光环同时继承攻速修正 `val4`。保留反射盾的继承标记、钢铁之心的有限次数语义，以及城战／战场不继承钢铁之心的限制。
+
+`tests/devotion-inheritance.test.mjs` 执行生产代码中的保护、自动防御、防御光环初始化分支，覆盖两种施放顺序、所有等级、正常地图／城战／战场、无已有防御状态、减伤／攻速数值和反射继承标记。旧代码失败，修复后通过。
+
+### 已复现并修复：盾牌连击覆盖已有倍率
+
+共享物理伤害流程先累计基础倍率和额外加成，然后调用各技能的倍率方法。盾牌连击却用 `=` 覆盖输入值，同时还减去了本应抵消输入基础值的 100。改为 `+=`，恢复基础倍率并保留先前累计的加成。原盾牌重量、精炼、盾牌力量、修炼及等级公式保持不变。
+
+`tests/shield-chain.test.mjs` 提取实际倍率方法与等级缩放宏，覆盖技能 1–5 级、三种输入倍率、角色 99／100／250 级、有无盾牌额外加成、盾牌力量开启／关闭及非玩家。旧代码失败，修复后通过。
+
+### 验证与限制
+
+- 两组新增回归和既有 `crusader-barrier.test.mjs` 通过，均启用未定义行为检测；继续覆盖守护者屏障容量／超大伤害、盾牌法术恢复、灵感消耗、舍命攻击自损、终极牺牲和攻击姿态刷新。
+- `map-server` 编译通过，未重启在线服务。
+- 客户端 6 个测试文件、26 项测试通过，覆盖十字军特效分派、技能使用／目标、四转动作／效果／地面单位。
+- 70 个技能的 ID、名称键和等级上限与客户端一致；39 个 STR 和 474 个依赖经 Gateway 读取检查无缺失。
+- 客户端没有修改，不重复构建相同 PWA。未逐技能实机战斗，不宣称官方数值及动画完全一致；上游未确认的四转系数保持原状。
+- 同时纠正首轮表格中的入口名称：自定义狂击示例在 `#if 0` 内禁用，实际使用 `SkillBash`，不存在启用每级增加 300% 倍率的自定义狂击。
+
+### 本轮逐技能覆盖
+
+| ID | 技能 | 服务端复查入口 |
+| --- | --- | --- |
+| 2 | 剑术修炼 `SM_SWORD` | status／battle／pc 共享被动与前置条件 |
+| 3 | 双手剑修炼 `SM_TWOHAND` | status／battle／pc 共享被动与前置条件 |
+| 4 | 增加HP恢复 `SM_RECOVERY` | status／battle／pc 共享被动与前置条件 |
+| 5 | 狂击 `SM_BASH` | SkillBash |
+| 6 | 挑衅 `SM_PROVOKE` | SkillProvoke |
+| 7 | 怒爆 `SM_MAGNUM` | SkillMagnumBreak |
+| 8 | 钢铁之心 `SM_ENDURE` | StatusSkillImpl |
+| 22 | 天使之护 `AL_DP` | status／battle／pc 共享被动与前置条件 |
+| 23 | 恶魔克星 `AL_DEMONBANE` | status／battle／pc 共享被动与前置条件 |
+| 28 | 治愈术 `AL_HEAL` | SkillHeal |
+| 35 | Cure `AL_CURE` | SkillCure |
+| 55 | 矛术修炼 `KN_SPEARMASTERY` | status／battle／pc 共享被动与前置条件 |
+| 63 | 骑乘大嘴鸟 `KN_RIDING` | status／battle／pc 共享被动与前置条件 |
+| 64 | 骑兵修炼 `KN_CAVALIERMASTERY` | status／battle／pc 共享被动与前置条件 |
+| 144 | 移动 HP 恢复 `SM_MOVINGRECOVERY` | status／battle／pc 共享被动与前置条件 |
+| 145 | 致命一击 `SM_FATALBLOW` | status／battle／pc 共享被动与前置条件 |
+| 146 | 自动狂暴 `SM_AUTOBERSERK` | SkillAutoBerserk |
+| 248 | 信仰 `CR_TRUST` | status／battle／pc 共享被动与前置条件 |
+| 249 | 防御 `CR_AUTOGUARD` | StatusSkillImpl；修复已有防御状态继承 |
+| 250 | 惩击 `CR_SHIELDCHARGE` | SkillSmite |
+| 251 | 盾牌回旋 `CR_SHIELDBOOMERANG` | SkillShieldBoomerang |
+| 252 | 盾牌反射 `CR_REFLECTSHIELD` | SkillShieldReflect |
+| 253 | 圣十字攻击 `CR_HOLYCROSS` | SkillHolyCross |
+| 254 | 圣十字审判 `CR_GRANDCROSS` | SkillGrandCross；地面单位 Dummyskill |
+| 255 | 舍命攻击 `CR_DEVOTION` | SkillSacrifice；修复已有防御状态继承 |
+| 256 | 灵魂坚韧 `CR_PROVIDENCE` | SkillResistantSouls |
+| 257 | 防御光环 `CR_DEFENDER` | StatusSkillImpl；修复已有防御状态继承 |
+| 258 | 长枪加速术 `CR_SPEARQUICKEN` | StatusSkillImpl |
+| 367 | Gloria Domini `PA_PRESSURE` | SkillGloriaDomini |
+| 368 | Martyr's Reckoning `PA_SACRIFICE` | SkillMartyrsReckoning |
+| 369 | Battle Chant `PA_GOSPEL` | SkillBattleChant；地面单位 Gospel |
+| 480 | 盾牌连击 `PA_SHIELDCHAIN` | SkillShieldChain；修复覆盖共享伤害倍率 |
+| 1002 | 缩小 `CR_SHRINK` | StatusSkillImpl |
+| 2307 | 加农矛 `LG_CANNONSPEAR` | SkillCannonSpear |
+| 2308 | 驱逐点 `LG_BANISHINGPOINT` | SkillBanishingPoint |
+| 2309 | 踩踏 `LG_TRAMPLE` | SkillTrample |
+| 2310 | 盾牌猛击 `LG_SHIELDPRESS` | SkillShieldPress |
+| 2311 | 反射伤害减免 `LG_REFLECTDAMAGE` | StatusSkillImpl |
+| 2312 | 精准攻击 `LG_PINPOINTATTACK` | SkillPinpointAttack |
+| 2313 | 先锋之力 `LG_FORCEOFVANGUARD` | SkillForceOfVanguard |
+| 2314 | 狂怒爆发 `LG_RAGEBURST` | SkillRageBurst |
+| 2315 | 盾牌法术 `LG_SHIELDSPELL` | SkillShieldSpell |
+| 2316 | 超越突破 `LG_EXEEDBREAK` | StatusSkillImpl |
+| 2317 | 超级烙印 `LG_OVERBRAND` | SkillOverBrand |
+| 2318 | 威望 `LG_PRESTIGE` | StatusSkillImpl |
+| 2319 | 结盟 `LG_BANDING` | SkillBanding；地面单位 Banding |
+| 2320 | 月斩 `LG_MOONSLASHER` | SkillMoonSlasher |
+| 2321 | 创世之光 `LG_RAYOFGENESIS` | SkillRayOfGenesis |
+| 2322 | 虔诚 `LG_PIETY` | SkillPiety |
+| 2323 | 大地驱动 `LG_EARTHDRIVE` | SkillEarthDrive |
+| 2324 | 赫斯珀洛斯之光 `LG_HESPERUSLIT` | SkillHesperusLit |
+| 2325 | 灵感 `LG_INSPIRATION` | StatusSkillImpl |
+| 5013 | 王者恩典 `LG_KINGS_GRACE` | SkillKingsGrace；地面单位 Kings_Grace |
+| 5014 | 全力推进 `ALL_FULL_THROTTLE` | StatusSkillImpl |
+| 5255 | 防御姿态 `IG_GUARD_STANCE` | StatusSkillImpl |
+| 5256 | 守护者之盾 `IG_GUARDIAN_SHIELD` | SkillGuardianShield |
+| 5257 | 反弹之盾 `IG_REBOUND_SHIELD` | StatusSkillImpl |
+| 5258 | 盾牌修炼 `IG_SHIELD_MASTERY` | status／battle／pc 共享被动与前置条件 |
+| 5259 | 矛剑修炼 `IG_SPEAR_SWORD_M` | status／battle／pc 共享被动与前置条件 |
+| 5260 | 攻击姿态 `IG_ATTACK_STANCE` | StatusSkillImpl |
+| 5261 | 终极牺牲 `IG_ULTIMATE_SACRIFICE` | SkillUltimateSacrifice |
+| 5262 | 神圣盾牌 `IG_HOLY_SHIELD` | StatusSkillImpl |
+| 5263 | 大审判 `IG_GRAND_JUDGEMENT` | SkillGrandJudgement |
+| 5264 | 审判十字 `IG_JUDGEMENT_CROSS` | SkillJudgementCross |
+| 5265 | 盾牌射击 `IG_SHIELD_SHOOTING` | SkillShieldShooting |
+| 5266 | 过度斩击 `IG_OVERSLASH` | SkillOverSlash |
+| 5267 | 十字雨 `IG_CROSS_RAIN` | SkillCrossRain；地面单位 Cross_Rain |
+| 6503 | 光辉长矛 `IG_RADIANT_SPEAR` | SkillRadiantSpear |
+| 6504 | 帝国十字 `IG_IMPERIAL_CROSS` | SkillImperialCross |
+| 6505 | 帝国压力 `IG_IMPERIAL_PRESSURE` | SkillImperialPressure |
