@@ -14,7 +14,7 @@
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 89 个技能及派生路径复查完成，修复与验证通过 |
 | 7 | 魔法师／贤者／妖术师／元素大师 | 93 个技能及随机／精灵派生入口复查完成，修复与验证通过 |
 | 8 | 商人／炼金术师／基因学者／生物学者 | 71 个主技能、58 个生命体技能及派生路径复查完成，修复与验证通过 |
-| 9 | 服事／武僧／修罗／审判官 | 待复查 |
+| 9 | 服事／武僧／修罗／审判官 | 78 个技能及连招／反击派生路径复查完成，修复与验证通过 |
 | 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 待复查 |
 | 11 | 弓箭手／诗人、舞娘及对应三、四转 | 待复查 |
 | 12 | 待确认是否为此前单独审查的骑士线 | 待复查 |
@@ -968,3 +968,123 @@ node tests/mechanic-resources.test.mjs ../../work/skill-review/genetic-round2-me
 | 8057 | 神圣之马 `MH_HEILIGE_PFERD` | SkillHeiligePferd |
 | 8058 | 黄金音调 `MH_GOLDENE_TONE` | SkillGoldeneTone |
 | 8059 | 炽热熔岩 `MH_BLAZING_LAVA` | 共享被动属性／技能前置 |
+
+
+## 武僧／修罗线工作记录
+
+### 范围和共享路径
+
+重新从 Acolyte、Acolyte_High、Monk、Champion、Sura、Sura_T、Inquisitor 当前技能树提取 78 个主技能，逐项复读独立实现与工厂入口。服事继承部分沿用本轮第 3 线，额外复查武僧至四转的以下共享路径：
+
+- 气弹创建、按时间排序、到期与消耗，吸收气弹／灵符、传递、潜龙升天扩容与结束时恢复五气弹上限；点穴攻击与受击补充气弹。
+- 三连击至阿修罗、双龙脚至虎炮／地狱之门的技能前置、连招目标与状态通知、AGI／DEX 延迟修正、阿修罗 SP 清空及爆气结束。
+- 闪光连击三个定时阶段、已学等级读取、目标距离／消失判断，以及拳套箭的延迟击退方向、撞墙追加；新月肘击派生反击、闪电步、真剑百破的双方状态解除。
+- 诅咒圆环的成功目标计数、气弹上限与扣除、施法者关联计数及目标结束通知；同步核对同实现来源的魔物版。
+- 虎炮 HP／SP 倍率、地狱之门额外伤害、治疗与坐下恢复、武器和拳套被动；审判官三种信念互斥、三个阶段前置、目标印记替换／移除和气弹免耗条件。
+- 客户端选点／目标施法、动作、伤害与成功通知、地面效果、球体／束缚通知和原生 STR 依赖。范围动画标志经过 `flag & 0xFFF` 才进入伤害计算，不会被第三式火焰弹误计为额外段数；未根据单个局部变量误改此路径。
+
+### 已复现并修复：诅咒圆环的计数契约丢失
+
+`map_forcountinrange` 累加回调返回值，并据此停止遍历；原实现通过 `skill_area_sub` 调用通用无伤害分派，但成功分派返回 0。结果是成功束缚仍不增加计数，可以越过气弹数量限制束缚更多目标，随后按零人数扣气弹并建立错误的施法者关联状态。
+
+改为技能专用的计数回调：只有成功束缚才返回 1；死亡、Boss、非敌对、免疫或已有束缚等失败目标不占人数。人数上限同时受本次记录的气弹数和当前实际剩余气弹约束，零气弹不进入“零代表无限制”的地图遍历模式。实际成功人数决定气弹消耗和施法者状态，没有目标时不建立自我束缚。
+
+魔物版复用相同实现，保留对每个目标原有的 50% 成功率及非玩家最多 15 个目标。已经存在成功目标时，施法者关联状态不再额外作一次 50% 随机判定，避免受害者已束缚但施法者没有关联状态而无法及时解除。两种技能 ID、持续时间和范围继续分别从数据库读取。
+
+### 验证与保留边界
+
+- 新增 `tests/monk-bindings.test.mjs`，提取真实圆环实现编译执行，覆盖 0／1／2／5／15 气弹，夹杂 Boss、免疫、死亡和非敌对目标，仅一个有效目标、全部失败、当前气弹少于施放时记录，以及魔物版 15 人上限和 50% 传参。旧实现断言失败，修复后 UBSan 通过。
+- `tests/monk-combat.test.mjs` 回归通过：地狱之门逐级 SP 加成、交错延迟击退、圆环逐目标释放及施法者消失、虎炮普通／连招启动与范围通知。
+- 服务端 `map-server` 编译通过，未重启在线服务；客户端 5 个测试文件共 34 项通过。48 个 STR 和 663 个关联资源通过本机 Gateway 读取及结构校验；78 个技能的 ID、名称键和等级与客户端全部一致。
+- 本轮客户端未改动，不重复构建相同 PWA。没有宣称逐技能真人战斗、人工听音或全部旧程序式效果已还原。
+- 第一轮记录的未知 STR／AGI／POW 系数和 Power Velocity 高于五气弹时的产品规则继续保留，不凭猜测更改平衡。测试与原始清单存于忽略目录 `work/skill-review/monk-round2-*`。
+
+复现命令（服务端仓库）：
+
+```sh
+node tests/monk-bindings.test.mjs ../../work/skill-review/monk-round2-bindings --no-color
+node tests/monk-combat.test.mjs ../../work/skill-review/monk-round2-combat --no-color
+```
+
+### 本轮逐技能覆盖
+
+| ID | 技能 | 实现入口 |
+| --- | --- | --- |
+| 22 | 天使之护 `AL_DP` | shared/passive |
+| 23 | 恶魔克星 `AL_DEMONBANE` | shared/passive |
+| 24 | 光猎 `AL_RUWACH` | ruwach.cpp |
+| 25 | 光之障壁 `AL_PNEUMA` | pneuma.cpp |
+| 26 | 瞬间移动 `AL_TELEPORT` | teleport.cpp |
+| 27 | 传送之阵 `AL_WARP` | warpportal.cpp |
+| 28 | 治愈术 `AL_HEAL` | heal.cpp |
+| 29 | 敏捷提升 `AL_INCAGI` | incagi.cpp |
+| 30 | 敏捷下降 `AL_DECAGI` | decagi.cpp |
+| 31 | Aqua Benedicta `AL_HOLYWATER` | holywater.cpp |
+| 32 | Signum Crucis `AL_CRUCIS` | crucis.cpp |
+| 33 | Angelus `AL_ANGELUS` | angelus.cpp |
+| 34 | Blessing `AL_BLESSING` | blessing.cpp |
+| 35 | Cure `AL_CURE` | cure.cpp |
+| 156 | Holy Light `AL_HOLYLIGHT` | holylight.cpp |
+| 259 | 铁砂掌 `MO_IRONHAND` | shared/passive |
+| 260 | 心灵震波 `MO_SPIRITSRECOVERY` | shared/passive |
+| 261 | 气弹召唤 `MO_CALLSPIRITS` | summonspiritsphere.cpp |
+| 262 | 气弹吸收 `MO_ABSORBSPIRITS` | absorbspiritsphere.cpp |
+| 263 | 三连击 `MO_TRIPLEATTACK` | ragingtrifectablow.cpp |
+| 264 | 残影 `MO_BODYRELOCATION` | snap.cpp |
+| 265 | Dodge `MO_DODGE` | shared/passive |
+| 266 | Occult Impaction `MO_INVESTIGATE` | occultimpaction.cpp |
+| 267 | Throw Spirit Sphere `MO_FINGEROFFENSIVE` | throwspiritsphere.cpp |
+| 268 | Mental Strength `MO_STEELBODY` | StatusSkillImpl |
+| 269 | Root `MO_BLADESTOP` | StatusSkillImpl |
+| 270 | Fury `MO_EXPLOSIONSPIRITS` | StatusSkillImpl |
+| 271 | Asura Strike `MO_EXTREMITYFIST` | asurastrike.cpp |
+| 272 | Raging Quadruple Blow `MO_CHAINCOMBO` | ragingquadrupleblow.cpp |
+| 273 | Raging Thrust `MO_COMBOFINISH` | ragingthrust.cpp |
+| 370 | 罗刹破凰拳 `CH_PALMSTRIKE` | ragingpalmstrike.cpp |
+| 371 | 冰川拳 `CH_TIGERFIST` | glacierfist.cpp |
+| 372 | 连环全身掌 `CH_CHAINCRUSH` | chaincrushcombo.cpp |
+| 401 | 禅 `CH_SOULCOLLECT` | zen.cpp |
+| 1015 | 气功转化 `MO_KITRANSLATION` | kitranslation.cpp |
+| 1016 | 气功爆破 `MO_BALKYOUNG` | kiexplosion.cpp |
+| 2326 | 龙连击 `SR_DRAGONCOMBO` | dragoncombo.cpp |
+| 2327 | 天网击 `SR_SKYNETBLOW` | skynetblow.cpp |
+| 2328 | 大地震撼 `SR_EARTHSHAKER` | earthshaker.cpp |
+| 2329 | 堕落帝国 `SR_FALLENEMPIRE` | fallenempire.cpp |
+| 2330 | 虎炮 `SR_TIGERCANNON` | tigercannon.cpp |
+| 2332 | 狂暴爆破 `SR_RAMPAGEBLASTER` | rampageblaster.cpp |
+| 2333 | 新月肘击 `SR_CRESCENTELBOW` | StatusSkillImpl |
+| 2334 | 诅咒圆环 `SR_CURSEDCIRCLE` | cursedcircle.cpp |
+| 2335 | 闪电步 `SR_LIGHTNINGWALK` | StatusSkillImpl |
+| 2336 | 拳套箭 `SR_KNUCKLEARROW` | knucklearrow.cpp |
+| 2337 | 风车 `SR_WINDMILL` | windmill.cpp |
+| 2338 | 升龙 `SR_RAISINGDRAGON` | raisingdragon.cpp |
+| 2340 | 力量同化 `SR_ASSIMILATEPOWER` | assimilatepower.cpp |
+| 2341 | Power Velocity `SR_POWERVELOCITY` | powervelocity.cpp |
+| 2343 | Gate of Hell `SR_GATEOFHELL` | gateofhell.cpp |
+| 2344 | Gentle Touch - Quiet `SR_GENTLETOUCH_QUIET` | gentletouchquiet.cpp |
+| 2345 | Gentle Touch - Cure `SR_GENTLETOUCH_CURE` | gentletouchcure.cpp |
+| 2346 | Gentle Touch - Energy Gain `SR_GENTLETOUCH_ENERGYGAIN` | StatusSkillImpl |
+| 2347 | Gentle Touch - Change `SR_GENTLETOUCH_CHANGE` | StatusSkillImpl |
+| 2348 | Gentle Touch - Revitalize `SR_GENTLETOUCH_REVITALIZE` | StatusSkillImpl |
+| 2517 | Howling of Lion `SR_HOWLINGOFLION` | howlingoflion.cpp |
+| 2518 | Ride In Lightening `SR_RIDEINLIGHTNING` | rideinlightening.cpp |
+| 5009 | 闪光连击 `SR_FLASHCOMBO` | flashcombo.cpp |
+| 5014 | 全力推进 `ALL_FULL_THROTTLE` | shared/passive |
+| 5238 | Powerful Faith `IQ_POWERFUL_FAITH` | StatusSkillImpl |
+| 5239 | Firm Faith `IQ_FIRM_FAITH` | StatusSkillImpl |
+| 5240 | Will Of Faith `IQ_WILL_OF_FAITH` | shared/passive |
+| 5241 | Oleum Sanctum `IQ_OLEUM_SANCTUM` | oleumsanctum.cpp |
+| 5242 | 真诚信仰 `IQ_SINCERE_FAITH` | StatusSkillImpl |
+| 5243 | 巨大火焰爆破 `IQ_MASSIVE_F_BLASTER` | massiveflameblaster.cpp |
+| 5244 | 爆炸爆破 `IQ_EXPOSION_BLASTER` | explosionblaster.cpp |
+| 5245 | 第一烙印 `IQ_FIRST_BRAND` | firstbrand.cpp |
+| 5246 | 第一信仰之力 `IQ_FIRST_FAITH_POWER` | StatusSkillImpl |
+| 5247 | 审判 `IQ_JUDGE` | StatusSkillImpl |
+| 5248 | 第二火焰 `IQ_SECOND_FLAME` | secondflame.cpp |
+| 5249 | 第二信仰 `IQ_SECOND_FAITH` | secondfaith.cpp |
+| 5250 | 第二审判 `IQ_SECOND_JUDGEMENT` | secondjudgement.cpp |
+| 5251 | 第三惩罚 `IQ_THIRD_PUNISH` | thirdpunish.cpp |
+| 5252 | 第三火焰炸弹 `IQ_THIRD_FLAME_BOMB` | thirdflamebomb.cpp |
+| 5253 | 第三奉献 `IQ_THIRD_CONSECRATION` | thirdconsecration.cpp |
+| 5254 | 第三驱魔之火 `IQ_THIRD_EXOR_FLAME` | StatusSkillImpl |
+| 6519 | Blazing Flame Blast `IQ_BLAZING_FLAME_BLAST` | blazingflameblast.cpp |
