@@ -10,7 +10,7 @@
 | 2 | 魔法师／巫师／大法师／至高法师 | 78 个技能及派生入口复查完成，修复与验证通过 |
 | 3 | 服事／牧师／大主教／枢机主教 | 77 个技能及派生入口复查完成，修复与验证通过 |
 | 4 | 剑士／十字军／皇家卫士／帝国卫士 | 70 个技能及共享路径复查完成，修复与验证通过 |
-| 5 | 盗贼／刺客／十字斩首者／暗影十字 | 待复查 |
+| 5 | 盗贼／刺客／十字斩首者／暗影十字 | 57 个技能及共享路径复查完成，修复与验证通过 |
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 待复查 |
 | 7 | 魔法师／贤者／妖术师／元素大师 | 待复查 |
 | 8 | 商人／炼金术师／基因学者／生物学者 | 待复查 |
@@ -449,3 +449,86 @@ node tests/hunter-status.test.mjs ../../work/skill-review/hunter-status-test --n
 | 6503 | 光辉长矛 `IG_RADIANT_SPEAR` | SkillRadiantSpear |
 | 6504 | 帝国十字 `IG_IMPERIAL_CROSS` | SkillImperialCross |
 | 6505 | 帝国压力 `IG_IMPERIAL_PRESSURE` | SkillImperialPressure |
+
+## 刺客线复查结果
+
+从当前 Thief、Thief_High、Assassin、Assassin_Cross、Guillotine_Cross、Guillotine_Cross_T、Shadow_Cross 技能树重新提取 57 个去重技能。复查独立实现、双持／拳刃／回避被动、隐身与破隐、毒药制作和涂毒菜单、状态周期、地面毒烟、反击／连击条件、资源消耗及四转伤痕；客户端复查目标选择、施放、通知阶段和效果资源。
+
+### 已复现并修复：暗影伤痕到期仍保留旧层数
+
+暗影武器产生的伤痕每层都有独立计时器。旧代码删除到期计时器后，只有全部到期才解除状态；部分到期时没有更新状态层数与同步封包，伤害仍使用旧层数。状态提前解除后也没有取消剩余计时器，再次施加时会混入旧层数。
+
+修复为每层到期同步剩余层数，状态结束时取消全部残留计时器并发送零层。新状态申请失败不再建立计时器；登出前清除该状态，避免把依赖内存计时器的无限状态保存后恢复成永久伤痕。保留现有每层增伤公式、概率和层数上限，不猜测调整上游未确认系数。
+
+`tests/shadow-scar.test.mjs` 提取生产计时、添加、清理方法及状态结束分支编译执行，覆盖交错到期、最后一层到期、提前解除、再次施加、100 层上限、状态拒绝和对象不存在。旧代码在三层减少到两层时断言失败，修复后通过，启用未定义行为检测。
+
+### 验证与限制
+
+- 服务端 `map-server` 与文档站构建通过，状态数据库解析与登出清理标志检查通过；未重启在线服务。
+- 新增伤痕生命周期回归及既有 `assassin-poison.test.mjs` 通过；继续覆盖毒药 HP／SP 边界、武器格挡攻击类型、八种涂毒选择与失效菜单、幻觉行走单次 HP 消耗。
+- 客户端 6 个测试文件、26 项测试通过，覆盖刺客效果通知、技能使用／目标和四转动作／效果／地面单位。
+- 57 个技能的 ID、名称键和等级上限与客户端逐项一致；18 个 STR 和 280 个依赖经 Gateway 读取检查无缺失。
+- 客户端本轮没有修改，不重复构建相同 PWA。未逐技能实机战斗或人工听音；毒烟／毒液印记旧视觉仍简化，伤痕层数封包同步不等于已完成人工视觉验收。
+- 新毒产量取模前由配方需求重新检查新毒研究等级，不会因菜单期间重置技能而直接除零；野蛮冲击的隐匿附加段数由共享范围入口先清零后设置，施法入口也保留其超越隐匿，不作为缺陷修改。
+
+### 本轮逐技能覆盖
+
+| ID | 技能 | 服务端复查入口 |
+| --- | --- | --- |
+| 48 | Double Attack `TF_DOUBLE` | SkillDoubleAttack |
+| 49 | Improve Dodge `TF_MISS` | status／battle／skill 共享被动、状态与前置条件 |
+| 50 | Steal `TF_STEAL` | SkillSteal |
+| 51 | Hiding `TF_HIDING` | SkillHiding |
+| 52 | Envenom `TF_POISON` | SkillEnvenom |
+| 53 | Detoxify `TF_DETOXIFY` | SkillDetoxify |
+| 132 | 右手修炼 `AS_RIGHT` | status／battle／skill 共享被动、状态与前置条件 |
+| 133 | 左手修炼 `AS_LEFT` | status／battle／skill 共享被动、状态与前置条件 |
+| 134 | 拳刃修炼 `AS_KATAR` | status／battle／skill 共享被动、状态与前置条件 |
+| 135 | 隐匿 `AS_CLOAKING` | SkillCloaking |
+| 136 | 音速投掷 `AS_SONICBLOW` | SkillSonicBlow |
+| 137 | 爪痕 `AS_GRIMTOOTH` | SkillGrimtooth |
+| 138 | 毒性附加 `AS_ENCHANTPOISON` | SkillEnchantPoison |
+| 139 | 毒性反弹 `AS_POISONREACT` | StatusSkillImpl |
+| 140 | 毒尘 `AS_VENOMDUST` | SkillVenomDust |
+| 141 | 毒液散播 `AS_SPLASHER` | SkillVenomSplasher |
+| 149 | 沙尘攻击 `TF_SPRINKLESAND` | SkillSandAttack |
+| 150 | 后滑 `TF_BACKSLIDING` | SkillBackSlide |
+| 151 | 寻找石头 `TF_PICKSTONE` | SkillFindStone |
+| 152 | Stone Fling `TF_THROWSTONE` | SkillStoneFling |
+| 376 | 高级拳刃修炼 `ASC_KATAR` | status／battle／skill 共享被动、状态与前置条件 |
+| 378 | 致命毒药附加 `ASC_EDP` | SkillEnchantDeadlyPoison |
+| 379 | 灵魂破坏 `ASC_BREAKER` | SkillSoulDestroyer |
+| 406 | 陨石突袭 `ASC_METEORASSAULT` | SkillMeteorAssault |
+| 407 | 制作致命毒药 `ASC_CDP` | SkillCreateDeadlyPoison |
+| 1003 | 音速加速 `AS_SONICACCEL` | status／battle／skill 共享被动、状态与前置条件 |
+| 1004 | 投掷毒刃 `AS_VENOMKNIFE` | SkillThrowVenomKnife |
+| 2021 | 毒液印记 `GC_VENOMIMPRESS` | StatusSkillImpl |
+| 2022 | 十字冲击 `GC_CROSSIMPACT` | SkillCrossImpact |
+| 2023 | 黑暗幻影 `GC_DARKILLUSION` | SkillDarkIllusion |
+| 2024 | 研究新毒药 `GC_RESEARCHNEWPOISON` | status／battle／skill 共享被动、状态与前置条件 |
+| 2025 | 制作新毒药 `GC_CREATENEWPOISON` | SkillCreateNewPoison |
+| 2026 | 解毒剂 `GC_ANTIDOTE` | SkillAntidote |
+| 2027 | 武器涂毒 `GC_POISONINGWEAPON` | SkillPoisoningWeapon |
+| 2028 | 武器格挡 `GC_WEAPONBLOCKING` | StatusSkillImpl |
+| 2029 | 反击斩 `GC_COUNTERSLASH` | SkillCounterSlash |
+| 2030 | 武器粉碎 `GC_WEAPONCRUSH` | SkillWeaponCrush |
+| 2031 | 毒液压力 `GC_VENOMPRESSURE` | SkillVenomPressure |
+| 2032 | 毒烟 `GC_POISONSMOKE` | SkillPoisonSmoke |
+| 2033 | 超越隐匿 `GC_CLOAKINGEXCEED` | SkillCloakingExceed |
+| 2034 | 幽灵威胁 `GC_PHANTOMMENACE` | SkillPhantomMenace |
+| 2035 | 幻觉行走 `GC_HALLUCINATIONWALK` | SkillHallucinationWalk |
+| 2036 | 滚动切割 `GC_ROLLINGCUTTER` | SkillRollingCutter |
+| 2037 | 十字撕裂斩 `GC_CROSSRIPPERSLASHER` | SkillCrossRipperSlasher |
+| 5001 | 暗黑之爪 `GC_DARKCROW` | SkillDarkClaw |
+| 5014 | 全力推进 `ALL_FULL_THROTTLE` | status／battle／skill 共享被动、状态与前置条件 |
+| 5285 | 暗影超越 `SHC_SHADOW_EXCEED` | StatusSkillImpl |
+| 5286 | 舞动之刃 `SHC_DANCING_KNIFE` | SkillDancingKnife |
+| 5287 | Savage Impact `SHC_SAVAGE_IMPACT` | SkillSavageImpact |
+| 5288 | Shadow Sense `SHC_SHADOW_SENSE` | status／battle／skill 共享被动、状态与前置条件 |
+| 5289 | Eternal Slash `SHC_ETERNAL_SLASH` | SkillEternalSlash |
+| 5290 | Potent Venom `SHC_POTENT_VENOM` | StatusSkillImpl |
+| 5291 | Shadow Stab `SHC_SHADOW_STAB` | SkillShadowStab |
+| 5292 | Impact Crater `SHC_IMPACT_CRATER` | SkillImpactCrater |
+| 5293 | Enchanting Shadow `SHC_ENCHANTING_SHADOW` | StatusSkillImpl；修复伤痕层数与计时器生命周期 |
+| 5294 | Fatal Shadow Crow `SHC_FATAL_SHADOW_CROW` | SkillFatalShadowCrow |
+| 6511 | Cross Slash `SHC_CROSS_SLASH` | SkillCrossSlash |
