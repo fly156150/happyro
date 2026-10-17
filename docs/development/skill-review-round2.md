@@ -12,7 +12,7 @@
 | 4 | 剑士／十字军／皇家卫士／帝国卫士 | 70 个技能及共享路径复查完成，修复与验证通过 |
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 57 个技能及共享路径复查完成，修复与验证通过 |
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 89 个技能及派生路径复查完成，修复与验证通过 |
-| 7 | 魔法师／贤者／妖术师／元素大师 | 待复查 |
+| 7 | 魔法师／贤者／妖术师／元素大师 | 93 个技能及随机／精灵派生入口复查完成，修复与验证通过 |
 | 8 | 商人／炼金术师／基因学者／生物学者 | 待复查 |
 | 9 | 服事／武僧／修罗／审判官 | 待复查 |
 | 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 待复查 |
@@ -650,3 +650,144 @@ node tests/hunter-status.test.mjs ../../work/skill-review/hunter-status-test --n
 | 6506 | 冲锋打击 `MT_RUSH_STRIKE` | SkillRushStrike |
 | 6507 | Powerful Swing `MT_POWERFUL_SWING` | SkillPowerfulSwing |
 | 6508 | Energy Cannonade `MT_ENERGY_CANNONADE` | SkillEnergyCannonade |
+
+
+## 贤者线工作记录
+
+完成 Mage、Mage_High、Sage、Professor、Sorcerer、Sorcerer_T、Elemental_Master 的 93 个去重技能，以及随机技能、五属性元素爆破与精灵自身技能的复查。
+
+### 已复查的路径
+
+- 当前技能树重新提取 93 个技能；复读二至四转独立实现、五属性元素爆破、随机技能派生实现，以及元素精灵目录全部独立实现。继承法师技能结合本轮巫师线记录复核自动念咒、魔法拳、高级精灵增益及能量外套反射联动。
+- 精灵创建、持久化与接收、模式切换、攻击／跟随 AI、资源维持、到期与移除；精灵攻击的近距离和追踪施放存在资源结算差异，已复现并修复。
+- 自动念咒解锁与提交、普攻触发、双重咏唱延时、魔法拳施放条件与普攻替换、法术解除读取原技能消耗的时序。
+- 属性领域重放与剩余时长、元素领域叠加和抵消、离开范围后的清理，三／四转持续伤害地面单位、极限空虚延迟拉取、属性徽章和结晶状态的初始化与定时处理。
+
+### 已复现并修复
+
+- 结晶状态的每秒 2% 最大 HP 扣除先进行 32 位无符号乘法，最大 HP 达 2,147,483,648 时错误变成零。改为先转为 `int64` 再乘除，保留资源不足和到期行为。
+- 精神耗弱将当前 SP 乘二时发生同类回绕；改为 64 位乘法后交给原有伤害结算。两项均覆盖正常值、零、小值和 32 位边界，并分别验证旧代码失败、修复后通过。
+- 继承技能能量外套的普通伤害分支已修复，但魔法反射分支仍使用旧的 32 位 SP 百分比和消耗算法。同步采用宽整数；扩充既有回归，同时执行普通伤害和反射分支，覆盖 SP 分档边界和消耗失败。旧反射分支失败，修复后通过。
+- 扩充 `sorcerer-resources.test.mjs` 和 `energy-coat.test.mjs`，直接提取当前生产分支编译执行，启用 UBSan；30 个精灵辅助技能的既有状态开关回归亦通过。
+
+### 当前验证
+
+- `map-server` 编译通过，未重启在线服务。
+- 客户端 7 个文件、36 项测试通过：妖术师效果路由、四转封包阶段、效果／地面单位／动作映射、技能目标与施放入口。
+- 60 个 STR 和 889 个依赖纹理／音效通过 Gateway 读取及结构检查。
+- 当前 93 个技能的客户端 ID／名称键一致；致盲迷雾仍为服务端数据库上限 5、客户端 1，已确认 Professor 职业技能树仅允许学习 1 级，有效上限一致，不修改生成源。
+
+### 精灵追踪施法修复
+
+旧代码在射程外先移动，再按估算步程直接调用 `skill_castend_id/pos`，跳过资源检查和扣除，也绕过正常施法起手。提取旧函数验证：近距离攻击消耗 20 SP，远距离完成攻击后仍保留原来的 100 SP。
+
+改为记录待执行目标和本次命令是否强制施放，由已有精灵 AI 在进入射程后重新经过同一 `elemental_action` 路径。等待期间不预扣资源；执行时重新检查目标、地图、资源、状态和施法限制。目标失效、模式切换、返回主人或移除地图时清理待执行命令。移除假冒施法计时器和未使用的旧 `skill_timer` 字段。
+
+强制施放状态从主人共享的 `skill_id_old` 移到精灵本次命令上下文，保留既有九种精灵技能的即时施放规则，不再把主人指针写入 `unit_skilluse_id2` 的玩家施法变量，避免精灵施法混入玩家后续处理。命令完成后清除标记，不改变其他精灵技能的咏唱规则。
+
+新增 `tests/elemental-action.test.mjs`，执行实际行动、恢复追踪、取消函数和即时施放判断，覆盖近／远距离、目标／地面技能、普通／强制命令、行走中 SP 耗尽、目标消失／死亡／跨地图／非敌对、禁止施法、走路失败、施法占用、动作延迟及取消后不再施放。旧路径资源断言失败，修复回归与 `map-server` 编译通过。
+
+### 覆盖边界
+
+- 书籍熟练、龙知识、自由施法、精灵共鸣和魔法书精通核对对应属性／攻击／施法／召唤路径；被动技能不要求主动特效。
+- 全部 93 项数据库目标类型、消耗、状态及技能树上限与独立实现和共享施放路径核对；客户端自动念咒选单按服务端列表返回技能 ID，移动端和桌面端共用选择回调。
+- 延续已知限制：随机技能 Gravity 没有实质效果，部分早期精灵技能缺独立原生动画，风刃出血概率存在上游未确认注释；未按推测修改官方平衡数值。
+- 本轮是完整职业线代码审查和定向回归，未进行逐技能实机战斗／人工听音验收。客户端没有修改，不重建相同 PWA；未重启在线地图服务。
+
+### 本轮逐技能覆盖
+
+| ID | 技能 | 服务端复查入口 |
+| --- | --- | --- |
+| 9 | 增加SP恢复 `MG_SRECOVERY` | status／battle／skill／pc 共享被动与前置条件 |
+| 10 | 火狩 `MG_SIGHT` | SkillSight |
+| 11 | 圣灵召唤 `MG_NAPALMBEAT` | SkillNapalmBeat |
+| 12 | 暗之障壁 `MG_SAFETYWALL` | SkillSafetyWall |
+| 13 | 灵魂打击 `MG_SOULSTRIKE` | SkillSoulStrike |
+| 14 | 冰箭术 `MG_COLDBOLT` | SkillColdBolt |
+| 15 | 冰冻术 `MG_FROSTDIVER` | SkillFrostDiver |
+| 16 | 石化术 `MG_STONECURSE` | SkillStoneCurse |
+| 17 | 火球术 `MG_FIREBALL` | SkillFireBall |
+| 18 | 火墙术 `MG_FIREWALL` | SkillFireWall |
+| 19 | 火箭术 `MG_FIREBOLT` | SkillFireBolt |
+| 20 | 雷击术 `MG_LIGHTNINGBOLT` | SkillLightningBolt |
+| 21 | 雷暴术 `MG_THUNDERSTORM` | SkillThunderStorm |
+| 90 | Earth Spike `WZ_EARTHSPIKE` | SkillEarthSpike |
+| 91 | Heaven's Drive `WZ_HEAVENDRIVE` | SkillHeavensDrive |
+| 93 | Sense `WZ_ESTIMATION` | SkillSense |
+| 157 | Energy Coat `MG_ENERGYCOAT` | SkillEnergyCoat |
+| 274 | Study `SA_ADVANCEDBOOK` | status／battle／skill／pc 共享被动与前置条件 |
+| 275 | Cast Cancel `SA_CASTCANCEL` | SkillCastCancel |
+| 276 | Magic Rod `SA_MAGICROD` | SkillMagicRod |
+| 277 | Spell Breaker `SA_SPELLBREAKER` | SkillSpellBreaker |
+| 278 | Free Cast `SA_FREECAST` | status／battle／skill／pc 共享被动与前置条件 |
+| 279 | Hindsight `SA_AUTOSPELL` | SkillHindsight |
+| 280 | Endow Blaze `SA_FLAMELAUNCHER` | SkillEndowBlaze |
+| 281 | Endow Tsunami `SA_FROSTWEAPON` | SkillEndowTsunami |
+| 282 | Endow Tornado `SA_LIGHTNINGLOADER` | SkillEndowTornado |
+| 283 | Endow Quake `SA_SEISMICWEAPON` | SkillEndowQuake |
+| 284 | Dragonology `SA_DRAGONOLOGY` | status／battle／skill／pc 共享被动与前置条件 |
+| 285 | Volcano `SA_VOLCANO` | SkillVolcano |
+| 286 | Deluge `SA_DELUGE` | SkillDeluge |
+| 287 | 旋风 `SA_VIOLENTGALE` | SkillWhirlwind |
+| 288 | 磁场大地 `SA_LANDPROTECTOR` | SkillMagneticEarth |
+| 289 | 解除魔法 `SA_DISPELL` | SkillDispell |
+| 290 | 戏法 `SA_ABRACADABRA` | SkillHocusPocus |
+| 373 | 享乐 `PF_HPCONVERSION` | SkillIndulge |
+| 374 | 灵魂吐息 `PF_SOULCHANGE` | SkillSoulExhale |
+| 375 | 灵魂虹吸 `PF_SOULBURN` | SkillSoulSiphon |
+| 402 | 心灵破坏者 `PF_MINDBREAKER` | SkillMindBreaker |
+| 403 | 预知 `PF_MEMORIZE` | StatusSkillImpl |
+| 404 | 致盲迷雾 `PF_FOGWALL` | SkillBlindingMist |
+| 405 | 藤蔓束缚 `PF_SPIDERWEB` | SkillFiberLock |
+| 482 | 双重施法 `PF_DOUBLECASTING` | StatusSkillImpl |
+| 1007 | 制作属性转换器 `SA_CREATECON` | SkillCreateElementalConverter |
+| 1008 | 属性转换·水 `SA_ELEMENTWATER` | SkillElementalChangeWater |
+| 1017 | 土属性转换 `SA_ELEMENTGROUND` | SkillElementalChangeEarth |
+| 1018 | 火属性转换 `SA_ELEMENTFIRE` | SkillElementalChangeFire |
+| 1019 | 风属性转换 `SA_ELEMENTWIND` | SkillElementalChangeWind |
+| 2443 | 火焰步 `SO_FIREWALK` | SkillFireWalk |
+| 2444 | 电流步 `SO_ELECTRICWALK` | SkillElectricWalk |
+| 2445 | 法术拳 `SO_SPELLFIST` | SkillSpellFist |
+| 2446 | 大地坟墓 `SO_EARTHGRAVE` | SkillEarthGrave |
+| 2447 | 钻石星尘 `SO_DIAMONDDUST` | SkillDiamondDust |
+| 2448 | 毒爆 `SO_POISON_BUSTER` | SkillPoisonBuster |
+| 2449 | 念力波 `SO_PSYCHIC_WAVE` | SkillPsychicWave |
+| 2450 | Cloud Kill `SO_CLOUD_KILL` | SkillCloudKill |
+| 2451 | Striking `SO_STRIKING` | SkillStriking |
+| 2452 | Warmer `SO_WARMER` | SkillWarmer |
+| 2453 | Vacuum Extreme `SO_VACUUM_EXTREME` | SkillVacuumExtreme |
+| 2454 | Varetyr Spear `SO_VARETYR_SPEAR` | SkillVaretyrSpear |
+| 2455 | Arrullo `SO_ARRULLO` | SkillArrullo |
+| 2456 | Spirit Control `SO_EL_CONTROL` | SkillSpiritControl |
+| 2457 | 召唤火精灵阿格尼 `SO_SUMMON_AGNI` | SkillSummonFireSpiritAgni |
+| 2458 | 召唤水精灵阿夸 `SO_SUMMON_AQUA` | SkillSummonWaterSpiritAqua |
+| 2459 | 召唤风精灵文图斯 `SO_SUMMON_VENTUS` | SkillSummonWindSpiritVentus |
+| 2460 | 召唤地精灵特拉 `SO_SUMMON_TERA` | SkillSummonEarthSpiritTera |
+| 2461 | 元素行动 `SO_EL_ACTION` | SkillElementalAction |
+| 2462 | 四精灵分析 `SO_EL_ANALYSIS` | SkillFourSpiritAnalysis |
+| 2463 | 精灵共鸣 `SO_EL_SYMPATHY` | status／battle／skill／pc 共享被动与前置条件 |
+| 2464 | 精灵恢复 `SO_EL_CURE` | SkillSpiritRecovery |
+| 2465 | 火之徽记 `SO_FIRE_INSIGNIA` | SkillFireInsignia |
+| 2466 | 水之徽记 `SO_WATER_INSIGNIA` | SkillWaterInsignia |
+| 2467 | 风之徽记 `SO_WIND_INSIGNIA` | SkillWindInsignia |
+| 2468 | 地之徽记 `SO_EARTH_INSIGNIA` | SkillEarthInsignia |
+| 5008 | 元素护盾 `SO_ELEMENTAL_SHIELD` | SkillElementalShield |
+| 5014 | 全力推进 `ALL_FULL_THROTTLE` | StatusSkillImpl |
+| 5365 | 魔法书修炼 `EM_MAGIC_BOOK_M` | status／battle／skill／pc 共享被动与前置条件 |
+| 5366 | 法术附魔 `EM_SPELL_ENCHANTING` | StatusSkillImpl |
+| 5367 | 活动燃烧 `EM_ACTIVITY_BURN` | SkillActivityBurn |
+| 5368 | 活动提升 `EM_INCREASING_ACTIVITY` | SkillIncreasingActivity |
+| 5369 | 钻石风暴 `EM_DIAMOND_STORM` | SkillDiamondStorm |
+| 5370 | 雷电之地 `EM_LIGHTNING_LAND` | SkillLightningLand |
+| 5371 | 毒液沼泽 `EM_VENOM_SWAMP` | SkillVenomSwamp |
+| 5372 | 大火灾 `EM_CONFLAGRATION` | SkillConflagration |
+| 5373 | 大地驱动 `EM_TERRA_DRIVE` | SkillTerraDrive |
+| 5374 | 元素精灵精通 `EM_ELEMENTAL_SPIRIT_M` | status／battle／skill／pc 共享被动与前置条件 |
+| 5375 | 召唤阿多尔 `EM_SUMMON_ELEMENTAL_ARDOR` | SkillSummonElementalArdor |
+| 5376 | 召唤迪鲁维奥 `EM_SUMMON_ELEMENTAL_DILUVIO` | SkillSummonElementalDiluvio |
+| 5377 | 召唤普罗塞拉 `EM_SUMMON_ELEMENTAL_PROCELLA` | SkillSummonElementalProcella |
+| 5378 | 召唤泰雷莫图斯 `EM_SUMMON_ELEMENTAL_TERREMOTUS` | SkillSummonElementalTerremotus |
+| 5379 | 召唤塞彭斯 `EM_SUMMON_ELEMENTAL_SERPENS` | SkillSummonElementalSerpens |
+| 5380 | 元素破坏 `EM_ELEMENTAL_BUSTER` | SkillElementalBuster |
+| 5381 | 元素帷幕 `EM_ELEMENTAL_VEIL` | SkillElementalVeil |
+| 6517 | Psychic Stream `EM_PSYCHIC_STREAM` | SkillPsychicStream |
