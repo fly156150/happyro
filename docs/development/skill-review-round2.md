@@ -16,7 +16,7 @@
 | 8 | 商人／炼金术师／基因学者／生物学者 | 71 个主技能、58 个生命体技能及派生路径复查完成，修复与验证通过 |
 | 9 | 服事／武僧／修罗／审判官 | 78 个技能及连招／反击派生路径复查完成，修复与验证通过 |
 | 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 74 个主技能及复制／地面／自动触发路径复查完成，修复与验证通过 |
-| 11 | 弓箭手／诗人、舞娘及对应三、四转 | 待复查 |
+| 11 | 弓箭手／诗人、舞娘及对应三、四转 | 85 个主技能及合奏／重唱／派生路径复查完成，修复与验证通过 |
 | 12 | 待确认是否为此前单独审查的骑士线 | 待复查 |
 
 ## 猎人线工作记录
@@ -1203,3 +1203,130 @@ node tests/rogue-state.test.mjs ../../work/skill-review/rogue-round2-state --no-
 | 6513 | `ABC_CHASING_BREAK` | chasingbreak.cpp |
 | 6514 | `ABC_CHASING_SHOT` | chasingshot.cpp |
 | 6515 | `ABC_ABYSS_FLAME` | abyssflame.cpp |
+
+## 诗人／舞娘双分支工作记录
+
+### 范围与依据
+
+重新从当前 Archer、Archer_High、Bard、Dancer、Clown、Gypsy、Minstrel、Wanderer、Minstrel_T、Wanderer_T、Troubadour、Trouvere 技能树提取 85 个去重主技能，逐项核对数据库、工厂分派、独立实现及共享状态。继承弓箭手结合本轮第 1 线检查；派生覆盖严重暴雨周期、玫瑰绽放后续范围攻击、混音自然结束攻击，以及旧残响／支配烙印对应的现存魔物地面路径。
+
+- 二转歌曲与合奏：Renewal 的统一歌曲分派、敌我／队伍／公会范围、最后歌曲记录、搭档职业／性别／队伍／武器／存活／行动限制、合奏疲劳和月光水车双方舞蹈关联。
+- 进阶：箭雨风暴倍率、人偶控制的双方属性片段／距离／解除、塔罗概率和各牌效果、冷笑话／惊声尖叫的延迟及队友概率、任务技能的目标限制。
+- 三转：单人／队伍增益、课程加成与互斥状态、魔力之歌一次恢复、沉睡恢复周期、狂热之夜消耗、弗丽嘉之歌周期、冥界诗歌地面触发、残响／节奏波动的箭矢属性和消耗、严重暴雨装备冻结与周期伤害。
+- 四转：舞台礼仪的武器及 P.ATK／S.MATK 条件、交响乐与克瓦希尔奏鸣曲、七种歌曲的搭档增益和重唱记录、玫瑰／混音状态的自然结束与提前解除、各伤害倍率／AP／箭矢入口。
+- 重新核对当前技能 ID、最大等级、目标类型、武器限制、状态和地面单位。客户端仍只有已知内部命名差异：318 的 `BA_FROSTJOKER`／`BA_FROSTJOKE`，5068 的 `CG_SPECIALSINGER`／`SKID_CG_SPECIALSINGER`；没有添加兼容别名。
+
+### 已复现并修复
+
+1. 严重暴雨：乐器／鞭子的额外倍率原本依赖 `miscflag & 4`，但当前地面周期入口传入 0，后续初始化也不再设置该标记。改为依据施法者的实际武器类型计算，保留弓及非玩家行为。
+2. 合奏搭档：`skill_check_pc_partner` 用静态计数和 ID 数组保存上一次查询，两个角色交错施法会使后施法者覆盖前者的搭档；大回音直接进入执行分支也可能使用旧结果。改为每次调用使用本地结果并重新查找当前搭档，疲劳、舞蹈关联和搭档 SP 消耗都只作用于本次有效对象；一并验证共享牧师调用。
+3. 安可／回顾：内部重唱直接传入历史等级，而入口只检查该歌曲当前是否已学。重置后重新学习低等级仍可重唱旧高等级。现在施放时取历史等级与当前已学等级的较低值，没有有效等级则失败。
+
+### 验证与边界
+
+- `tests/bard-rainstorm.test.mjs` 提取真实伤害公式：旧实现乐器且标记为 0 时失败；新实现覆盖技能 1–5 级、角色等级 100／175／250、乐器／鞭子／弓／匕首、无关标记及非玩家，UBSan 通过。
+- `tests/bard-partner.test.mjs` 提取真实搭档查询／执行函数：旧实现交错查询后对错误搭档施加疲劳；新实现覆盖两对搭档、离开后的重新查询、大回音直接执行、月光水车已建立施法者状态的时序，以及共享牧师扣 SP 路径。地图枚举由测试提供，未冒充多人实战。
+- `tests/bard-recall.test.mjs` 提取两个真实重唱方法：旧实现重唱 10 级而当前只学 1 级时失败；新实现覆盖历史等级 1／5／10 与当前等级 0／1／3／10 的组合，验证失败通知及实际调用等级。
+- 既有 `tests/bard-song.test.mjs` 回归通过；客户端 4 个文件 20 项测试通过；42 个 STR、420 个贴图依赖均通过本机 Gateway 获取与结构检查。服务端 `map-server` 编译通过，未重启在线服务。
+- 客户端没有修改，不重复构建相同 PWA。未进行逐技能多人实战、人工听音或官方逐帧比对；旧程序效果、课程／四转概率等未定规则仍按第一轮限制记录，人偶控制维持现有属性片段规则。
+
+复现命令（服务端仓库）：
+
+```sh
+node tests/bard-rainstorm.test.mjs ../../work/skill-review/bard-round2-rainstorm --no-color
+node tests/bard-partner.test.mjs ../../work/skill-review/bard-round2-partner --no-color
+node tests/bard-recall.test.mjs ../../work/skill-review/bard-round2-recall --no-color
+node tests/bard-song.test.mjs ../../work/skill-review/bard-round2-song --no-color
+```
+
+原始清单与验证输出位于忽略目录 `work/skill-review/bard-round2-*`。
+
+### 逐技能清单
+
+| ID | 技能 | 实现入口 |
+| --- | --- | --- |
+| 43 | `AC_OWL` | shared/passive |
+| 44 | `AC_VULTURE` | shared/passive |
+| 45 | `AC_CONCENTRATION` | concentration.cpp |
+| 46 | `AC_DOUBLE` | doublestrafe.cpp |
+| 47 | `AC_SHOWER` | arrowshower.cpp |
+| 147 | `AC_MAKINGARROW` | makingarrow.cpp |
+| 148 | `AC_CHARGEARROW` | chargearrow.cpp |
+| 304 | `BD_ADAPTATION` | amp.cpp |
+| 305 | `BD_ENCORE` | encore.cpp |
+| 306 | `BD_LULLABY` | lullaby.cpp |
+| 307 | `BD_RICHMANKIM` | mentalsensing.cpp |
+| 308 | `BD_ETERNALCHAOS` | downtempo.cpp |
+| 309 | `BD_DRUMBATTLEFIELD` | battletheme.cpp |
+| 310 | `BD_RINGNIBELUNGEN` | harmoniclick.cpp |
+| 311 | `BD_ROKISWEIL` | classicalpluck.cpp |
+| 312 | `BD_INTOABYSS` | powerchord.cpp |
+| 313 | `BD_SIEGFRIED` | acousticrhythm.cpp |
+| 315 | `BA_MUSICALLESSON` | shared/passive |
+| 316 | `BA_MUSICALSTRIKE` | melodystrike.cpp |
+| 317 | `BA_DISSONANCE` | unchainedserenade.cpp |
+| 318 | `BA_FROSTJOKER` | unbarringoctave.cpp |
+| 319 | `BA_WHISTLE` | perfecttablature.cpp |
+| 320 | `BA_ASSASSINCROSS` | impressiveriff.cpp |
+| 321 | `BA_POEMBRAGI` | magicstrings.cpp |
+| 322 | `BA_APPLEIDUN` | songoflutie.cpp |
+| 323 | `DC_DANCINGLESSON` | shared/passive |
+| 324 | `DC_THROWARROW` | slingingarrow.cpp |
+| 325 | `DC_UGLYDANCE` | hipshaker.cpp |
+| 326 | `DC_SCREAM` | dazzler.cpp |
+| 327 | `DC_HUMMING` | focusballet.cpp |
+| 328 | `DC_DONTFORGETME` | slowgrace.cpp |
+| 329 | `DC_FORTUNEKISS` | ladyluck.cpp |
+| 330 | `DC_SERVICEFORYOU` | gypsyskiss.cpp |
+| 394 | `CG_ARROWVULCAN` | vulcanarrow.cpp |
+| 395 | `CG_MOONLIT` | shelteringbliss.cpp |
+| 396 | `CG_MARIONETTE` | marionettecontrol.cpp |
+| 488 | `CG_HERMODE` | wandofhermode.cpp |
+| 489 | `CG_TAROTCARD` | tarotcardoffate.cpp |
+| 1010 | `BA_PANGVOICE` | pangvoice.cpp |
+| 1011 | `DC_WINKCHARM` | winkofcharm.cpp |
+| 2350 | `WA_SWING_DANCE` | swingdance.cpp |
+| 2351 | `WA_SYMPHONY_OF_LOVER` | symphonyoflovers.cpp |
+| 2352 | `WA_MOONLIT_SERENADE` | moonlitserenade.cpp |
+| 2381 | `MI_RUSH_WINDMILL` | windmillrushattack.cpp |
+| 2382 | `MI_ECHOSONG` | echosong.cpp |
+| 2383 | `MI_HARMONIZE` | harmonize.cpp |
+| 2412 | `WM_LESSON` | shared/passive |
+| 2413 | `WM_METALICSOUND` | metallicsound.cpp |
+| 2414 | `WM_REVERBERATION` | reverberation.cpp |
+| 2418 | `WM_SEVERE_RAINSTORM` | severerainstorm.cpp |
+| 2419 | `WM_POEMOFNETHERWORLD` | poemofthenetherworld.cpp |
+| 2420 | `WM_VOICEOFSIREN` | voiceofsiren.cpp |
+| 2421 | `WM_DEADHILLHERE` | valleyofdeath.cpp |
+| 2422 | `WM_LULLABY_DEEPSLEEP` | deepsleeplullaby.cpp |
+| 2423 | `WM_SIRCLEOFNATURE` | circleofnaturessound.cpp |
+| 2424 | `WM_RANDOMIZESPELL` | improvisedsong.cpp |
+| 2425 | `WM_GLOOMYDAY` | gloomyday.cpp |
+| 2426 | `WM_GREAT_ECHO` | greatecho.cpp |
+| 2427 | `WM_SONG_OF_MANA` | songofmana.cpp |
+| 2428 | `WM_DANCE_WITH_WUG` | dancewithawarg.cpp |
+| 2429 | `WM_SOUND_OF_DESTRUCTION` | soundofdestruction.cpp |
+| 2430 | `WM_SATURDAY_NIGHT_FEVER` | saturdaynightfever.cpp |
+| 2431 | `WM_LERADS_DEW` | leradsdew.cpp |
+| 2432 | `WM_MELODYOFSINK` | melodyofsink.cpp |
+| 2433 | `WM_BEYOND_OF_WARCRY` | warcryofbeyond.cpp |
+| 2434 | `WM_UNLIMITED_HUMMING_VOICE` | unlimitedhummingvoice.cpp |
+| 5007 | `WM_FRIGG_SONG` | friggssong.cpp |
+| 5014 | `ALL_FULL_THROTTLE` | shared/passive |
+| 5068 | `CG_SPECIALSINGER` | skilledspecialsinger.cpp |
+| 5349 | `TR_STAGE_MANNER` | shared/passive |
+| 5350 | `TR_RETROSPECTION` | retrospection.cpp |
+| 5351 | `TR_MYSTIC_SYMPHONY` | StatusSkillImpl |
+| 5352 | `TR_KVASIR_SONATA` | StatusSkillImpl |
+| 5353 | `TR_ROSEBLOSSOM` | roseblossom.cpp |
+| 5355 | `TR_RHYTHMSHOOTING` | rhythmshooting.cpp |
+| 5356 | `TR_METALIC_FURY` | metallicfury.cpp |
+| 5357 | `TR_SOUNDBLEND` | soundblend.cpp |
+| 5358 | `TR_GEF_NOCTURN` | geffenianocturn.cpp |
+| 5359 | `TR_ROKI_CAPRICCIO` | rokicapriccio.cpp |
+| 5360 | `TR_AIN_RHAPSODY` | ainrhapsody.cpp |
+| 5361 | `TR_MUSICAL_INTERLUDE` | musicalinterlude.cpp |
+| 5362 | `TR_JAWAII_SERENADE` | jawaiiserenade.cpp |
+| 5363 | `TR_NIPELHEIM_REQUIEM` | nipelheimrequiem.cpp |
+| 5364 | `TR_PRON_MARCH` | pronmarch.cpp |
+| 6521 | `TR_RHYTHMICAL_WAVE` | rhythmicalwave.cpp |
