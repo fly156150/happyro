@@ -13,7 +13,7 @@
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 57 个技能及共享路径复查完成，修复与验证通过 |
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 89 个技能及派生路径复查完成，修复与验证通过 |
 | 7 | 魔法师／贤者／妖术师／元素大师 | 93 个技能及随机／精灵派生入口复查完成，修复与验证通过 |
-| 8 | 商人／炼金术师／基因学者／生物学者 | 待复查 |
+| 8 | 商人／炼金术师／基因学者／生物学者 | 71 个主技能、58 个生命体技能及派生路径复查完成，修复与验证通过 |
 | 9 | 服事／武僧／修罗／审判官 | 待复查 |
 | 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 待复查 |
 | 11 | 弓箭手／诗人、舞娘及对应三、四转 | 待复查 |
@@ -791,3 +791,180 @@ node tests/hunter-status.test.mjs ../../work/skill-review/hunter-status-test --n
 | 5380 | 元素破坏 `EM_ELEMENTAL_BUSTER` | SkillElementalBuster |
 | 5381 | 元素帷幕 `EM_ELEMENTAL_VEIL` | SkillElementalVeil |
 | 6517 | Psychic Stream `EM_PSYCHIC_STREAM` | SkillPsychicStream |
+
+
+## 炼金／基因线工作记录
+
+### 范围和已核对路径
+
+重新提取 Merchant、Merchant_High、Alchemist、Creator、Genetic、Genetic_T、Biolo 当前技能树的 71 个去重主技能，并复查全部 58 个生命体技能。商人继承部分与本轮第 6 线共用；独立技能核对工厂、目标类型、施放／伤害／状态方法，派生技能继续追踪四属性酸化、疯狂野草、地狱植物、恶魔火焰与扩张。
+
+- 攻击与保护：酸性攻击／强酸火烟、手推车两种攻击、荆棘陷阱／墙、孢子、地狱植物、曼陀罗、四属性酸化及新技能；装备保护、全身与全体保护、影子装备保护、研究报告的材料减免和伤害增益。
+- 制作与治疗：药水辅助／浓缩药水、药水学习及剑斧被动、暮光炼金、料理、特殊药剂、材料转换、仿生制药；配方选择、库存验证、扣除与批量产出。当前技能树已注释植物栽培、投掷物品、炸弹制作；复读其遗留实现用于边界判断，不将其当作当前可学习主技能。
+- 召唤与生命体：植物、海洋球、四种仿生植物及召唤军团的创建、数量限制、删除计时器、主人关系和属性重算；生命体休息、召回、复活及冷却同步；被动属性、亲密度、气弹、两种模式、六段连招、范围攻击、增益、持续扣除和状态结束处理。
+- 客户端：当前技能 ID／等级映射，主人与生命体分别选取施法实体，远距离命令队列与地面选点，制作菜单及材料转换桌面／触屏入口，成功／伤害／地面效果路由及原生资源依赖。
+
+### 本轮修复
+
+1. **召唤物重算读错技能。** 植物、海洋球、四种仿生植物和召唤军团在生成时保存自己的召唤技能与等级。属性重算使用这些值，避免主人施放其他技能后，数据库重载等重算路径丢失召唤 HP／攻击修正或混用地狱树加成。复用第 6 线引入的字段，不另建平行状态。
+2. **催泪瓦斯高 HP 扣除回绕。** 最大 HP 的 5% 先用 `int64` 计算，修复 10 亿 HP 等有效配置下的乘法回绕；没有改变比例或周期。
+3. **施放被拒绝仍扣生命体气弹。** 请求前置检查只验证，气弹改在施放结束且 HP／SP／物品条件通过后扣除，并重新检查剩余数量。未学习或请求等级超过已学等级时先归一化。Blazing And Furious 仍在计算命中数后清空气弹。
+4. **地面生命体技能漏掉独立冷却。** 补齐与目标技能相同的生命体冷却登记，Blast Forge 的 3 秒配置现在生效；无冷却技能仍由原函数忽略零值。
+5. **岩浆流重复概率判定。** 受击入口按 `3 × 技能等级` 的百分比判定一次；删除范围递归中每个目标再次判定概率的覆盖方法，并修正 `<=` 导致的额外 1%。不修改伤害公式。
+6. **SP 恰好足够却不能施放。** 生命体／佣兵共用需求检查将 SP 不足条件改为严格小于消耗值，允许正常耗尽 SP；HP 的保命条件不变。
+
+### 验证和边界
+
+- `tests/genetic-resources.test.mjs` 执行真实召唤方法与属性选择分支，覆盖主人切换技能后的重算、地狱树区别、召唤军团等级和数量、催泪瓦斯高 HP，以及此前治疗、材料、生命体状态与冷却回归。召唤与催泪瓦斯旧实现分别断言失败，修复后通过。
+- `tests/homunculus-casting.test.mjs` 提取实际请求方法、前置检查、资源扣除及冷却分支，覆盖禁用地图、正在施法、动作延迟、未学习、SP 不足、缺少物品、无效目标、技能冷却、气弹不足、正常扣除、Blazing 保留气弹、恰好足够的 SP。岩浆流穷举 0–99 随机结果并验证一次发动命中三个目标，不再逐目标随机跳过。旧气弹、地面冷却、岩浆流实现均复现失败。
+- 上述 C++ 提取测试启用 UBSan；共享召唤路径的 `mechanic-resources.test.mjs` 回归通过。`map-server` 编译通过，未重启在线服务。
+- 7 个客户端测试文件共 55 项通过，覆盖基因／生命体效果、材料菜单、四转映射、伙伴动作与冷却；63 个 STR 和 704 个关联资源通过本机 Gateway 读取及结构校验。客户端未修改，不重建相同 PWA 产物。
+- 129 个数据库条目与客户端常量／等级核对，只有既有通用开店 `ALL_BUYING_STORE` 的服务端 1／客户端 2 级显示差异；生命体 58 项一致。原始清单和运行日志保存在忽略目录 `work/skill-review/genetic-round2-*`。
+- 本轮是代码审查与定向回归，没有逐技能实机战斗或人工听音。第一轮记录的旧程序式动画、持续墙体表现缺口，以及仿生植物／部分生命体新技能／仿生制药未知公式仍然存在，未用猜测替换。
+
+复现命令（服务端仓库）：
+
+```sh
+node tests/genetic-resources.test.mjs ../../work/skill-review/genetic-round2-resources --no-color
+node tests/homunculus-casting.test.mjs ../../work/skill-review/genetic-round2-casting --no-color
+node tests/mechanic-resources.test.mjs ../../work/skill-review/genetic-round2-mechanic-resources --no-color
+```
+
+### 本轮主技能逐项覆盖
+
+| ID | 技能 | 实现入口 |
+| --- | --- | --- |
+| 36 | Enlarge Weight Limit `MC_INCCARRY` | shared/passive |
+| 37 | Discount `MC_DISCOUNT` | shared/passive |
+| 38 | Overcharge `MC_OVERCHARGE` | shared/passive |
+| 39 | Pushcart `MC_PUSHCART` | shared/passive |
+| 40 | Item Appraisal `MC_IDENTIFY` | itemappraisal.cpp |
+| 41 | Vending `MC_VENDING` | skill_vending.cpp |
+| 42 | Mammonite `MC_MAMMONITE` | mammonite.cpp |
+| 153 | Cart Revolution `MC_CARTREVOLUTION` | cartrevolution.cpp |
+| 154 | Change Cart `MC_CHANGECART` | changecart.cpp |
+| 155 | Crazy Uproar `MC_LOUD` | crazyuproar.cpp |
+| 226 | 斧修炼 `AM_AXEMASTERY` | shared/passive |
+| 227 | 药水研究 `AM_LEARNINGPOTION` | shared/passive |
+| 228 | 制作药水 `AM_PHARMACY` | preparepotion.cpp |
+| 229 | 炸弹 `AM_DEMONSTRATION` | bomb.cpp |
+| 230 | 酸性恐惧 `AM_ACIDTERROR` | acidterror.cpp |
+| 231 | 辅助药水 `AM_POTIONPITCHER` | aidpotion.cpp |
+| 232 | 召唤植物 `AM_CANNIBALIZE` | summonflora.cpp |
+| 233 | 召唤海洋球 `AM_SPHEREMINE` | summonmarinesphere.cpp |
+| 234 | 炼金武器 `AM_CP_WEAPON` | alchemicalweapon.cpp |
+| 235 | 合成盾牌 `AM_CP_SHIELD` | synthesizedshield.cpp |
+| 236 | 合成铠甲 `AM_CP_ARMOR` | syntheticarmor.cpp |
+| 237 | 生化头盔 `AM_CP_HELM` | biochemicalhelm.cpp |
+| 238 | 生物伦理 `AM_BIOETHICS` | shared/passive |
+| 243 | 召唤人工生命体 `AM_CALLHOMUN` | callhomunculus.cpp |
+| 244 | 蒸发 `AM_REST` | vaporize.cpp |
+| 247 | 人工生命体复活 `AM_RESURRECTHOMUN` | homunculusresurrection.cpp |
+| 446 | Aid Berserk Potion `AM_BERSERKPITCHER` | aidberserkpotion.cpp |
+| 478 | 浓缩药水辅助 `CR_SLIMPITCHER` | aidcondensedpotion.cpp |
+| 479 | 全面保护 `CR_FULLPROTECTION` | fullprotection.cpp |
+| 490 | 强酸攻击 `CR_ACIDDEMONSTRATION` | aciddemonstration.cpp |
+| 496 | Twilight Alchemy 1 `AM_TWILIGHT1` | twilightalchemy1.cpp |
+| 497 | Twilight Alchemy 2 `AM_TWILIGHT2` | twilightalchemy2.cpp |
+| 498 | Twilight Alchemy 3 `AM_TWILIGHT3` | twilightalchemy3.cpp |
+| 2474 | 剑术训练 `GN_TRAINING_SWORD` | shared/passive |
+| 2475 | 手推车改造 `GN_REMODELING_CART` | shared/passive |
+| 2476 | 手推车龙卷风 `GN_CART_TORNADO` | carttornado.cpp |
+| 2477 | 手推车加农炮 `GN_CARTCANNON` | cartcannon.cpp |
+| 2478 | 手推车加速 `GN_CARTBOOST` | StatusSkillImpl |
+| 2479 | 荆棘陷阱 `GN_THORNS_TRAP` | thorntrap.cpp |
+| 2480 | 吸血 `GN_BLOOD_SUCKER` | StatusSkillImpl |
+| 2481 | 孢子爆炸 `GN_SPORE_EXPLOSION` | sporeexplosion.cpp |
+| 2482 | 荆棘之墙 `GN_WALLOFTHORN` | wallofthorns.cpp |
+| 2483 | 狂野杂草 `GN_CRAZYWEED` | crazyweed.cpp |
+| 2485 | 恶魔之火 `GN_DEMONIC_FIRE` | demonicfire.cpp |
+| 2486 | 火焰扩散 `GN_FIRE_EXPANSION` | fireexpansion.cpp |
+| 2490 | 地狱之花 `GN_HELLS_PLANT` | hellsplant.cpp |
+| 2492 | 曼陀罗嚎叫 `GN_MANDRAGORA` | howlingofmandragora.cpp |
+| 2494 | 材料转换 `GN_CHANGEMATERIAL` | changematerial.cpp |
+| 2495 | 混合烹饪 `GN_MIX_COOKING` | mixcooking.cpp |
+| 2497 | 特殊药剂 `GN_S_PHARMACY` | specialpharmacy.cpp |
+| 2535 | Open Buying Store `ALL_BUYING_STORE` | shared/passive |
+| 2544 | Decorate Cart `MC_CARTDECORATE` | decoratecart.cpp |
+| 5003 | 幻影兴奋剂 `GN_ILLUSIONDOPING` | illusiondoping.cpp |
+| 5014 | 全力推进 `ALL_FULL_THROTTLE` | shared/passive |
+| 5336 | 仿生药剂学 `BO_BIONIC_PHARMACY` | bionicpharmacy.cpp |
+| 5337 | 仿生学精通 `BO_BIONICS_M` | shared/passive |
+| 5338 | 全面保护 `BO_THE_WHOLE_PROTECTION` | thewholeprotection.cpp |
+| 5339 | 高级保护 `BO_ADVANCE_PROTECTION` | advanceprotection.cpp |
+| 5340 | 水属性酸化区域 `BO_ACIDIFIED_ZONE_WATER` | acidifiedzonewater.cpp |
+| 5341 | 地属性酸化区域 `BO_ACIDIFIED_ZONE_GROUND` | acidifiedzoneground.cpp |
+| 5342 | 风属性酸化区域 `BO_ACIDIFIED_ZONE_WIND` | acidifiedzonewind.cpp |
+| 5343 | 火属性酸化区域 `BO_ACIDIFIED_ZONE_FIRE` | acidifiedzonefire.cpp |
+| 5344 | Wooden Warrior `BO_WOODENWARRIOR` | woodenwarrior.cpp |
+| 5345 | Wooden Fairy `BO_WOODEN_FAIRY` | woodenfairy.cpp |
+| 5346 | Creeper `BO_CREEPER` | creeper.cpp |
+| 5347 | Research Report `BO_RESEARCHREPORT` | StatusSkillImpl |
+| 5348 | Hell Tree `BO_HELLTREE` | helltree.cpp |
+| 6005 | 爆炸粉末 `BO_EXPLOSIVE_POWDER` | explosivepowder.cpp |
+| 6006 | 混乱荆棘 `BO_MAYHEMIC_THORNS` | mayhemicthorns.cpp |
+| 6509 | Mystery Powder `BO_MYSTERY_POWDER` | mysterypowder.cpp |
+| 6510 | Dust Explosion `BO_DUST_EXPLOSION` | dustexplosion.cpp |
+
+### 本轮生命体逐项覆盖
+
+| ID | 技能 | 实现入口 |
+| --- | --- | --- |
+| 8001 | 治愈之触 `HLIF_HEAL` | SkillHealingTouch |
+| 8002 | 闪避 `HLIF_AVOID` | SkillAvoid |
+| 8003 | 脑部手术 `HLIF_BRAIN` | 共享被动属性／技能前置 |
+| 8004 | 变更 `HLIF_CHANGE` | SkillChange |
+| 8005 | 王车易位 `HAMI_CASTLE` | SkillCastling |
+| 8006 | 防御 `HAMI_DEFENCE` | SkillDefense |
+| 8007 | 精钢皮肤 `HAMI_SKIN` | 共享被动属性／技能前置 |
+| 8008 | 嗜血 `HAMI_BLOODLUST` | StatusSkillImpl |
+| 8009 | 月光 `HFLI_MOON` | SkillMoonlight |
+| 8010 | 瞬移 `HFLI_FLEET` | StatusSkillImpl |
+| 8011 | 速度 `HFLI_SPEED` | StatusSkillImpl |
+| 8012 | S.B.R.44 `HFLI_SBR44` | SkillSBR44 |
+| 8013 | 奇想 `HVAN_CAPRICE` | SkillCaprice |
+| 8014 | 混沌祝福 `HVAN_CHAOTIC` | SkillBenedictionOfChaos |
+| 8015 | 指导 `HVAN_INSTRUCT` | 共享被动属性／技能前置 |
+| 8016 | 生化爆炸 `HVAN_EXPLOSION` | SkillBioExplosion |
+| 8018 | 召唤军团 `MH_SUMMON_LEGION` | SkillSummonLegion |
+| 8019 | 麻痹针 `MH_NEEDLE_OF_PARALYZE` | SkillNeedleOfParalyze |
+| 8020 | 毒雾 `MH_POISON_MIST` | SkillPoisonMist |
+| 8021 | 止痛药 `MH_PAIN_KILLER` | SkillPainKiller |
+| 8022 | 再生之光 `MH_LIGHT_OF_REGENE` | SkillLightOfRegene |
+| 8023 | 过载提升 `MH_OVERED_BOOST` | SkillOveredBoost |
+| 8024 | 橡皮擦切割 `MH_ERASER_CUTTER` | SkillEraserCutter |
+| 8025 | 异种斩 `MH_XENO_SLASHER` | SkillXenoSlasher |
+| 8026 | 寂静微风 `MH_SILENT_BREEZE` | SkillSilentBreeze |
+| 8027 | 风格变换 `MH_STYLE_CHANGE` | SkillStyleChange |
+| 8028 | 音速爪 `MH_SONIC_CRAW` | SkillSonicClaw |
+| 8029 | 银色贝恩冲锋 `MH_SILVERVEIN_RUSH` | SkillSilverVeinRush |
+| 8030 | 午夜狂乱 `MH_MIDNIGHT_FRENZY` | SkillMidnightFrenzy |
+| 8031 | 钢铁之角 `MH_STAHL_HORN` | SkillSteelHorn |
+| 8032 | 黄金脚跟 `MH_GOLDENE_FERSE` | StatusSkillImpl |
+| 8033 | 石墙 `MH_STEINWAND` | SkillStoneWall |
+| 8034 | 圣柱 `MH_HEILIGE_STANGE` | SkillHolyPole |
+| 8035 | 攻击模式 `MH_ANGRIFFS_MODUS` | StatusSkillImpl |
+| 8036 | 火种破坏 `MH_TINDER_BREAKER` | SkillTinderBreaker |
+| 8037 | 连续破坏连击 `MH_CBC` | SkillContinualBreakCombo |
+| 8038 | 永恒迅捷连击 `MH_EQC` | SkillEternalQuickCombo |
+| 8039 | 岩浆流 `MH_MAGMA_FLOW` | SkillMagmaFlow |
+| 8040 | Granitic Armor `MH_GRANITIC_ARMOR` | SkillGraniticArmor |
+| 8041 | Lava Slide `MH_LAVA_SLIDE` | SkillLavaSlide |
+| 8042 | Pyroclastic `MH_PYROCLASTIC` | SkillPyroclastic |
+| 8043 | Volcanic Ash `MH_VOLCANIC_ASH` | SkillVolcanicAsh |
+| 8044 | Blast Forge `MH_BLAST_FORGE` | SkillBlastForge |
+| 8045 | Tempering `MH_TEMPERING` | SkillTempering |
+| 8046 | Classy Flutter `MH_CLASSY_FLUTTER` | 共享被动属性／技能前置 |
+| 8047 | Twister Cutter `MH_TWISTER_CUTTER` | SkillTwisterCutter |
+| 8048 | Absolute Zephyr `MH_ABSOLUTE_ZEPHYR` | SkillAbsoluteZephyr |
+| 8049 | Brushup Claw `MH_BRUSHUP_CLAW` | 共享被动属性／技能前置 |
+| 8050 | Blazing And Furious `MH_BLAZING_AND_FURIOUS` | SkillBlazingAndFurious |
+| 8051 | The One Fighter Rises `MH_THE_ONE_FIGHTER_RISES` | SkillTheOneFighterRises |
+| 8052 | 抛光针 `MH_POLISHING_NEEDLE` | 共享被动属性／技能前置 |
+| 8053 | 曼陀罗毒素 `MH_TOXIN_OF_MANDARA` | SkillToxinOfMandara |
+| 8054 | 针刺 `MH_NEEDLE_STINGER` | SkillNeedleStinger |
+| 8055 | 光角 `MH_LICHT_GEHORN` | 共享被动属性／技能前置 |
+| 8056 | 闪耀长矛 `MH_GLANZEN_SPIES` | SkillGlanzenSpies |
+| 8057 | 神圣之马 `MH_HEILIGE_PFERD` | SkillHeiligePferd |
+| 8058 | 黄金音调 `MH_GOLDENE_TONE` | SkillGoldeneTone |
+| 8059 | 炽热熔岩 `MH_BLAZING_LAVA` | 共享被动属性／技能前置 |
