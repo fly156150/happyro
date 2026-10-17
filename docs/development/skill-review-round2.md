@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | 1 | 弓箭手／猎人／神射手／游侠／风鹰 | 68 个技能代码复查完成，回归与编译通过 |
 | 2 | 魔法师／巫师／大法师／至高法师 | 78 个技能及派生入口复查完成，修复与验证通过 |
-| 3 | 服事／牧师／大主教／枢机主教 | 待复查 |
+| 3 | 服事／牧师／大主教／枢机主教 | 77 个技能及派生入口复查完成，修复与验证通过 |
 | 4 | 剑士／十字军／皇家卫士／帝国卫士 | 待复查 |
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 待复查 |
 | 6 | 商人／铁匠／机甲神匠／机甲大师 | 待复查 |
@@ -237,3 +237,113 @@ node tests/hunter-status.test.mjs ../../work/skill-review/hunter-status-test --n
 | 5235 | Crimson Arrow `AG_CRIMSON_ARROW` | SkillCrimsonArrow |
 | 5237 | Frozen Slash `AG_FROZEN_SLASH` | SkillFrozenSlash |
 | 6516 | Energy Conversion `AG_ENERGY_CONVERSION` | SkillEnergyConversion |
+
+## 牧师线复查结果
+
+重新核对 Acolyte、Priest、High_Priest、Arch_Bishop、Arch_Bishop_T、Cardinal 的 77 个去重技能，覆盖独立实现、通用状态、被动属性、治疗与复活、协助者条件、地面单位、双重圣光和 Arbitrium 派生入口。客户端同时复查技能选择、传送菜单、受益者特效、状态图标及四转地面效果路径。
+
+### 已复现并修复：传送之阵丢失本次等级
+
+选点菜单将 `menuskill_val` 用于保存地面坐标，但没有保存本次技能等级；确认选点时又使用已学习的最高等级创建传送门，并将坐标误作等级查询最大数量。已学四级、选用一级时，生成的门仍按四级处理。
+
+将本次等级保存到现有 `menuskill_val2`，确认时用该等级检查可选目的地、数量、需求和创建技能单位，并重新确认当前仍有对应技能／道具等级。成功、取消及失败统一清除三个菜单字段。未修改封包长度或客户端协议。
+
+`tests/warp-menu.test.mjs` 执行生产选点完成函数及菜单保存代码，覆盖 1–4 级、越级目的地、窗口打开后技能重置、死亡／禁施法／需求不足、取消、道具传送阵和瞬间移动。旧代码失败，修复后通过。
+
+### 已复现并修复：霸邪护盾容量溢出
+
+霸邪之阵和群体霸邪在计算最大 HP 百分比时先做 32 位乘法。例如最大 HP 为 200,000,000、10 级时，原基础容量只有 17,050,327，正确值应为 60,000,000。改用 `int64` 中间值，保留比例、人数增量和可抵挡次数。
+
+`tests/priest-shield.test.mjs` 提取实际状态初始化分支执行，覆盖 1–10 级、无队伍及 1／2／12 人、普通 HP、首次回绕附近、20 亿和无符号 32 位上界。旧代码失败，修复后通过；启用未定义行为检测。
+
+### 验证与限制
+
+- 服务端四组回归通过：传送选点、两种霸邪护盾、治疗／反射／经验／复活、圣树多人周期。前一轮修复的实时协助者 SP、净化成功率、治疗百分比和复活失败计数继续通过。
+- `map-server` 编译通过，未重启在线服务。
+- 客户端 6 个测试文件、30 项测试通过，覆盖技能使用／目标、牧师效果路由与四转动作／效果／地面单位。
+- 77 个技能的 ID、名称键和等级上限与客户端逐项一致；31 个 STR、250 个依赖经 Gateway 读取检查无缺失。
+- 本轮没有客户端修改，不重复构建相同 PWA。未逐技能实机战斗或人工听音，不将代码复查等同于官方数值与动画完全一致。
+- Dilectio 的范围中心和治疗来源仍沿用受益者；Mediale 仍由受益者的状态定时器驱动。已追踪到实际计算入口，但官方治疗来源／公式证据不足，不据此猜测修改。Silentium 等级和部分四转倍率的上游 TODO 也保持原状。
+- 传送目的地 vector 前面的空字符串会被当前版本封包构造跳过，并非空菜单缺陷；Renewal 圣殿使用增益状态，不当作旧版地面领域。
+
+### 本轮逐技能覆盖
+
+| ID | 技能 | 服务端复查入口 |
+| --- | --- | --- |
+| 9 | 增加SP恢复 `MG_SRECOVERY` | status／battle／skill 共享被动与前置条件 |
+| 12 | 暗之障壁 `MG_SAFETYWALL` | SkillSafetyWall；地面单位 Safetywall |
+| 22 | 天使之护 `AL_DP` | status／battle／skill 共享被动与前置条件 |
+| 23 | 恶魔克星 `AL_DEMONBANE` | status／battle／skill 共享被动与前置条件 |
+| 24 | 光猎 `AL_RUWACH` | SkillRuwach |
+| 25 | 光之障壁 `AL_PNEUMA` | SkillPneuma；地面单位 Pneuma |
+| 26 | 瞬间移动 `AL_TELEPORT` | SkillTeleport |
+| 27 | 传送之阵 `AL_WARP` | SkillWarpPortal；地面单位 Warp_Active；修复选点等级保存与校验 |
+| 28 | 治愈术 `AL_HEAL` | SkillHeal |
+| 29 | 敏捷提升 `AL_INCAGI` | SkillIncreaseAgi |
+| 30 | 敏捷下降 `AL_DECAGI` | SkillDecreaseAgi |
+| 31 | Aqua Benedicta `AL_HOLYWATER` | SkillHolyWater |
+| 32 | Signum Crucis `AL_CRUCIS` | SkillCrucis |
+| 33 | Angelus `AL_ANGELUS` | SkillAngelus |
+| 34 | Blessing `AL_BLESSING` | SkillBlessing |
+| 35 | Cure `AL_CURE` | SkillCure |
+| 54 | 复活术 `ALL_RESURRECTION` | SkillResurrection |
+| 65 | 钝器修炼 `PR_MACEMASTERY` | status／battle／skill 共享被动与前置条件 |
+| 66 | 牺牲祈福 `PR_IMPOSITIO` | SkillImpositioManus |
+| 67 | 牺牲祈福 `PR_SUFFRAGIUM` | SkillSuffragium |
+| 68 | 圣水洗礼 `PR_ASPERSIO` | SkillAspersio |
+| 69 | 圣体降福 `PR_BENEDICTIO` | SkillBenedictioSanctissimiSacramenti |
+| 70 | 光耀之堂 `PR_SANCTUARY` | SkillSanctuary；地面单位 Sanctuary |
+| 71 | 缓慢中毒 `PR_SLOWPOISON` | StatusSkillImpl |
+| 72 | 状态恢复 `PR_STRECOVERY` | SkillStatusRecovery |
+| 73 | 凯里艾勒松 `PR_KYRIE` | SkillKyrieEleison；修复共享护盾容量溢出 |
+| 74 | 赞美诗 `PR_MAGNIFICAT` | SkillMagnificat |
+| 75 | 荣耀 `PR_GLORIA` | SkillGloria |
+| 76 | 神圣法典 `PR_LEXDIVINA` | SkillLexDivina |
+| 77 | 退散不死 `PR_TURNUNDEAD` | SkillTurnUndead |
+| 78 | 永恒法典 `PR_LEXAETERNA` | StatusSkillImpl |
+| 79 | 大驱魔术 `PR_MAGNUS` | SkillMagnusExorcismus；地面单位 Magnus |
+| 156 | Holy Light `AL_HOLYLIGHT` | SkillHolyLight |
+| 361 | Assumptio `HP_ASSUMPTIO` | SkillAssumptio |
+| 362 | Basilica `HP_BASILICA` | SkillBasilica |
+| 363 | Meditatio `HP_MEDITATIO` | status／battle／skill 共享被动与前置条件 |
+| 481 | 魔力充能 `HP_MANARECHARGE` | status／battle／skill 共享被动与前置条件 |
+| 1014 | 牺牲祈福 `PR_REDEMPTIO` | SkillRedemptio |
+| 2038 | 朱迪克斯 `AB_JUDEX` | SkillJudex |
+| 2039 | 安琪拉 `AB_ANCILLA` | SkillAncilla |
+| 2040 | 阿多拉穆斯 `AB_ADORAMUS` | SkillAdoramus |
+| 2041 | 克莱门提亚 `AB_CLEMENTIA` | SkillCrementia |
+| 2042 | 坎托·坎迪杜斯 `AB_CANTO` | SkillCantoCandidus |
+| 2043 | 群体治愈 `AB_CHEAL` | SkillColuceoHeal |
+| 2044 | 圣灵降临 `AB_EPICLESIS` | SkillEpiclesis；地面单位 Epiclesis |
+| 2045 | 祷告 `AB_PRAEFATIO` | SkillPraefatio；修复共享护盾容量溢出 |
+| 2046 | 祈祷 `AB_ORATIO` | SkillOratio |
+| 2047 | 羔羊赞歌 `AB_LAUDAAGNUS` | SkillLaudaAgnus |
+| 2048 | 枝条赞歌 `AB_LAUDARAMUS` | SkillLaudaRamus |
+| 2050 | 新生 `AB_RENOVATIO` | SkillRenovatio |
+| 2051 | 高级治愈 `AB_HIGHNESSHEAL` | SkillHighnessHeal |
+| 2052 | 清除 `AB_CLEARANCE` | SkillClearance |
+| 2053 | 赎罪 `AB_EXPIATIO` | StatusSkillImpl |
+| 2054 | 双重光 `AB_DUPLELIGHT` | StatusSkillImpl；MELEE／MAGIC 派生与普攻触发 |
+| 2057 | Silentium `AB_SILENTIUM` | SkillSilentium |
+| 2515 | Secrament `AB_SECRAMENT` | StatusSkillImpl |
+| 5011 | 奉献礼 `AB_OFFERTORIUM` | StatusSkillImpl |
+| 5014 | 全力推进 `ALL_FULL_THROTTLE` | StatusSkillImpl |
+| 5072 | 责骂 `AB_VITUPERATUM` | SkillVituperatum |
+| 5073 | 契约 `AB_CONVENIO` | SkillConvenio |
+| 5268 | 修复 `CD_REPARATIO` | SkillReparatio |
+| 5269 | 中级祷言 `CD_MEDIALE_VOTUM` | SkillMedialeVotum |
+| 5270 | 钝器书精通 `CD_MACE_BOOK_M` | status／battle／skill 共享被动与前置条件 |
+| 5271 | 锐利生命 `CD_ARGUTUS_VITA` | StatusSkillImpl |
+| 5272 | 锐利武器 `CD_ARGUTUS_TELUM` | StatusSkillImpl |
+| 5273 | 裁决 `CD_ARBITRIUM` | SkillArbitrium；ATK 派生 |
+| 5275 | 临在之锋 `CD_PRESENS_ACIES` | StatusSkillImpl |
+| 5276 | 忠诚之魂 `CD_FIDUS_ANIMUS` | status／battle／skill 共享被动与前置条件 |
+| 5277 | 释放 `CD_EFFLIGO` | SkillEffligo |
+| 5278 | 能力 `CD_COMPETENTIA` | SkillCompetentia |
+| 5279 | 气流风暴 `CD_PNEUMATICUS_PROCELLA` | SkillPneumaticusProcella；地面单位 Pneumaticus_Procella |
+| 5280 | 恩爱治愈 `CD_DILECTIO_HEAL` | SkillDilectioHeal |
+| 5281 | 信仰 `CD_RELIGIO` | StatusSkillImpl |
+| 5282 | 祝福 `CD_BENEDICTUM` | StatusSkillImpl |
+| 5283 | 请求 `CD_PETITIO` | SkillPetitio |
+| 5284 | 框架 `CD_FRAMEN` | SkillFramen |
+| 6518 | Divinus Flos `CD_DIVINUS_FLOS` | SkillDivinusFlos |
