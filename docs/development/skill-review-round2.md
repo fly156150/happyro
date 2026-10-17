@@ -15,7 +15,7 @@
 | 7 | 魔法师／贤者／妖术师／元素大师 | 93 个技能及随机／精灵派生入口复查完成，修复与验证通过 |
 | 8 | 商人／炼金术师／基因学者／生物学者 | 71 个主技能、58 个生命体技能及派生路径复查完成，修复与验证通过 |
 | 9 | 服事／武僧／修罗／审判官 | 78 个技能及连招／反击派生路径复查完成，修复与验证通过 |
-| 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 待复查 |
+| 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 74 个主技能及复制／地面／自动触发路径复查完成，修复与验证通过 |
 | 11 | 弓箭手／诗人、舞娘及对应三、四转 | 待复查 |
 | 12 | 待确认是否为此前单独审查的骑士线 | 待复查 |
 
@@ -1088,3 +1088,118 @@ node tests/monk-combat.test.mjs ../../work/skill-review/monk-round2-combat --no-
 | 5253 | 第三奉献 `IQ_THIRD_CONSECRATION` | thirdconsecration.cpp |
 | 5254 | 第三驱魔之火 `IQ_THIRD_EXOR_FLAME` | StatusSkillImpl |
 | 6519 | Blazing Flame Blast `IQ_BLAZING_FLAME_BLAST` | blazingflameblast.cpp |
+
+## 流氓／魅影追踪者线工作记录
+
+### 范围与共享路径
+
+从当前 Thief、Thief_High、Rogue、Stalker、Shadow_Chaser、Shadow_Chaser_T、Abyss_Chaser 技能树重新提取 74 个主技能，核对定义、前置、材料、SP／AP、武器及箭矢要求与工厂入口。一转盗贼及剑术／弓箭／拆陷阱继承能力结合本轮前述职业线核对；再次阅读流氓至四转独立实现，连锁反应射击、来自深渊和深渊火焰的派生入口一并覆盖。
+
+- 二转／进阶：抢夺的普攻触发与偷窃检查、抢劫的魔物及重复限制、背刺位移与方向、潜击的隐匿前置和范围标记、脱装概率／持续时间／化学保护、挟持的延迟传送与目标失效、商店折扣及多人同坐逻辑。
+- 复制／繁殖：可复制资格、保持状态、等级上限、两个复制槽去重、替换、持久化恢复；自动暗影法术的列表、取消、交易／死亡／重置失效清理和自动施放入口。
+- 状态：近身禁锢的目标计数及双侧解除、暗影形态的地图／死亡／敌对检查和转伤次数、隐身术与潜行的周期消耗、面具的成功率／Boss 限制／重复限制、气弹及随行清理、传染的状态白名单和剩余计时。
+- 地面：人孔的目标关联与结束、次元门的地图限制、混乱恐慌的重复状态、漩涡的吸收及地图格清理、血腥欲望的离开清理、虚击炸弹的诱饵与到时爆炸、紧急逃脱的陷阱材料和击退。
+- 四转：匕首／弓和魔法剑修炼的武器及体型数组、追击状态与多段变化、各攻击的范围／移动／派生调用、深渊球生成／周期补充／消耗／结束、深渊广场的范围内双倍段数、欧米伽深渊打击的种族倍率。
+- 客户端：自动施法选择的桌面／移动入口与取消封包，目标与地面施法，四转启动／命中／地面效果的挂接及资源依赖；没有改动封包版本。
+
+### 已复现并修复：弓的攻击距离标记冲突
+
+Hit And Sliding（`ABC_HIT_AND_SLIDING`）数据库范围为 2。通用伤害初始化先设置近战标记；技能使用弓时原本只追加远程标记，造成一次攻击同时带有 `BF_SHORT` 和 `BF_LONG`。近战防御／减伤与远程防御／减伤因此可能同时匹配。
+
+弓分支现在先清除近战标记，再设置远程标记；保留武器和技能攻击标记，非弓及非玩家分支不变。没有调整倍率、射程、位移距离或消耗。
+
+### 验证与保留边界
+
+- 新增 `tests/rogue-range.test.mjs`，提取真实 `battle_range_type` 与 `modifyDamageData` 编译执行。旧实现断言失败；修复后覆盖 1–5 级、按技能范围／按距离配置、近／远距离、弓／匕首／长枪和非玩家来源，UBSan 通过。
+- `tests/rogue-state.test.mjs` 回归通过，覆盖选择取消和失效清理、多个禁锢目标、敌对判断和高 SP 消耗。
+- 当前 74 个技能的 ID、名称键及最大等级与客户端一致；客户端 5 个文件共 34 项回归通过。38 个 STR、592 个贴图依赖均通过 Gateway 获取及结构检查。
+- 服务端 `map-server` 编译通过，未重启在线地图服务。客户端无代码改动，不重复构建相同 PWA；没有做逐技能实机战斗或人工听音，不能据此宣称官方数值与视觉完全一致。
+- 涂鸦／城旗涂鸦遗留功能缺口仍保留：缺少完整文字输入／地面显示，城旗涂鸦没有专属服务端施放实现。本轮未擅自定义这些旧功能的规则。背刺命中率、致命威胁 AGI 和部分深渊自动触发概率的上游 TODO 也没有凭猜测调整。
+
+复现命令（服务端仓库）：
+
+```sh
+node tests/rogue-range.test.mjs ../../work/skill-review/rogue-round2-range --no-color
+node tests/rogue-state.test.mjs ../../work/skill-review/rogue-round2-state --no-color
+```
+
+当前清单、比对和构建输出位于忽略目录 `work/skill-review/rogue-round2-*`。
+
+### 逐技能清单
+
+| ID | 技能 | 实现入口 |
+| --- | --- | --- |
+| 2 | `SM_SWORD` | shared/passive |
+| 44 | `AC_VULTURE` | shared/passive |
+| 46 | `AC_DOUBLE` | shared/passive |
+| 48 | `TF_DOUBLE` | doubleattack.cpp |
+| 49 | `TF_MISS` | shared/passive |
+| 50 | `TF_STEAL` | steal.cpp |
+| 51 | `TF_HIDING` | hiding.cpp |
+| 52 | `TF_POISON` | envenom.cpp |
+| 53 | `TF_DETOXIFY` | detoxify.cpp |
+| 124 | `HT_REMOVETRAP` | shared/passive |
+| 149 | `TF_SPRINKLESAND` | sandattack.cpp |
+| 150 | `TF_BACKSLIDING` | backslide.cpp |
+| 151 | `TF_PICKSTONE` | findstone.cpp |
+| 152 | `TF_THROWSTONE` | stonefling.cpp |
+| 210 | `RG_SNATCHER` | shared/passive |
+| 211 | `RG_STEALCOIN` | mug.cpp |
+| 212 | `RG_BACKSTAP` | backstab.cpp |
+| 213 | `RG_TUNNELDRIVE` | shared/passive |
+| 214 | `RG_RAID` | sightlessmind.cpp |
+| 215 | `RG_STRIPWEAPON` | divestweapon.cpp |
+| 216 | `RG_STRIPSHIELD` | divestshield.cpp |
+| 217 | `RG_STRIPARMOR` | divestarmor.cpp |
+| 218 | `RG_STRIPHELM` | divesthelm.cpp |
+| 219 | `RG_INTIMIDATE` | snatch.cpp |
+| 220 | `RG_GRAFFITI` | scribble.cpp |
+| 221 | `RG_FLAGGRAFFITI` | 遗留缺口：无专属施放实现 |
+| 222 | `RG_CLEANER` | remover.cpp |
+| 223 | `RG_GANGSTER` | shared/passive |
+| 224 | `RG_COMPULSION` | shared/passive |
+| 225 | `RG_PLAGIARISM` | shared/passive |
+| 389 | `ST_CHASEWALK` | stealth.cpp |
+| 390 | `ST_REJECTSWORD` | counterinstinct.cpp |
+| 475 | `ST_PRESERVE` | StatusSkillImpl |
+| 476 | `ST_FULLSTRIP` | divestall.cpp |
+| 1005 | `RG_CLOSECONFINE` | closeconfine.cpp |
+| 2284 | `SC_FATALMENACE` | fatalmenace.cpp |
+| 2285 | `SC_REPRODUCE` | reproduce.cpp |
+| 2286 | `SC_AUTOSHADOWSPELL` | autoshadowspell.cpp |
+| 2287 | `SC_SHADOWFORM` | shadowform.cpp |
+| 2288 | `SC_TRIANGLESHOT` | triangleshot.cpp |
+| 2289 | `SC_BODYPAINT` | bodypainting.cpp |
+| 2290 | `SC_INVISIBILITY` | invisibility.cpp |
+| 2291 | `SC_DEADLYINFECT` | StatusSkillImpl |
+| 2292 | `SC_ENERVATION` | masqueradeenervation.cpp |
+| 2293 | `SC_GROOMY` | masqueradegloomy.cpp |
+| 2294 | `SC_IGNORANCE` | masqueradeignorance.cpp |
+| 2295 | `SC_LAZINESS` | masqueradelaziness.cpp |
+| 2296 | `SC_UNLUCKY` | masqueradeunlucky.cpp |
+| 2297 | `SC_WEAKNESS` | masqueradeweakness.cpp |
+| 2298 | `SC_STRIPACCESSARY` | stripaccessory.cpp |
+| 2299 | `SC_MANHOLE` | manhole.cpp |
+| 2300 | `SC_DIMENSIONDOOR` | dimensiondoor.cpp |
+| 2301 | `SC_CHAOSPANIC` | chaospanic.cpp |
+| 2302 | `SC_MAELSTROM` | maelstrom.cpp |
+| 2303 | `SC_BLOODYLUST` | bloodylust.cpp |
+| 2304 | `SC_FEINTBOMB` | feintbomb.cpp |
+| 5010 | `SC_ESCAPE` | emergencyescape.cpp |
+| 5014 | `ALL_FULL_THROTTLE` | shared/passive |
+| 5311 | `ABC_DAGGER_AND_BOW_M` | shared/passive |
+| 5312 | `ABC_MAGIC_SWORD_M` | shared/passive |
+| 5313 | `ABC_STRIP_SHADOW` | stripshadow.cpp |
+| 5314 | `ABC_ABYSS_DAGGER` | abyssdagger.cpp |
+| 5315 | `ABC_UNLUCKY_RUSH` | unluckyrush.cpp |
+| 5316 | `ABC_CHAIN_REACTION_SHOT` | chainreactionshot.cpp |
+| 5317 | `ABC_FROM_THE_ABYSS` | fromtheabyss.cpp |
+| 5318 | `ABC_ABYSS_SLAYER` | StatusSkillImpl |
+| 5319 | `ABC_ABYSS_STRIKE` | omegaabyssstrike.cpp |
+| 5320 | `ABC_DEFT_STAB` | deftstab.cpp |
+| 5321 | `ABC_ABYSS_SQUARE` | abysssquare.cpp |
+| 5322 | `ABC_FRENZY_SHOT` | frenzyshot.cpp |
+| 6512 | `ABC_HIT_AND_SLIDING` | hitandsliding.cpp |
+| 6513 | `ABC_CHASING_BREAK` | chasingbreak.cpp |
+| 6514 | `ABC_CHASING_SHOT` | chasingshot.cpp |
+| 6515 | `ABC_ABYSS_FLAME` | abyssflame.cpp |
