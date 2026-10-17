@@ -17,7 +17,97 @@
 | 9 | 服事／武僧／修罗／审判官 | 78 个技能及连招／反击派生路径复查完成，修复与验证通过 |
 | 10 | 盗贼／流氓／魅影追踪者／深渊追踪者 | 74 个主技能及复制／地面／自动触发路径复查完成，修复与验证通过 |
 | 11 | 弓箭手／诗人、舞娘及对应三、四转 | 85 个主技能及合奏／重唱／派生路径复查完成，修复与验证通过 |
-| 12 | 待确认是否为此前单独审查的骑士线 | 待复查 |
+| 12 | 剑士／骑士、领主骑士／符文骑士／龙骑士 | 56 个主技能及 12 个符文石／派生入口再次复查完成，修复与验证通过 |
+
+## 骑士线工作记录
+
+用户确认第 12 条为骑士线后，再次核查一至四转、继承技能、符文石与派生入口，重点追踪状态关联、施法前后资源快照及范围攻击中的资源变化；以下改动作为整线审查结果一并提交。
+
+- 仆从武器标记：`pc_dead` 只查询玩家目标，死亡时漏掉魔物标记；清空记录后，旧魔物标记到期可能清掉复活后新目标占用的记录。改为查询通用地图对象，死亡时一并结束玩家与魔物标记。`tests/knight-servant.test.mjs` 提取实际死亡清理和状态结束分支，覆盖玩家、魔物、已不存在的目标、重复清理和复活后重新标记；旧代码断言失败，修改后通过 UBSan 回归。
+- 风刃：长矛分支追加远程标记时未清除原近程标记，可能同时触发两类伤害防御判断。改为切换到单一远程类别。`tests/knight-range.test.mjs` 提取实际距离分类和技能修正函数，覆盖 1–5 级、按距离分类配置、近远目标、单双手矛、双手剑、其它武器及非玩家施放；旧代码断言失败，修改后通过 UBSan 回归，双手剑段数保持不变。
+- 已完成剑士、骑士、领主骑士、符文骑士及龙骑士的独立实现、通用状态和被动路径复核。覆盖武器及骑乘限制、吟唱与冷却、SP/AP／仆从消耗、暴击与攻击段数、精通及体型修正、反击／反射、位移、异常状态、增益叠加与解除、符文制造及道具施放。
+- 数据库核对包含目标类型、武器／骑乘要求、范围、段数、持续时间、状态及资源消耗。客户端核对技能信息、目标选择、点选／地面施放、动作与成功／命中效果路由、仆从数量及千年神盾封包更新；死亡离图时清理仆从环绕效果。
+- 服务端四项新增回归与最终 `map-server` 编译通过；没有重启在线服务。客户端未修改，不重建相同产物。音波命中、符文战意及光环剑仍有上游待确认的平衡系数，本轮不凭猜测调整。
+- 仆从标记施加失败占用名额、施法者重新登录后旧标记误清新目标记录，也已分别复现并修复：只在状态施加成功后记录目标，结束时核对名额当前仍属于该目标。上述标记测试覆盖这两种情形及重复刷新。
+- 龙息伤害改用 64 位中间值；符文「恢复」的 25% HP 回复与「狂怒」的 5% HP 扣除同样先提升精度。`tests/knight-resource.test.mjs` 提取当前实际公式，覆盖技能等级、基础等级、POW、龙之气息状态和 HP/SP 边界。旧龙息公式触发 UBSan 有符号溢出，修复后通过。
+- 再次复查发现仆从「幻影／毁灭」混用施法前与当前仆从数量：零仆从幻影可能使用默认的五段，施法中补充仆从及毁灭命中后的补充又可能改变攻击段数。改为资源消耗阶段记录本次可用数量，整次范围攻击只使用该快照，保留零仆从幻影的位移。`tests/knight-ammunition.test.mjs` 提取实际开始检查、数量记录、消耗和两种攻击的段数分支，覆盖 0–5 个仆从、施法期间数量变化、消耗豁免及多个目标间补充；旧代码断言失败，修改后通过 UBSan 回归。
+- 已排除「丰饶第一次回复后提前结束」的怀疑：续期后计时器编号改变，`status_change_end` 会拒绝旧计时器结束新状态；无需修改。
+- 56 个技能树条目及 12 个符文石／派生技能的 ID、名称及等级上限与客户端一致；骑士／龙骑士的 32 个 STR 和 316 个依赖资源通过 Gateway 读取校验。客户端 5 个文件、24 项定向测试通过。资源读取不等同于实机画面、声音验收。
+
+### 骑士线逐技能覆盖
+
+范围来自当前技能树的 56 项与技能数据库额外的 10 个符文石技能、2 个派生攻击。下表的独立入口与上述共享路径共同构成本轮覆盖；不代表逐技能实机战斗、画面或听音验收。
+
+| ID | 技能 | 服务端复查入口 |
+| --- | --- | --- |
+| 2 | `SM_SWORD` | battle 剑术精通 |
+| 3 | `SM_TWOHAND` | battle 双手剑精通 |
+| 4 | `SM_RECOVERY` | status 自然恢复／pc 药品恢复 |
+| 5 | `SM_BASH` | bash.cpp |
+| 6 | `SM_PROVOKE` | provoke.cpp |
+| 7 | `SM_MAGNUM` | magnum.cpp |
+| 8 | `SM_ENDURE` | StatusSkillImpl |
+| 55 | `KN_SPEARMASTERY` | battle 枪术精通 |
+| 56 | `KN_PIERCE` | pierce.cpp |
+| 57 | `KN_BRANDISHSPEAR` | brandishspear.cpp |
+| 58 | `KN_SPEARSTAB` | spearstab.cpp |
+| 59 | `KN_SPEARBOOMERANG` | spearboomerang.cpp |
+| 60 | `KN_TWOHANDQUICKEN` | StatusSkillImpl |
+| 61 | `KN_AUTOCOUNTER` | counterattack.cpp |
+| 62 | `KN_BOWLINGBASH` | bowlingbash.cpp |
+| 63 | `KN_RIDING` | pc 骑乘及 status 负重 |
+| 64 | `KN_CAVALIERMASTERY` | status 骑乘攻速 |
+| 144 | `SM_MOVINGRECOVERY` | status 行走恢复 |
+| 145 | `SM_FATALBLOW` | bash.cpp 晕眩附加 |
+| 146 | `SM_AUTOBERSERK` | autoberserk.cpp |
+| 355 | `LK_AURABLADE` | StatusSkillImpl |
+| 356 | `LK_PARRYING` | StatusSkillImpl |
+| 357 | `LK_CONCENTRATION` | StatusSkillImpl |
+| 358 | `LK_TENSIONRELAX` | relax.cpp |
+| 359 | `LK_BERSERK` | StatusSkillImpl |
+| 397 | `LK_SPIRALPIERCE` | spiralpierce.cpp |
+| 398 | `LK_HEADCRUSH` | traumaticblow.cpp |
+| 399 | `LK_JOINTBEAT` | vitalstrike.cpp |
+| 495 | `KN_ONEHAND` | StatusSkillImpl |
+| 1001 | `KN_CHARGEATK` | chargeattack.cpp |
+| 2001 | `RK_ENCHANTBLADE` | enchantblade.cpp |
+| 2002 | `RK_SONICWAVE` | sonicwave.cpp |
+| 2003 | `RK_DEATHBOUND` | StatusSkillImpl |
+| 2004 | `RK_HUNDREDSPEAR` | hundredspear.cpp |
+| 2005 | `RK_WINDCUTTER` | windcutter.cpp |
+| 2006 | `RK_IGNITIONBREAK` | ignitionbreak.cpp |
+| 2007 | `RK_DRAGONTRAINING` | status 龙骑攻速／负重及 battle 龙息 |
+| 2008 | `RK_DRAGONBREATH` | dragonbreath.cpp |
+| 2009 | `RK_DRAGONHOWLING` | dragonhowling.cpp |
+| 2010 | `RK_RUNEMASTERY` | skill 符文制造及符文石道具入口 |
+| 2011 | `RK_MILLENNIUMSHIELD` | milleniumshield.cpp |
+| 2012 | `RK_CRUSHSTRIKE` | crushstrike.cpp |
+| 2013 | `RK_REFRESH` | refresh.cpp |
+| 2014 | `RK_GIANTGROWTH` | giantgrowth.cpp |
+| 2015 | `RK_STONEHARDSKIN` | stonehardskin.cpp |
+| 2016 | `RK_VITALITYACTIVATION` | vitalityactivation.cpp |
+| 2017 | `RK_STORMBLAST` | stormblast.cpp |
+| 2018 | `RK_FIGHTINGSPIRIT` | fightingspirit.cpp |
+| 2019 | `RK_ABUNDANCE` | abundance.cpp |
+| 2020 | `RK_PHANTOMTHRUST` | phantomthrust.cpp |
+| 5004 | `RK_DRAGONBREATH_WATER` | dragonbreath.cpp |
+| 5005 | `RK_LUXANIMA` | luxanima.cpp |
+| 5014 | `ALL_FULL_THROTTLE` | StatusSkillImpl／status 属性与周期消耗 |
+| 5201 | `DK_SERVANTWEAPON` | servantweapon.cpp |
+| 5202 | `DK_SERVANTWEAPON_ATK` | servantweapon.cpp |
+| 5203 | `DK_SERVANT_W_SIGN` | servantweaponsign.cpp |
+| 5204 | `DK_SERVANT_W_PHANTOM` | servantweaponphantom.cpp |
+| 5205 | `DK_SERVANT_W_DEMOL` | servantweapondemolition.cpp |
+| 5206 | `DK_CHARGINGPIERCE` | StatusSkillImpl |
+| 5207 | `DK_TWOHANDDEF` | status 体型减伤 |
+| 5208 | `DK_HACKANDSLASHER` | hackandslasher.cpp |
+| 5209 | `DK_HACKANDSLASHER_ATK` | hackandslasher.cpp |
+| 5210 | `DK_DRAGONIC_AURA` | dragonicaura.cpp |
+| 5211 | `DK_MADNESS_CRUSHER` | madnesscrusher.cpp |
+| 5212 | `DK_VIGOR` | StatusSkillImpl |
+| 5213 | `DK_STORMSLASH` | stormslash.cpp |
+| 6001 | `DK_DRAGONIC_BREATH` | dragonicbreath.cpp |
+| 6502 | `DK_DRAGONIC_PIERCE` | dragonicpierce.cpp |
 
 ## 猎人线工作记录
 
