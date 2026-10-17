@@ -11,7 +11,7 @@
 | 3 | 服事／牧师／大主教／枢机主教 | 77 个技能及派生入口复查完成，修复与验证通过 |
 | 4 | 剑士／十字军／皇家卫士／帝国卫士 | 70 个技能及共享路径复查完成，修复与验证通过 |
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 57 个技能及共享路径复查完成，修复与验证通过 |
-| 6 | 商人／铁匠／机甲神匠／机甲大师 | 待复查 |
+| 6 | 商人／铁匠／机甲神匠／机甲大师 | 89 个技能及派生路径复查完成，修复与验证通过 |
 | 7 | 魔法师／贤者／妖术师／元素大师 | 待复查 |
 | 8 | 商人／炼金术师／基因学者／生物学者 | 待复查 |
 | 9 | 服事／武僧／修罗／审判官 | 待复查 |
@@ -532,3 +532,121 @@ node tests/hunter-status.test.mjs ../../work/skill-review/hunter-status-test --n
 | 5293 | Enchanting Shadow `SHC_ENCHANTING_SHADOW` | StatusSkillImpl；修复伤痕层数与计时器生命周期 |
 | 5294 | Fatal Shadow Crow `SHC_FATAL_SHADOW_CROW` | SkillFatalShadowCrow |
 | 6511 | Cross Slash `SHC_CROSS_SLASH` | SkillCrossSlash |
+
+## 铁匠／机匠线复查结果
+
+从当前商人、铁匠、超转、机匠及机甲大师技能树（含机甲／进阶／宝宝变体）提取 89 个去重技能，复查独立主动实现与岩浆喷发 DOT 派生路径；同时核对负重、交易折扣、武器制作／精炼／维修、手推车、机甲／工具／燃料／弹药要求、过热、被动属性、地面力场与 FAW／ABR 召唤、跟随及主人死亡清理。客户端复查技能使用、制作与维修／精炼选择、特效通知阶段及地面单位。
+
+### 已复现并修复：魔法诱饵丢失召唤等级
+
+确认属性石时，`skill_magicdecoy` 清空菜单等级后才生成召唤物，而属性计算仍读取主人的菜单等级。按当前公式，五级诱饵的基础魔攻应为 500，原代码却得到 250；HP 也缺少等级对应增量。原入口还会用菜单 ID 改写主人的当前施法技能。
+
+现在由召唤物保存创建它的技能与等级，属性计算读取该上下文，不修改主人当前技能。银色狙击手及四类 ABR 同时保存各自上下文，主人改施其他技能后重算召唤物属性也不会走错分支。魔法诱饵 HP 使用宽整数计算并钳制到字段上限，避免高 SP 乘法回绕。材料扣除、召唤期限和既有公式系数保持不变。
+
+### 已复现并修复：隐形力场高 SP 周期扣除回绕
+
+隐形力场的最大 SP × 3 原先先做 32 位乘法，高于 1,431,655,765 时发生回绕。改为 `int64` 中间值，仍按最大 SP 的 3% 扣除；不足时结束、到期后不再扣除的规则不变。这是高数值配置边界问题，并非默认 SP 下的普遍异常。
+
+### 验证与限制
+
+- 扩展 `tests/mechanic-resources.test.mjs`，执行真实魔法诱饵方法、五种直接召唤方法及实际属性计算分支：四种属性、五级诱饵、1–5 级银色狙击手、1–4 级四类 ABR、菜单清空、主人施法变化后重算、零／普通／高 SP／UINT_MAX、材料不足和删除失败均通过；旧代码在诱饵属性断言失败。
+- 同一回归执行隐形力场真实计时分支，覆盖溢出临界、SP 不足与到期；旧实现扣除断言失败。既有修复／自爆／ABR 高属性／手推车终结／岩浆单次 DOT 回归继续通过，启用未定义行为检测。
+- 精炼成功率回归通过；共享属性入口涉及的既有炼金／生物召唤回归也通过。
+- 服务端 `map-server` 编译通过。客户端 8 个测试文件、48 项测试通过，覆盖四转通知阶段、使用／目标、四转映射、摆摊和精炼菜单；canvas 提示不作为实际渲染验收。
+- 89 个技能的 ID 与名称键一致；88 个等级上限一致，收购商店仍保留官方客户端元数据 MaxLv=2／服务端 1 的已知差异，可选施放等级由服务端技能字段约束。
+- 38 个 STR 和 582 个依赖经 Gateway 读取检查无缺失。没有客户端代码改动，不重复构建 PWA；未重启在线服务，未做 89 个技能逐项实机战斗或人工听音。
+- 攻击装置、ABR 和制造装置的上游未知／自定义公式仍保留；不把现有简化动画当作官方完整还原。维修支持道具触发，未错误增加必须学会技能的限制；手推车攻击的计算也按实际配置上限核对，未把不可达的假设容量当作本轮缺陷。
+
+### 本轮逐技能覆盖
+
+| ID | 技能 | 服务端复查入口 |
+| --- | --- | --- |
+| 36 | Enlarge Weight Limit `MC_INCCARRY` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 37 | Discount `MC_DISCOUNT` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 38 | Overcharge `MC_OVERCHARGE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 39 | Pushcart `MC_PUSHCART` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 40 | Item Appraisal `MC_IDENTIFY` | SkillItemAppraisal |
+| 41 | Vending `MC_VENDING` | SkillVending |
+| 42 | Mammonite `MC_MAMMONITE` | SkillMammonite |
+| 94 | Iron Tempering `BS_IRON` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 95 | Steel Tempering `BS_STEEL` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 96 | Enchanted Stone Craft `BS_ENCHANTEDSTONE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 97 | Oridecon Research `BS_ORIDEOCON` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 98 | Smith Dagger `BS_DAGGER` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 99 | Smith Sword `BS_SWORD` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 100 | Smith Two-handed Sword `BS_TWOHANDSWORD` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 101 | Smith Axe `BS_AXE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 102 | Smith Mace `BS_MACE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 103 | Smith Knucklebrace `BS_KNUCKLE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 104 | Smith Spear `BS_SPEAR` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 105 | Hilt Binding `BS_HILTBINDING` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 106 | Ore Discovery `BS_FINDINGORE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 107 | Weaponry Research `BS_WEAPONRESEARCH` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 108 | Weapon Repair `BS_REPAIRWEAPON` | SkillWeaponRepair |
+| 109 | Skin Tempering `BS_SKINTEMPER` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 110 | Hammer Fall `BS_HAMMERFALL` | SkillHammerFall |
+| 111 | Adrenaline Rush `BS_ADRENALINE` | SkillAdrenalineRush |
+| 112 | 武器修炼 `BS_WEAPONPERFECT` | SkillWeaponPerfection |
+| 113 | 武器值最大化 `BS_OVERTHRUST` | SkillPowerThrust |
+| 114 | 最大力量 `BS_MAXIMIZE` | StatusSkillImpl |
+| 153 | Cart Revolution `MC_CARTREVOLUTION` | SkillCartRevolution |
+| 154 | Change Cart `MC_CHANGECART` | SkillChangeCart |
+| 155 | Crazy Uproar `MC_LOUD` | SkillCrazyUproar |
+| 384 | 碎裂打击 `WS_MELTDOWN` | StatusSkillImpl |
+| 387 | 手推车加速 `WS_CARTBOOST` | StatusSkillImpl |
+| 459 | 高级速度激发 `BS_ADRENALINE2` | SkillAdvancedAdrenalineRush |
+| 477 | 武器升级 `WS_WEAPONREFINE` | SkillUpgradeWeapon |
+| 485 | 手推车终结 `WS_CARTTERMINATION` | SkillCartTermination |
+| 486 | 最大力量挥击 `WS_OVERTHRUSTMAX` | StatusSkillImpl |
+| 1012 | 不公平的诡计 `BS_UNFAIRLYTRICK` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 1013 | 贪婪 `BS_GREED` | SkillGreed |
+| 2255 | 魔导机甲执照 `NC_MADOLICENCE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 2256 | 强化拳 `NC_BOOSTKNUCKLE` | SkillBoostKnuckle |
+| 2257 | 桩锚 `NC_PILEBUNKER` | SkillPileBunker |
+| 2258 | 火神炮 `NC_VULCANARM` | SkillVulcanArm |
+| 2259 | 火焰发射器 `NC_FLAMELAUNCHER` | SkillFlameLauncher |
+| 2260 | 寒冷减速器 `NC_COLDSLOWER` | SkillColdSlower |
+| 2261 | 手臂加农炮 `NC_ARMSCANNON` | SkillArmCannon |
+| 2262 | 加速 `NC_ACCELERATION` | StatusSkillImpl |
+| 2263 | 悬浮 `NC_HOVERING` | StatusSkillImpl |
+| 2264 | 前侧滑行 `NC_F_SIDESLIDE` | SkillFrontSideSlide |
+| 2265 | 后侧滑行 `NC_B_SIDESLIDE` | SkillBackSideSlide |
+| 2266 | 主机重构 `NC_MAINFRAME` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 2267 | 自毁 `NC_SELFDESTRUCTION` | SkillSelfDestruction |
+| 2268 | 形态转换 `NC_SHAPESHIFT` | StatusSkillImpl |
+| 2269 | 紧急冷却 `NC_EMERGENCYCOOL` | SkillEmergencyCool |
+| 2270 | 红外扫描 `NC_INFRAREDSCAN` | SkillInfraredScan |
+| 2271 | 分析 `NC_ANALYZE` | SkillAnalyze |
+| 2272 | 磁场 `NC_MAGNETICFIELD` | SkillMagneticField |
+| 2273 | 中性屏障 `NC_NEUTRALBARRIER` | SkillNeutralBarrier |
+| 2274 | 隐形力场 `NC_STEALTHFIELD` | SkillStealthField；修复高 SP 周期计算 |
+| 2275 | 修理 `NC_REPAIR` | SkillRepair |
+| 2276 | 斧训练 `NC_TRAININGAXE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 2277 | 火/土研究 `NC_RESEARCHFE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 2278 | 斧回旋镖 `NC_AXEBOOMERANG` | SkillAxeBoomerang |
+| 2279 | 强力挥击 `NC_POWERSWING` | SkillPowerSwing |
+| 2280 | 斧旋风 `NC_AXETORNADO` | SkillAxeTornado |
+| 2281 | FAW - 银色狙击手 `NC_SILVERSNIPER` | SkillFawSilverSniper；修复召唤上下文保存与属性重算 |
+| 2282 | FAW - 魔法诱饵 `NC_MAGICDECOY` | SkillFawMagicDecoy；修复召唤上下文保存与属性重算 |
+| 2283 | FAW 消除 `NC_DISJOINT` | SkillFawRemoval |
+| 2535 | Open Buying Store `ALL_BUYING_STORE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 2544 | Decorate Cart `MC_CARTDECORATE` | SkillDecorateCart |
+| 5006 | 岩浆喷发 `NC_MAGMA_ERUPTION` | SkillMagmaEruption；DOT 派生、地面周期与销毁 |
+| 5014 | 全力推进 `ALL_FULL_THROTTLE` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 5295 | Axe Stomp `MT_AXE_STOMP` | SkillAxeStomp |
+| 5296 | Rush Quake `MT_RUSH_QUAKE` | SkillRushQuake |
+| 5297 | Manufacture Machine `MT_M_MACHINE` | SkillManufactureMachine |
+| 5298 | Attack Machine `MT_A_MACHINE` | SkillAttackMachine |
+| 5299 | Defense Machine `MT_D_MACHINE` | StatusSkillImpl |
+| 5300 | Two Hand Axe Def `MT_TWOAXEDEF` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 5301 | ABR Mastery `MT_ABR_M` | status／battle／skill／pc 共享被动、菜单及前置条件 |
+| 5302 | ABR Battle Warior `MT_SUMMON_ABR_BATTLE_WARIOR` | SkillAbrBattleWarrior；修复召唤上下文保存与属性重算 |
+| 5303 | ABR 双炮 `MT_SUMMON_ABR_DUAL_CANNON` | SkillAbrDualCannon；修复召唤上下文保存与属性重算 |
+| 5304 | ABR 母网 `MT_SUMMON_ABR_MOTHER_NET` | SkillAbrMotherNet；修复召唤上下文保存与属性重算 |
+| 5305 | ABR 无限 `MT_SUMMON_ABR_INFINITY` | SkillAbrInfinity；修复召唤上下文保存与属性重算 |
+| 6002 | 火花爆破 `MT_SPARK_BLASTER` | SkillSparkBlaster |
+| 6003 | 三重激光 `MT_TRIPLE_LASER` | SkillTripleLaser |
+| 6004 | 强力粉碎 `MT_MIGHTY_SMASH` | SkillMightySmash |
+| 6506 | 冲锋打击 `MT_RUSH_STRIKE` | SkillRushStrike |
+| 6507 | Powerful Swing `MT_POWERFUL_SWING` | SkillPowerfulSwing |
+| 6508 | Energy Cannonade `MT_ENERGY_CANNONADE` | SkillEnergyCannonade |
