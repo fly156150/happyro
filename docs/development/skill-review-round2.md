@@ -7,7 +7,7 @@
 | 顺序 | 职业线 | 本轮状态 |
 | --- | --- | --- |
 | 1 | 弓箭手／猎人／神射手／游侠／风鹰 | 68 个技能代码复查完成，回归与编译通过 |
-| 2 | 魔法师／巫师／大法师／至高法师 | 待复查 |
+| 2 | 魔法师／巫师／大法师／至高法师 | 78 个技能及派生入口复查完成，修复与验证通过 |
 | 3 | 服事／牧师／大主教／枢机主教 | 待复查 |
 | 4 | 剑士／十字军／皇家卫士／帝国卫士 | 待复查 |
 | 5 | 盗贼／刺客／十字斩首者／暗影十字 | 待复查 |
@@ -126,3 +126,114 @@ node tests/hunter-status.test.mjs ../../work/skill-review/hunter-status-test --n
 | 5334 | 成长箭矢 `WH_CRESCIVE_BOLT` | SkillCresciveBolt |
 | 5335 | 火焰陷阱 `WH_FLAMETRAP` | SkillFlameTrap；地面单位 Flametrap |
 | 6520 | Wild Walk `WH_WILD_WALK` | SkillWildWalk |
+
+## 巫师线复查结果
+
+从当前 Mage、Wizard、High_Wizard、Warlock、Warlock_T、Arch_Mage 技能树重新提取 78 个去重技能，逐项检查定义、工厂、主动实现或共享被动；另外覆盖读取魔法书、四种元素球攻击、四属性漩涡与四转派生攻击。客户端检查技能与地面单位映射、封包播放阶段、白色监狱身体状态和球体快照更新。
+
+### 已复现并修复：四属性漩涡命中序号
+
+- 原实现用元素球槽位相对位置作为命中序号。四球位于 1–4 槽时得到 1–4，而定时器将序号大于等于 3 视为末段，导致末段异常状态尝试两次。
+- 只检查第 5 槽是否存在就删除第 1 槽；如果中间有球先到期，剩余四球可能因此只释放三次。
+- 六级以上范围版的四种派生攻击固定传入序号 0，导致末段异常状态不触发。
+
+修复为先统计球数，只有五球齐全才舍弃第 1 槽；实际攻击连续编号 0–3，并传入范围版派生定时器。保留元素顺序和 200 毫秒间隔。
+
+`tests/tetra-sequence.test.mjs` 提取实际主技能与四种派生方法编译执行，覆盖四球的全部空槽位置、五球、1／5／6／10 级、单体／双目标范围和怪物施放；旧代码失败，修复后通过。既有火属性封包回归也通过。这些定向测试验证具体缺陷，整条线的代码复查覆盖见下表。
+
+### 已复现并修复：魔法半径覆盖施法等级
+
+共享固定咏唱计算把 `pc_checkskill(WL_RADIUS)` 赋给当前施法等级，且在技能范围检查之前就执行赋值。未学习半径的玩家也会将当前等级置零，后续状态修正读取错误等级。改为独立的 `radius_lv`，仅在巫师技能范围内读取；半径原来的减免公式保持不变。
+
+`tests/wizard-cast.test.mjs` 提取生产固定咏唱分支，覆盖玩家／非玩家、未学／各级半径、范围内外技能和 1–10 级施法。旧代码失败，修复后通过，施法等级保持不变。
+
+### 验证与限制
+
+- 六组服务端回归通过：四属性漩涡命中顺序、火属性封包、魔法半径、吸取生命、能量外套、魔法书容量与失败保留；执行实际代码并启用未定义行为检测。
+- 服务端 `map-server` 编译通过，未重启在线服务。
+- 客户端 9 个测试文件、46 项测试通过，覆盖球体、身体状态、效果路由、四转地面效果和共用施放入口；测试环境有不支持 canvas 的提示，不将其视为实际 WebGL 渲染验收。
+- 78 个技能的 ID、名称键和等级上限与客户端一致；55 个 STR 与 642 个贴图／音频等依赖通过 Gateway 读取检查。
+- 本轮没有客户端代码修改，没有重复构建相同 PWA。没有逐技能实机战斗、人工听音或官方逐帧比对；石化扩散抵抗等未定上游平衡项保持原状。
+
+### 本轮逐技能覆盖
+
+| ID | 技能 | 服务端复查入口 |
+| --- | --- | --- |
+| 9 | 增加SP恢复 `MG_SRECOVERY` | 共享属性／被动／资源前置 |
+| 10 | 火狩 `MG_SIGHT` | SkillSight |
+| 11 | 圣灵召唤 `MG_NAPALMBEAT` | SkillNapalmBeat |
+| 12 | 暗之障壁 `MG_SAFETYWALL` | SkillSafetyWall；地面单位 Safetywall |
+| 13 | 灵魂打击 `MG_SOULSTRIKE` | SkillSoulStrike |
+| 14 | 冰箭术 `MG_COLDBOLT` | SkillColdBolt |
+| 15 | 冰冻术 `MG_FROSTDIVER` | SkillFrostDiver |
+| 16 | 石化术 `MG_STONECURSE` | SkillStoneCurse |
+| 17 | 火球术 `MG_FIREBALL` | SkillFireBall |
+| 18 | 火墙术 `MG_FIREWALL` | SkillFireWall；地面单位 Firewall |
+| 19 | 火箭术 `MG_FIREBOLT` | SkillFireBolt |
+| 20 | 雷击术 `MG_LIGHTNINGBOLT` | SkillLightningBolt |
+| 21 | 雷暴术 `MG_THUNDERSTORM` | SkillThunderStorm；地面单位 Dummyskill |
+| 80 | 火柱术 `WZ_FIREPILLAR` | SkillFirePillar；地面单位 Firepillar_Waiting |
+| 81 | 火狩 `WZ_SIGHTRASHER` | SkillSightRasher |
+| 83 | 陨石术 `WZ_METEOR` | SkillMeteorStorm；地面单位 Dummyskill |
+| 84 | 雷鸣术 `WZ_JUPITEL` | SkillJupitelThunder |
+| 85 | 雷鸣风暴 `WZ_VERMILION` | SkillLordOfVermilion；地面单位 Dummyskill |
+| 86 | 水球术 `WZ_WATERBALL` | SkillWaterBall；地面单位 Dummyskill |
+| 87 | 冰墙术 `WZ_ICEWALL` | SkillIceWall；地面单位 Icewall |
+| 88 | Frost Nova `WZ_FROSTNOVA` | SkillFrostNova |
+| 89 | Storm Gust `WZ_STORMGUST` | SkillStormGust；地面单位 Dummyskill |
+| 90 | Earth Spike `WZ_EARTHSPIKE` | SkillEarthSpike |
+| 91 | Heaven's Drive `WZ_HEAVENDRIVE` | SkillHeavensDrive；地面单位 Dummyskill |
+| 92 | Quagmire `WZ_QUAGMIRE` | SkillQuagmire；地面单位 Quagmire |
+| 93 | Sense `WZ_ESTIMATION` | SkillSense |
+| 157 | Energy Coat `MG_ENERGYCOAT` | SkillEnergyCoat |
+| 364 | Soul Drain `HW_SOULDRAIN` | 共享属性／被动／资源前置 |
+| 365 | Stave Crasher `HW_MAGICCRASHER` | WeaponSkillImpl |
+| 366 | Mystical Amplification `HW_MAGICPOWER` | StatusSkillImpl |
+| 400 | 凝固汽油火神炮 `HW_NAPALMVULCAN` | SkillNapalmVulcan |
+| 483 | 岩碎术 `HW_GANBANTEIN` | SkillGanbantein |
+| 484 | 重力场 `HW_GRAVITATION` | SkillGravitationField；地面单位 Gravitation |
+| 1006 | 视线爆破 `WZ_SIGHTBLASTER` | SkillSightBlaster |
+| 2201 | 白色监禁 `WL_WHITEIMPRISON` | SkillWhiteImprison |
+| 2202 | 灵魂扩张 `WL_SOULEXPANSION` | SkillSoulExpansion |
+| 2203 | 冰霜迷雾 `WL_FROSTMISTY` | SkillFrostyMisty |
+| 2204 | 杰克霜冻 `WL_JACKFROST` | SkillJackFrost |
+| 2205 | Marsh of Abyss `WL_MARSHOFABYSS` | StatusSkillImpl |
+| 2206 | Recognized Spell `WL_RECOGNIZEDSPELL` | StatusSkillImpl |
+| 2207 | Sienna Execrate `WL_SIENNAEXECRATE` | SkillSiennaExecrate |
+| 2208 | Radius `WL_RADIUS` | 共享属性／被动／资源前置；修复覆盖施法等级 |
+| 2209 | Stasis `WL_STASIS` | SkillStasis |
+| 2210 | Drain Life `WL_DRAINLIFE` | SkillDrainLife |
+| 2211 | Crimson Rock `WL_CRIMSONROCK` | SkillCrimsonRock |
+| 2212 | Hell Inferno `WL_HELLINFERNO` | SkillHellInferno |
+| 2213 | Comet `WL_COMET` | SkillComet；地面单位 Dummyskill |
+| 2214 | Chain Lightning `WL_CHAINLIGHTNING` | SkillChainLightning |
+| 2216 | Earth Strain `WL_EARTHSTRAIN` | SkillEarthStrain；地面单位 Earthstrain |
+| 2217 | Tetra Vortex `WL_TETRAVORTEX` | SkillTetraVortex；修复命中序号与球数判定 |
+| 2222 | 召唤火球 `WL_SUMMONFB` | SkillSummonFireBall |
+| 2223 | 召唤雷球 `WL_SUMMONBL` | SkillSummonLightningBall |
+| 2224 | 召唤水球 `WL_SUMMONWB` | SkillSummonWaterBall |
+| 2229 | 召唤石块 `WL_SUMMONSTONE` | SkillSummonStone |
+| 2230 | 释放 `WL_RELEASE` | SkillRelease |
+| 2231 | 阅读魔法书 `WL_READING_SB` | 共享属性／被动／资源前置 |
+| 2232 | 冻结魔法 `WL_FREEZE_SP` | 共享属性／被动／资源前置 |
+| 5012 | 强力念力 `WL_TELEKINESIS_INTENSE` | StatusSkillImpl |
+| 5014 | 全力推进 `ALL_FULL_THROTTLE` | StatusSkillImpl |
+| 5214 | 致命投影 `AG_DEADLY_PROJECTION` | SkillDeadlyProjection |
+| 5215 | 毁灭飓风 `AG_DESTRUCTIVE_HURRICANE` | SkillDestructiveHurricane |
+| 5216 | 水晶之雨 `AG_RAIN_OF_CRYSTAL` | SkillRainOfCrystal；地面单位 Rain_Of_Crystal |
+| 5217 | 神秘幻象 `AG_MYSTERY_ILLUSION` | SkillMysteryIllusion；地面单位 Mystery_Illusion |
+| 5218 | 暴烈地震 `AG_VIOLENT_QUAKE` | SkillViolentQuake；地面单位 Violent_Quake |
+| 5220 | 灵魂火神击 `AG_SOUL_VC_STRIKE` | SkillSoulVulcanStrike |
+| 5221 | 地层震颤 `AG_STRANTUM_TREMOR` | SkillStrantumTremor；地面单位 Strantum_Tremor |
+| 5222 | 全花绽放 `AG_ALL_BLOOM` | SkillAllBloom；地面单位 All_Bloom |
+| 5225 | Crystal Impact `AG_CRYSTAL_IMPACT` | SkillCrystalImpact |
+| 5227 | Tornado Storm `AG_TORNADO_STORM` | SkillTornadoStorm；地面单位 Tornado_Storm |
+| 5228 | Two Hand Staff Mastery `AG_TWOHANDSTAFF` | 共享属性／被动／资源前置 |
+| 5229 | Floral Flare Road `AG_FLORAL_FLARE_ROAD` | SkillFloralFlareRoad；地面单位 Floral_Flare_Road |
+| 5230 | Astral Strike `AG_ASTRAL_STRIKE` | SkillAstralStrike；地面单位 Astral_Strike |
+| 5232 | Climax `AG_CLIMAX` | StatusSkillImpl |
+| 5233 | Rock Down `AG_ROCK_DOWN` | SkillRockDown |
+| 5234 | Storm Cannon `AG_STORM_CANNON` | SkillStormCannon |
+| 5235 | Crimson Arrow `AG_CRIMSON_ARROW` | SkillCrimsonArrow |
+| 5237 | Frozen Slash `AG_FROZEN_SLASH` | SkillFrozenSlash |
+| 6516 | Energy Conversion `AG_ENERGY_CONVERSION` | SkillEnergyConversion |
