@@ -5,7 +5,8 @@
 | 主题目录 | 内容 | 常用入口 |
 | --- | --- | --- |
 | [开发流程](workflow/README.md) | 本地环境、命令、测试、Git 与文档协作 | [本地开发](workflow/local-setup.md)、[常用命令](workflow/common-commands.md) |
-| [客户端专题](client/README.md) | 移动端 UI、性能诊断、职业外观和三端展示图 | [移动端诊断](client/mobile-diagnostics.md)、[职业外观](client/character-appearance.md) |
+| [客户端专题](client/README.md) | 移动端 UI、性能诊断和三端展示图 | [移动端诊断](client/mobile-diagnostics.md)、[UI 规范](client/mobile-ui.md) |
+| [职业外观](character-appearance/README.md) | 职业与显示分离、同步协议及十二职业线扩展 | [当前实现](character-appearance/implementation.md)、[扩展计划](character-appearance/roadmap.md) |
 | [四转开发](fourth-jobs/README.md) | 使用、实现、资源、回归规则与有效待办 | [四转使用](fourth-jobs/usage.md)、[验收边界](fourth-jobs/acceptance.md) |
 | [技能审查](skill-review/README.md) | 12 条职业线代码复查、607 项实机处理清单、修复与待办 | [已修复问题](skill-review/fixes.md)、[未解决事项](skill-review/pending.md)、[逐技能清单](skill-review/catalog.md) |
 | [转职实测](job-change-review/README.md) | 12 条线、13 个分支至四转和正常重登的流程与证据 | [转职流程索引](job-change-review/walkthrough.md)、[缺陷修复](job-change-review/fixes.md) |

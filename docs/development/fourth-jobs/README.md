@@ -11,4 +11,4 @@
 
 源码和回归测试保存实现，changelog 保存产品变化；不维护已完成阶段的进度副本。发布按[镜像发布流程](../../operations/docker-release.md)，功能实现不等于最终包通过验收。
 
-相关主题：[职业外观](../client/character-appearance.md)、[NPC转职实测](../job-change-review/README.md)、[技能审查](../skill-review/README.md)。
+相关主题：[职业外观](../character-appearance/README.md)、[NPC转职实测](../job-change-review/README.md)、[技能审查](../skill-review/README.md)。
