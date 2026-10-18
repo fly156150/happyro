@@ -1,5 +1,5 @@
 assert.equal((await snapshot()).name,'JobAuditF');assert.equal((await snapshot()).map,'job3_arch02');
-const {walk}=await import('/vol2/1000/kugarocks/happyro/tools/job-change-audit/walk.mjs?arch=4');
+const {walk}=await import('./walk.mjs?arch=4');
 const proof={moves:[],attacks:[],preparation:'Existing strengthened test character; native scroll summon; normal diagonal walking and learned Holy Light attacks'};const file='docs/development/job-change-review/evidence/archbishop-trial-walk-second.json';
 for(const point of [[112,73],[94,123],[93,173],[114,186],[154,211],[201,240],[255,268],[269,302],[203,286],[155,320],[113,327]]){
  try{proof.moves.push({point,steps:await walk(game,snapshot,point,3)});}catch(e){proof.error=e.message;break;}

@@ -1,7 +1,7 @@
 assert.equal((await snapshot()).name,'JobDirectM');
 await game.evaluate(()=>{window.__rangerHunts=[];window.__rangerDrops=[];for(const p of window.__fourthTest.packets){if(!p)continue;if(p.name?.includes('UPDATE_MISSION_HUNT')){const orig=p.callback;p.callback=function(pkt){window.__rangerHunts.push(JSON.parse(JSON.stringify(pkt)));return orig.apply(this,arguments);};}if(p.name?.includes('ITEM_FALL_ENTRY')){const orig=p.callback;p.callback=function(pkt){window.__rangerDrops.push(JSON.parse(JSON.stringify(pkt)));return orig.apply(this,arguments);};}}});
 for(const [id,loc] of [[1703,2],[1750,32768]]){await game.evaluate(({id,loc})=>{const t=window.__fourthTest,i=t.inventory.getItemById(id);if(i){const p=new t.packet.CZ.REQ_WEAR_EQUIP();p.index=i.index;p.wearLocation=loc;t.network.sendPacket(p);}},{id,loc});await game.waitForTimeout(400);}
-const {walk}=await import('/vol2/1000/kugarocks/happyro/tools/job-change-audit/walk.mjs?ranger=2');
+const {walk}=await import('./walk.mjs?ranger=2');
 const proof={attacks:[],drops:[],hunts:[],preparation:'Existing strengthened stats; native bow and arrows; naturally spawned Dragon Tail; ordinary attacks and pickup'};
 const file='docs/development/job-change-review/evidence/ranger-hunt.json';
 const points=[[100,150],[120,150],[120,120],[150,120],[170,150],[140,180]];let point=0;

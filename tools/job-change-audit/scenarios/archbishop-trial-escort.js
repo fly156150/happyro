@@ -1,7 +1,7 @@
 assert.equal((await snapshot()).name,'JobAuditF');assert.equal((await snapshot()).map,'job3_arch02');
-const {walk}=await import('/vol2/1000/kugarocks/happyro/tools/job-change-audit/walk.mjs?arch=5');
+const {walk}=await import('./walk.mjs?arch=5');
 const proof={startedAt:new Date().toISOString(),moves:[],attacks:[],preparation:'Existing strengthened test character; native scroll summon; normal diagonal walking; Holy Light and prepared mercenary red potions protect native summon'};const file='docs/development/job-change-review/evidence/archbishop-trial-escort.json';
-const {escortGuard}=await import('/vol2/1000/kugarocks/happyro/tools/job-change-audit/escort.mjs');const guard=escortGuard(game,proof);
+const {escortGuard}=await import('./escort.mjs');const guard=escortGuard(game,proof);
 for(const point of [[112,73],[94,123],[93,173],[114,186],[154,211],[201,240],[255,268],[269,302],[203,286],[155,320],[113,327]]){
  try{proof.moves.push({point,steps:await walk(game,snapshot,point,3,guard)});}catch(e){proof.error=e.message;break;}
  let s=await snapshot();if(s.map!=='job3_arch02'){proof.returned={map:s.map,x:s.x,y:s.y};proof.chat=await game.evaluate(()=>window.__fourthTest.chat._shadow.querySelector('.content')?.innerText);break;}

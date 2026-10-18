@@ -1,7 +1,7 @@
 assert.equal((await snapshot()).name,'JobAuditF');assert.equal((await snapshot()).map,'job3_arch02');
-const {walk}=await import('/vol2/1000/kugarocks/happyro/tools/job-change-audit/walk.mjs?arch=8');
+const {walk}=await import('./walk.mjs?arch=8');
 const proof={attacks:[],moves:[],preparation:'Existing strengthened test character; normal Holy Light skill, movement and mercenary commands; no quest writes'};const file='docs/development/job-change-review/evidence/archbishop-trial-finish.json';
-const {escortGuard}=await import('/vol2/1000/kugarocks/happyro/tools/job-change-audit/escort.mjs');const guard=escortGuard(game,proof);
+const {escortGuard}=await import('./escort.mjs');const guard=escortGuard(game,proof);
 const save=()=>fs.writeFile(file,JSON.stringify(proof,null,2));
 async function boss(){
  for(let n=0;n<30;n++){

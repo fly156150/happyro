@@ -1,5 +1,5 @@
 assert.equal((await snapshot()).name,'JobDirectM');
-const {route}=await import('/vol2/1000/kugarocks/happyro/tools/job-change-audit/hunter-path.mjs');
+const {route}=await import('./hunter-path.mjs');
 const grid=JSON.parse(await fs.readFile('work/job-change-audit/hunter-grid.json','utf8'));const source=await fs.readFile('repos/happyro-server/npc/jobs/2-1/hunter.txt','utf8');const blocked=new Set();
 for(const m of source.matchAll(/job_hunte,(\d+),(\d+),\d+\s+(?:duplicate\(HntTrap2?\)|script\s+[^\s]+::HntTrap2?)[^\n]*?-1,(\d+),(\d+)/g)){const [,x,y,rx,ry]=m.map(Number);for(let a=x-rx;a<=x+rx;a++)for(let b=y-ry;b<=y+ry;b++)blocked.add(`${a},${b}`);}
 const proof={preparation:'Actual collision grid and ordinary walking/attacks, strengthened dedicated role; no quest variables, timers or monster spawning changed',events:[]};const file='docs/development/job-change-review/evidence/hunter-arena-walk.json';

@@ -1,5 +1,5 @@
 assert.equal((await snapshot()).name,'JobDirectM');assert.equal((await snapshot()).job_id,4012);
-const {walk}=await import('/vol2/1000/kugarocks/happyro/tools/job-change-audit/walk.mjs?arch=9');
+const {walk}=await import('./walk.mjs?arch=9');
 const proof={preparation:'Dedicated character STR99 AGI5000 VIT1000 INT99 DEX500 LUK99 for survival, normal native bow/arrows/bombs/wolf; no quest writes or timer changes',firstAttacks:[],bombs:[],wolfAttacks:[]};const file='docs/development/job-change-review/evidence/ranger-practical-tests.json';const save=()=>fs.writeFile(file,JSON.stringify(proof,null,2));
 await command('character.stats.update',{str:99,agi:5000,vit:1000,int:99,dex:500,luk:99});await command('character.vitals.restore',{});
 // Equipped weapons are represented by Equipment UI after relog, not Inventory.list.
@@ -17,7 +17,7 @@ assert(proof.firstPassed,'First ranger exam not passed');await save();
 await game.waitForTimeout(27000);await jobNpc.contact(111,56);proof.bombTask=await jobNpc.run([],80);assert(await game.evaluate(()=>window.__fourthTest.inventory.getItemById(12258)?.count===10));await save();
 // Keep each escape endpoint beyond the native radius-five blast plus spawn offset.
 const points=[[113,47],[113,37],[115,27],[125,23],[133,22],[142,29],[150,39],[160,49],[168,54],[173,64],[179,74]];
-const {route}=await import('/vol2/1000/kugarocks/happyro/tools/job-change-audit/hunter-path.mjs?bounds=whole-map-v2');
+const {route}=await import('./hunter-path.mjs?bounds=whole-map-v2');
 const grid=await game.evaluate(()=>{const a=window.__fourthTest.altitude;return {width:a.width,height:a.height,cells:Array.from({length:a.height},(_,y)=>Array.from({length:a.width},(_,x)=>(a.getCellType(x,y)&a.TYPE.WALKABLE)?1:0))};});
 await walk(game,snapshot,points[0],0);
 for(let i=0;i<10;i++){

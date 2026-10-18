@@ -12,7 +12,7 @@ if len(sys.argv) == 1 or '--help' in sys.argv or '-h' in sys.argv:
         return text if '--no-color' in sys.argv else f'\033[{code}m{text}\033[0m'
     print('\n' + paint('1;36', 'HappyRO job-change audit'))
     print(paint('1;33', 'Usage'))
-    print('  python3 tools/job-change-audit/prepare.py ' + paint('1;32', '--run') + ' [--pair 1|2] [--no-color]')
+    print('  python3 tools/job-change-audit/prepare.py ' + paint('1;32', '--run') + ' [--pair 1|2|3|4] [--database-container NAME] [--no-color]')
     print(paint('1;33', 'Example'))
     print(paint('36', '  python3 tools/job-change-audit/prepare.py --run --no-color'))
     print('\nCreates dedicated male/female novice accounts without changing existing characters.\n')
@@ -20,19 +20,20 @@ if len(sys.argv) == 1 or '--help' in sys.argv or '-h' in sys.argv:
 parser = argparse.ArgumentParser()
 parser.add_argument('--run', required=True, action='store_true')
 parser.add_argument('--no-color', action='store_true')
-parser.add_argument('--pair', type=int, choices=[1, 2], default=1)
+parser.add_argument('--pair', type=int, choices=[1, 2, 3, 4], default=1)
+parser.add_argument('--database-container', default='happyro-native-database')
+parser.add_argument('--database', default='happyro')
 args = parser.parse_args()
-suffix = '' if args.pair == 1 else '2'
+suffix = '' if args.pair == 1 else str(args.pair)
 root = Path(__file__).resolve().parents[2]
-env = dict(line.split('=', 1) for line in (root / 'work/runtime/mariadb-10.11/compose.env').read_text().splitlines() if '=' in line and not line.startswith('#'))
 
 def sql(query):
-    result = subprocess.run(['docker', 'exec', '-i', '-e', 'MYSQL_PWD=' + env['MARIADB_ROOT_PASSWORD'], 'happyro-mariadb', 'mariadb', '-uroot', '-N', env['DB_MAIN_DATABASE']], input=query, capture_output=True, text=True)
+    result = subprocess.run(['docker', 'exec', '-i', args.database_container, 'sh', '-c', 'exec env MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb -uroot -N "$1"', 'audit-db', args.database], input=query, capture_output=True, text=True)
     if result.returncode:
         raise RuntimeError('Audit database operation failed; inspect schema without logging credentials')
     return result.stdout.strip()
 
-credentials_path = root / ('work/runtime/job-change-audit' + ('-2' if suffix else '') + '.json')
+credentials_path = root / ('work/runtime/job-change-audit' + ('-' + suffix if suffix else '') + '.json')
 if credentials_path.exists():
     print('Dedicated credentials already exist; no account or character changed.')
     sys.exit(0)

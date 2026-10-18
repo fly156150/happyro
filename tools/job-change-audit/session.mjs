@@ -1,20 +1,29 @@
-import playwright from '../../node_modules/playwright-core/index.js';
+import playwright from 'playwright-core';
+import {pacedSnapshot} from './snapshot.mjs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const projectRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+process.chdir(projectRoot);
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 if (!process.argv.includes('--run')) {
  const p=(c,s)=>process.argv.includes('--no-color')?s:`\x1b[${c}m${s}\x1b[0m`;
- console.log(`\n${p('1;36','HappyRO job-change browser audit')}\n${p('1;33','Usage')}\n  node tools/job-change-audit/session.mjs ${p('1;32','--run')} [--female] [--pair=1|2] [--slot=0|1] [--port=9351] [--mobile] [--no-color]\n${p('1;33','Example')}\n${p('36','  node tools/job-change-audit/session.mjs --run')}\n`);
+ console.log(`\n${p('1;36','HappyRO job-change browser audit')}\n${p('1;33','Usage')}\n  node tools/job-change-audit/session.mjs ${p('1;32','--run')} [--female] [--pair=1|2|3|4] [--slot=N] [--character=NAME] [--port=9351] [--base-url=http://127.0.0.1:3338] [--browser-path=PATH] [--mobile] [--no-color]\n${p('1;33','Example')}\n${p('36','  node tools/job-change-audit/session.mjs --run')}\n`);
  process.exit(0);
 }
 const female=process.argv.includes('--female');
 const pair=Number(process.argv.find(a=>a.startsWith('--pair='))?.split('=')[1] || 1);
-assert([1,2].includes(pair),'Supported account pairs: 1, 2');
-const pairSuffix=pair===1?'':'2';
+assert([1,2,3,4].includes(pair),'Supported account pairs: 1, 2, 3, 4');
+const pairSuffix=pair===1?'':String(pair);
 const slot=Number(process.argv.find(a=>a.startsWith('--slot='))?.split('=')[1] || 0);
+const expectedCharacter=process.argv.find(a=>a.startsWith('--character='))?.slice(12);
+assert(!expectedCharacter || /^Job[A-Za-z0-9]+$/.test(expectedCharacter), 'Explicit character must be a dedicated Job audit fixture');
 const controlPort=Number(process.argv.find(a=>a.startsWith('--port='))?.split('=')[1] || 9351);
-const credentials=JSON.parse(await fs.readFile('work/runtime/job-change-audit'+(pair===2?'-2':'')+'.json','utf8'))[female?1:0];
-const browser = await playwright.chromium.launch({headless: true, executablePath: '/usr/bin/chromium', args: ['--no-sandbox', `--remote-debugging-port=${controlPort-1}`]});
+const credentials=JSON.parse(await fs.readFile('work/runtime/job-change-audit'+(pair===1?'':'-'+pair)+'.json','utf8'))[female?1:0];
+const baseUrl=new URL(process.argv.find(a=>a.startsWith('--base-url='))?.slice(11) || 'http://127.0.0.1:3338');
+const browserPath=process.argv.find(a=>a.startsWith('--browser-path='))?.slice(15);
+const browser = await playwright.chromium.launch({headless:true, ...(browserPath ? {executablePath:browserPath} : {channel:'chrome'}), args:[`--remote-debugging-port=${controlPort-1}`]});
 const report = {startedAt: new Date().toISOString(), jobs: [], assertions: [], errors: []};
 let game;
 try {
@@ -26,7 +35,7 @@ try {
 		await route.fulfill({response, body: body + '\nwindow.__fourthTest={get altitude(){return Altitude;},get keys(){return KEYS;},get renderer(){return Renderer;},get packets(){return Packets.list;},get entities(){return EntityManager;},get targeting(){return SkillTargetSelection;},get manager(){return EffectManager;},get inventory(){return InventoryController.getUI();},get session(){return SessionStorage_default;},get skills(){return Controller$4.getUI();},get network(){return Network;},get packet(){return PACKET;},get effects(){return SkillEffect;},get renderEffects(){return EffectTable_default;},get explicitEffects(){return fourthJobSkillEffects;},get chat(){return ChatBox;}};'});
 	});
 	const page = await context.newPage();
-	await page.goto('http://127.0.0.1:3338/applications/pwa/index.html');
+	await page.goto(new URL('/applications/pwa/index.html',baseUrl).href);
 	const popup = (process.argv.includes('--mobile') || process.argv.includes('--tablet')) ? Promise.resolve(page) : context.waitForEvent('page');
 	await page.getByRole('button', {name: '进入游戏'}).click();
 	game = await popup;
@@ -70,13 +79,13 @@ try {
 
 	sessionHeaders=await game.evaluate(()=>{const s=window.__fourthTest.session;return {'x-happyro-account-id':String(s.AID),'x-happyro-character-id':String(s.GID),'x-happyro-auth-token':s.WebToken};});
 	const headers = sessionHeaders;
-	const api = 'http://127.0.0.1:3338/api/adventure-tools/character';
+	const api = new URL('/api/adventure-tools/character',baseUrl).href;
 	const refreshHeaders = async () => Object.assign(headers, await game.evaluate(()=>{const s=window.__fourthTest.session;return {'x-happyro-account-id':String(s.AID),'x-happyro-character-id':String(s.GID),'x-happyro-auth-token':s.WebToken};}));
-	const snapshot = async () => {
+	const snapshot = pacedSnapshot(async () => {
 		await refreshHeaders();
 		const r = await game.request.get(api, {headers});
 		assert.equal(r.status(), 200);return (await r.json()).data;
-	};
+	});
 	const command = async (type, payload, valid = true) => {
 		await new Promise(resolve => setTimeout(resolve, 2100));
 		await refreshHeaders();
@@ -87,7 +96,7 @@ try {
 		return json.data;
 	};
 	let current = await snapshot();
-	assert.equal(current.name, slot===1 ? 'JobDirect'+pairSuffix+credentials.sex : credentials.character, 'Only the dedicated automation character may be modified');
+	assert.equal(current.name, expectedCharacter || (slot===1 ? 'JobDirect'+pairSuffix+credentials.sex : credentials.character), 'Only the dedicated automation character may be modified');
 
  const http=await import('node:http');
  const server=http.createServer(async(req,res)=>{

@@ -28,19 +28,28 @@ export function dialogueDriver(game, snapshot) {
     if(!found)throw Error(`NPC not visible at ${x},${y}`);
     const p=new t.packet.CZ.CONTACTNPC();p.NAID=found.id;t.network.sendPacket(p);return found;
    },{x,y});
-   await Promise.race([game.locator('#NpcBox .content').waitFor({state:'visible',timeout:5000}),game.locator('#NpcMenu .content').waitFor({state:'visible',timeout:5000})]);
+   await Promise.race([game.locator('#NpcBox .content').waitFor({state:'visible',timeout:15000}),game.locator('#NpcMenu .content').waitFor({state:'visible',timeout:15000})]);
    return npc;
   },
-  async run(choices=[],maxPages=50) {
-   const pages=[];let selected=0;
+  async run(choices=[],maxPages=50,inputs=[]) {
+   const pages=[];let selected=0,entered=0;
    for(let i=0;i<maxPages;i++) {
     await game.waitForTimeout(180);
     const menu=game.locator('#NpcMenu .content');
     const next=game.locator('#NpcBox .next');
     const close=game.locator('#NpcBox .close');
     const content=game.locator('#NpcBox .content');
+    const input=game.locator('#inputbox input');
     if(await content.isVisible())pages.push({text:await content.innerText()});
-    if(await menu.isVisible()) {
+    if(await input.isVisible()) {
+     const value=typeof inputs==='function' ? await inputs({pages,index:entered++}) : inputs[entered++];
+     if(value===undefined)return {pages,waiting:'input'};
+     pages.push({input:String(value)});
+     await input.fill(String(value));
+     await input.press('Enter');
+     // Allow the input response to replace the previous page's close button.
+     await game.waitForTimeout(500);
+    } else if(await menu.isVisible()) {
      const options=await menu.locator('[data-index]').allTextContents();
      const choice=typeof choices==='function' ? await choices({options,pages,index:selected++}) : choices[selected++];
      pages.push({options,choice});
