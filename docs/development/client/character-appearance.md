@@ -1,5 +1,7 @@
 # 同职业分支职业外观
 
+[返回客户端专题](README.md)
+
 状态：首版已实现（2026-10-18），目前开放骑士／十字军两条分支；机甲与骑狼仍待后续实现。下文保留整体边界，并记录首版实现及验收范围。
 
 ## 目标与边界
@@ -84,17 +86,17 @@
 
 ## 代码入口
 
-- [客户端幻化解析](../../repos/happyro-client/src/Renderer/Entity/RidingAppearance.js)
-- [服务端职业与阶段白名单](../../repos/happyro-server/src/common/riding_appearance.hpp)
-- [客户端骑乘映射](../../repos/happyro-client/src/DB/Jobs/MountTable.js)
-- [客户端资源名称](../../repos/happyro-client/src/DB/Jobs/JobNameTable.js)
-- [客户端资源路径解析](../../repos/happyro-client/src/DB/DBManager.js)
-- [客户端实体显示](../../repos/happyro-client/src/Renderer/Entity/EntityView.js)
-- [客户端外观封包处理](../../repos/happyro-client/src/Engine/MapEngine/Entity.js)
-- [骑乘菜单组件](../../repos/happyro-client/src/UI/Components/GameTools/CharacterRiding.js)
-- [服务端骑乘管理](../../repos/happyro-server/src/map/game_control_riding.cpp)
-- [服务端外观状态](../../repos/happyro-server/src/map/status.cpp)
-- [服务端骑乘切换](../../repos/happyro-server/src/map/pc.cpp)
+- [客户端幻化解析](../../../repos/happyro-client/src/Renderer/Entity/RidingAppearance.js)
+- [服务端职业与阶段白名单](../../../repos/happyro-server/src/common/riding_appearance.hpp)
+- [客户端骑乘映射](../../../repos/happyro-client/src/DB/Jobs/MountTable.js)
+- [客户端资源名称](../../../repos/happyro-client/src/DB/Jobs/JobNameTable.js)
+- [客户端资源路径解析](../../../repos/happyro-client/src/DB/DBManager.js)
+- [客户端实体显示](../../../repos/happyro-client/src/Renderer/Entity/EntityView.js)
+- [客户端外观封包处理](../../../repos/happyro-client/src/Engine/MapEngine/Entity.js)
+- [骑乘菜单组件](../../../repos/happyro-client/src/UI/Components/GameTools/CharacterRiding.js)
+- [服务端骑乘管理](../../../repos/happyro-server/src/map/game_control_riding.cpp)
+- [服务端外观状态](../../../repos/happyro-server/src/map/status.cpp)
+- [服务端骑乘切换](../../../repos/happyro-server/src/map/pc.cpp)
 
 ## 首版验证记录（2026-10-18）
 
@@ -108,16 +110,16 @@
 
 仍需人工扩展验收：真实 iOS／iPadOS 上的视觉体验、全部方向和攻击／施法动作、剑枪盾及披肩头饰组合、三四转技能特效起点、死亡复活与复杂变身／特殊服装组合。本轮通过不等于这些组合全部验收完毕。
 
-## 验收目标与后续扩展
+## 回归检查与扩展边界
 
-1. 确定外观标识、白名单、持久化和同步方案，先完成真实职业与外观分离。
-2. 接入龙骑士、帝国禁卫军的默认与旧外观，完善三端入口。
+1. 检查外观标识、白名单、持久化和同步，确认真实职业与显示外观保持分离。
+2. 回归骑士／十字军分支的默认与旧外观，核对三端入口。
 3. 使用两个角色验证本人和旁观者画面；验证入视野、换地图、重登、死亡复活、下骑与再次骑乘。
 4. 男女分别验证移动、待机、攻击、受击、施法，以及剑、枪、盾、头饰、披肩和染色；检查三四转技能在旧外观上的动作、特效起点。
 5. 核对职业名称、技能树、装备资格、属性、费用及骑乘技能限制未变化；验证连续切换、变身覆盖和非法请求。
 6. 完成桌面、手机和平板验收后，再决定是否开放机甲、骑狼及其他服装组合。
 
-工作量判断：中等。现成主体资源降低了素材成本，主要工作在职业与外观解耦、同步生命周期，以及旧外观与高阶技能和装备的组合验收。没有现成资源的“保留四转服装，仅替换旧坐骑”不在首批范围内。
+扩展时重点核对职业与外观分离、同步生命周期，以及旧外观与高阶技能和装备的组合。没有现成资源的“保留四转服装，仅替换旧坐骑”不在首批范围内。
 
 ## 默认路径隔离与失败回退（2026-10-18）
 

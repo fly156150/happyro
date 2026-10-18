@@ -30,4 +30,4 @@ node tools/resources/audit-fourth-jobs.mjs audit --no-color
 - `data/texture/effect/shinkiro_shiranui/npc_kinai/kunaiarea_00_loop.str`
 - `data/texture/effect/shinkiro_shiranui/npc_kinai/kunaiarea_00_end.str`
 
-不要通过修改官方输入、猜测 `npc_kinai` 拼写或隐藏审计缺项消除报告。处理优先级见[待办与边界](backlog.md)。
+不要通过修改官方输入、猜测 `npc_kinai` 拼写或隐藏审计缺项消除报告。处理优先级见[待办与边界](acceptance.md#后续范围与处理优先级)。

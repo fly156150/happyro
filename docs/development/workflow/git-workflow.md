@@ -38,4 +38,4 @@ Client 和 Server 的产品变更还要同步记录到根仓库集中 changelog�
 
 - 长期说明放在 `docs/`，不要把 Agent 分片或 `work/` 产物继续放进文档目录。
 - 上游 roBrowser / rAthena README 保留在子仓库，HappyRO 说明写在各仓库根 README 和 `docs/`。
-- Docker 镜像发布规则见 [Docker 镜像发布](../operations/docker-release.md)。
+- Docker 镜像发布规则见 [Docker 镜像发布](../../operations/docker-release.md)。

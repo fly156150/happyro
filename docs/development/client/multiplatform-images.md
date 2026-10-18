@@ -65,6 +65,6 @@
 
 ## 后续生成请求示例
 
-> 按 docs/development/multiplatform-images.md 的规则，使用我提供的 PC、平板、手机三张截图，生成新版三端展示图。保持真实 UI、不写版本号，先给预览，不提交代码或替换正式文档图片。
+> 按 docs/development/client/multiplatform-images.md 的规则，使用我提供的 PC、平板、手机三张截图，生成新版三端展示图。保持真实 UI、不写版本号，先给预览，不提交代码或替换正式文档图片。
 
-参考：[文档维护](documentation.md)、[移动端 UI 开发与验收](mobile-ui.md)。
+参考：[文档维护](../workflow/documentation.md)、[移动端 UI 开发与验收](mobile-ui.md)。

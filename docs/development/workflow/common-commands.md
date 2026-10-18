@@ -1,6 +1,8 @@
 # 常用命令
 
-根仓库 `Makefile` 是本机业务入口。脚本路径见 [scripts/README.md](../../scripts/README.md)。底层生成器见 [tools/README.md](../../tools/README.md)。
+根仓库 `Makefile` 是本机业务入口。脚本路径见 [scripts/README.md](../../../scripts/README.md)。底层生成器见 [tools/README.md](../../../tools/README.md)。
+
+以下 Makefile 服务管理命令主要用于 Linux 开发栈；macOS 已配置环境使用 `scripts/local/macos-services.sh`，平台差异与启动前检查见[本地开发](local-setup.md#运行环境与平台差异)。
 
 ## 环境
 

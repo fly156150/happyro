@@ -1,6 +1,6 @@
 # 职业技能审计：已修复的明确问题
 
-更新于 2026-10-18。本页单独记录本次技能审计已经修复的明确问题，按最终实现合并重复修正；总体范围、607 项处理清单及未解决事项见[审查结果](skill-review.md)。
+更新于 2026-10-18。本页单独记录本次技能审计已经修复的明确问题，按最终实现合并重复修正；总体范围、607 项处理清单及未解决事项见[审查结果](README.md)。
 
 ## 范围与验证口径
 
@@ -16,7 +16,7 @@
 
 来源：client:52bdde3f；server:8dce39bae。
 
-验证入口：[hunter-status.test.mjs](../../repos/happyro-server/tests/hunter-status.test.mjs)、[CompanionSkillMotion.test.js](../../repos/happyro-client/tests/engine/CompanionSkillMotion.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[hunter-status.test.mjs](../../../repos/happyro-server/tests/hunter-status.test.mjs)、[CompanionSkillMotion.test.js](../../../repos/happyro-client/tests/engine/CompanionSkillMotion.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -27,7 +27,7 @@
 
 来源：client:128822f7；server:a81472ede、39520fc84；反射分支 server:30ad0fb68。
 
-验证入口：[drain-life.test.mjs](../../repos/happyro-server/tests/drain-life.test.mjs)、[energy-coat.test.mjs](../../repos/happyro-server/tests/energy-coat.test.mjs)、[spellbook.test.mjs](../../repos/happyro-server/tests/spellbook.test.mjs)、[tetra-packet.test.mjs](../../repos/happyro-server/tests/tetra-packet.test.mjs)、[tetra-sequence.test.mjs](../../repos/happyro-server/tests/tetra-sequence.test.mjs)、[wizard-cast.test.mjs](../../repos/happyro-server/tests/wizard-cast.test.mjs)、[WizardEffectRouting.test.js](../../repos/happyro-client/tests/renderer/WizardEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[drain-life.test.mjs](../../../repos/happyro-server/tests/drain-life.test.mjs)、[energy-coat.test.mjs](../../../repos/happyro-server/tests/energy-coat.test.mjs)、[spellbook.test.mjs](../../../repos/happyro-server/tests/spellbook.test.mjs)、[tetra-packet.test.mjs](../../../repos/happyro-server/tests/tetra-packet.test.mjs)、[tetra-sequence.test.mjs](../../../repos/happyro-server/tests/tetra-sequence.test.mjs)、[wizard-cast.test.mjs](../../../repos/happyro-server/tests/wizard-cast.test.mjs)、[WizardEffectRouting.test.js](../../../repos/happyro-client/tests/renderer/WizardEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -47,7 +47,7 @@
 
 来源：client:fe4f2dfb；server:c207a272f、e28c5627c。
 
-验证入口：[priest-healing.test.mjs](../../repos/happyro-server/tests/priest-healing.test.mjs)、[epiclesis.test.mjs](../../repos/happyro-server/tests/epiclesis.test.mjs)、[warp-menu.test.mjs](../../repos/happyro-server/tests/warp-menu.test.mjs)、[priest-shield.test.mjs](../../repos/happyro-server/tests/priest-shield.test.mjs)、[PriestEffectRouting.test.js](../../repos/happyro-client/tests/renderer/PriestEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[priest-healing.test.mjs](../../../repos/happyro-server/tests/priest-healing.test.mjs)、[epiclesis.test.mjs](../../../repos/happyro-server/tests/epiclesis.test.mjs)、[warp-menu.test.mjs](../../../repos/happyro-server/tests/warp-menu.test.mjs)、[priest-shield.test.mjs](../../../repos/happyro-server/tests/priest-shield.test.mjs)、[PriestEffectRouting.test.js](../../../repos/happyro-client/tests/renderer/PriestEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -68,7 +68,7 @@
 
 来源：client:fa33c698；server:dfd33ff30、a78f953fe。
 
-验证入口：[crusader-barrier.test.mjs](../../repos/happyro-server/tests/crusader-barrier.test.mjs)、[devotion-inheritance.test.mjs](../../repos/happyro-server/tests/devotion-inheritance.test.mjs)、[shield-chain.test.mjs](../../repos/happyro-server/tests/shield-chain.test.mjs)、[CrusaderEffectRouting.test.js](../../repos/happyro-client/tests/renderer/CrusaderEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[crusader-barrier.test.mjs](../../../repos/happyro-server/tests/crusader-barrier.test.mjs)、[devotion-inheritance.test.mjs](../../../repos/happyro-server/tests/devotion-inheritance.test.mjs)、[shield-chain.test.mjs](../../../repos/happyro-server/tests/shield-chain.test.mjs)、[CrusaderEffectRouting.test.js](../../../repos/happyro-client/tests/renderer/CrusaderEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -84,7 +84,7 @@
 
 来源：client:39ef5f32；server:f3c6779aa、e962291ef。
 
-验证入口：[assassin-poison.test.mjs](../../repos/happyro-server/tests/assassin-poison.test.mjs)、[shadow-scar.test.mjs](../../repos/happyro-server/tests/shadow-scar.test.mjs)、[AssassinEffectRouting.test.js](../../repos/happyro-client/tests/renderer/AssassinEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[assassin-poison.test.mjs](../../../repos/happyro-server/tests/assassin-poison.test.mjs)、[shadow-scar.test.mjs](../../../repos/happyro-server/tests/shadow-scar.test.mjs)、[AssassinEffectRouting.test.js](../../../repos/happyro-client/tests/renderer/AssassinEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -100,7 +100,7 @@
 
 来源：client:2e4b417e、183468c0；server:a34125dbc、e3685d5f2、10ceea4b4。
 
-验证入口：[mechanic-resources.test.mjs](../../repos/happyro-server/tests/mechanic-resources.test.mjs)、[FourthJobEffects.test.js](../../repos/happyro-client/tests/db/FourthJobEffects.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[mechanic-resources.test.mjs](../../../repos/happyro-server/tests/mechanic-resources.test.mjs)、[FourthJobEffects.test.js](../../../repos/happyro-client/tests/db/FourthJobEffects.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -119,7 +119,7 @@
 
 来源：client:6f0ec306；server:81d0e8c84、30ad0fb68。
 
-验证入口：[sorcerer-resources.test.mjs](../../repos/happyro-server/tests/sorcerer-resources.test.mjs)、[elemental-options.test.mjs](../../repos/happyro-server/tests/elemental-options.test.mjs)、[elemental-action.test.mjs](../../repos/happyro-server/tests/elemental-action.test.mjs)、[SorcererEffectRouting.test.js](../../repos/happyro-client/tests/renderer/SorcererEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[sorcerer-resources.test.mjs](../../../repos/happyro-server/tests/sorcerer-resources.test.mjs)、[elemental-options.test.mjs](../../../repos/happyro-server/tests/elemental-options.test.mjs)、[elemental-action.test.mjs](../../../repos/happyro-server/tests/elemental-action.test.mjs)、[SorcererEffectRouting.test.js](../../../repos/happyro-client/tests/renderer/SorcererEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -137,7 +137,7 @@
 
 来源：client:1b13d282；server:586645a13、d29424cdb。
 
-验证入口：[genetic-resources.test.mjs](../../repos/happyro-server/tests/genetic-resources.test.mjs)、[homunculus-casting.test.mjs](../../repos/happyro-server/tests/homunculus-casting.test.mjs)、[GeneticEffectRouting.test.js](../../repos/happyro-client/tests/renderer/GeneticEffectRouting.test.js)、[MaterialSelection.test.js](../../repos/happyro-client/tests/ui/MaterialSelection.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[genetic-resources.test.mjs](../../../repos/happyro-server/tests/genetic-resources.test.mjs)、[homunculus-casting.test.mjs](../../../repos/happyro-server/tests/homunculus-casting.test.mjs)、[GeneticEffectRouting.test.js](../../../repos/happyro-client/tests/renderer/GeneticEffectRouting.test.js)、[MaterialSelection.test.js](../../../repos/happyro-client/tests/ui/MaterialSelection.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -163,7 +163,7 @@
 
 来源：client:7087f60b；server:ae8c45a49、752ebe5f6。
 
-验证入口：[monk-combat.test.mjs](../../repos/happyro-server/tests/monk-combat.test.mjs)、[monk-bindings.test.mjs](../../repos/happyro-server/tests/monk-bindings.test.mjs)、[MonkEffectRouting.test.js](../../repos/happyro-client/tests/renderer/MonkEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[monk-combat.test.mjs](../../../repos/happyro-server/tests/monk-combat.test.mjs)、[monk-bindings.test.mjs](../../../repos/happyro-server/tests/monk-bindings.test.mjs)、[MonkEffectRouting.test.js](../../../repos/happyro-client/tests/renderer/MonkEffectRouting.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -179,7 +179,7 @@
 
 来源：client:03ad37f0；server:b7a3b2484、131483eef。
 
-验证入口：[rogue-state.test.mjs](../../repos/happyro-server/tests/rogue-state.test.mjs)、[rogue-range.test.mjs](../../repos/happyro-server/tests/rogue-range.test.mjs)、[FourthJobEffects.test.js](../../repos/happyro-client/tests/db/FourthJobEffects.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[rogue-state.test.mjs](../../../repos/happyro-server/tests/rogue-state.test.mjs)、[rogue-range.test.mjs](../../../repos/happyro-server/tests/rogue-range.test.mjs)、[FourthJobEffects.test.js](../../../repos/happyro-client/tests/db/FourthJobEffects.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -194,7 +194,7 @@
 
 来源：client:747d2d19；server:ff9fc0bd2、c2bdbc1a3。
 
-验证入口：[bard-song.test.mjs](../../repos/happyro-server/tests/bard-song.test.mjs)、[bard-rainstorm.test.mjs](../../repos/happyro-server/tests/bard-rainstorm.test.mjs)、[bard-partner.test.mjs](../../repos/happyro-server/tests/bard-partner.test.mjs)、[bard-recall.test.mjs](../../repos/happyro-server/tests/bard-recall.test.mjs)、[FourthJobEffects.test.js](../../repos/happyro-client/tests/db/FourthJobEffects.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[bard-song.test.mjs](../../../repos/happyro-server/tests/bard-song.test.mjs)、[bard-rainstorm.test.mjs](../../../repos/happyro-server/tests/bard-rainstorm.test.mjs)、[bard-partner.test.mjs](../../../repos/happyro-server/tests/bard-partner.test.mjs)、[bard-recall.test.mjs](../../../repos/happyro-server/tests/bard-recall.test.mjs)、[FourthJobEffects.test.js](../../../repos/happyro-client/tests/db/FourthJobEffects.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -212,7 +212,7 @@
 
 来源：client:2e4b417e、b002c5a9；server:f86109c4e。
 
-验证入口：[knight-servant.test.mjs](../../repos/happyro-server/tests/knight-servant.test.mjs)、[knight-range.test.mjs](../../repos/happyro-server/tests/knight-range.test.mjs)、[knight-resource.test.mjs](../../repos/happyro-server/tests/knight-resource.test.mjs)、[knight-ammunition.test.mjs](../../repos/happyro-server/tests/knight-ammunition.test.mjs)、[FourthJobEffects.test.js](../../repos/happyro-client/tests/db/FourthJobEffects.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
+验证入口：[knight-servant.test.mjs](../../../repos/happyro-server/tests/knight-servant.test.mjs)、[knight-range.test.mjs](../../../repos/happyro-server/tests/knight-range.test.mjs)、[knight-resource.test.mjs](../../../repos/happyro-server/tests/knight-resource.test.mjs)、[knight-ammunition.test.mjs](../../../repos/happyro-server/tests/knight-ammunition.test.mjs)、[FourthJobEffects.test.js](../../../repos/happyro-client/tests/db/FourthJobEffects.test.js)。这些是对应修复的回归入口，不表示本次重新执行。
 
 | 编号 | 明确问题 | 原影响／触发条件 | 最终修复 |
 | --- | --- | --- | --- |
@@ -234,29 +234,29 @@
 
 | 编号 | 明确问题 | 最终修复及验证范围 | 已入库证据 |
 | --- | --- | --- | --- |
-| F109 | 话匣子缺少完整留言输入与中文流程 | 补共用输入、UTF-8 编码及空值／NUL／长度校验；取消、断线或切图不发送旧位置请求；真实中文放置与触发通过 | [talkie-fixed.json](skill-review/evidence/talkie-fixed.json) |
-| F110 | 话匣子消息按旧长度读取导致收包错位／断线 | 当前字段为 21 字节含 NUL，完整包 27 字节；输入最多 20 字节 UTF-8；双客户端触发后保持连接并继续施法 | [talkie-fixed.json](skill-review/evidence/talkie-fixed.json) |
-| F111 | 他人触发隐藏话匣子看不到留言 | 原先丢弃隐藏陷阱实体导致无坐标；保留不可见单位位置供留言显示，不显示隐藏外观 | [talkie-fixed.json](skill-review/evidence/talkie-fixed.json) |
-| F112 | 队员升级／转职后职业与等级仍旧 | 补 0x0abd 解析、注册和队伍更新；真实对端变化实时同步，保留队长和血量 | [party-info-fixed.json](skill-review/evidence/party-info-fixed.json) |
-| F113 | 中文队名与角色名乱码 | 队伍列表改用正确字符串解码，重新进入游戏核对中文队名 | [party-name-fixed.json](skill-review/evidence/party-name-fixed.json) |
-| F114 | 元素精灵扣材料但创建失败 | 修正有符号下限与无符号等级比较；命中／防御／魔防／回避以宽整数限制在 0..32767，避免数据库拒绝；四种三阶精灵实际召唤、控制及攻击 | [elemental-fixed.json](skill-review/evidence/elemental-fixed.json) |
-| F115 | 元素分析／材料转换拖物品变成拖整个窗口 | 删除不存在 .head 导致的全窗口拖动绑定，只保留标题栏拖动；实际材料拖入与数量输入通过 | [elemental-analysis.json](skill-review/evidence/elemental-analysis.json) |
-| F116 | 材料确认调用不存在的封包构造器 | 统一使用随协议选择的 ITEMLISTWIN_RES；桌面和移动共用。实机转换扣料／产出正常，取消不扣料且能继续施法 | [elemental-analysis.json](skill-review/evidence/elemental-analysis.json)、[material-cancel.json](skill-review/evidence/material-cancel.json) |
-| F117 | 较大 ID 的制造装置选择后不制作 | REQ_MAKINGITEM 新旧 ID 宽度分支反置，修正当前协议为 uint32；真实装置胶囊产出与材料扣除匹配 | [machine-crafted-fixed.json](skill-review/evidence/machine-crafted-fixed.json) |
-| F118 | 武器精炼列表未知物品与错误索引 | 当前 0x221 条目改按 23 字节读取，物品和卡片保留 uint32；真实锻造木棒 +0→+1，矿石扣除正确 | [refine-fixed.json](skill-review/evidence/refine-fixed.json) |
-| F119 | 武器修理列表及提交字段错位 | 0x0b65 按 24 字节解析，修正卡片／精炼／评级顺序；修理请求写完整 ID 和评级。真实损坏木棒修复、扣铁矿石且重新装备，精炼与锻造信息保留 | [repair-fixed.json](skill-review/evidence/repair-fixed.json) |
-| F120 | 上下机甲后主机体防御与负重残留 | 进入／退出机甲执行完整属性重算；实机两轮防御 102→2→102→2，负重及速度同步恢复 | [mado-recalculation-verify.json](skill-review/evidence/mado-recalculation-verify.json) |
-| F121 | 小型熔炉重复列出同一成品 | 配方资格检查后按成品 ID 去重，保留合法制作规则；新窗口铁／钢各一项 | [produce-dedup-fixed.json](skill-review/evidence/produce-dedup-fixed.json) |
-| F122 | 毒药等共用物品选择错误显示制作箭矢／LIST | 统一共用窗口为“选择物品”，空列表提示相应调整；核对实际选择窗口 | [selection-title-fixed.json](skill-review/evidence/selection-title-fixed.json) |
-| F123 | 随机传送及取消仍显示协议值／英文 | 显示为“随机传送”和“取消”，提交仍保留原协议目的地，不改变传送行为 | [teleport-label-fixed.json](skill-review/evidence/teleport-label-fixed.json) |
-| F124 | 九个旧增益／探测技能缺主体反馈 | 为探测、狙杀瞄准、风之步与六个大主教技能补短时程序效果；全部取得真实回包和 ready／draws 记录，失败施放不新增效果；不是官方完整动画 | [support-effects-live.json](skill-review/evidence/support-effects-live.json) |
-| F125 | 制作材料说明残留韩文且编码不明确 | 75 条说明使用审查后的中文覆盖并显式 UTF-8 读取；核对 ID、数量、顺序及 Gateway 哈希，官方源材料不改 | [support-effects-materials-check.json](skill-review/evidence/support-effects-materials-check.json) |
+| F109 | 话匣子缺少完整留言输入与中文流程 | 补共用输入、UTF-8 编码及空值／NUL／长度校验；取消、断线或切图不发送旧位置请求；真实中文放置与触发通过 | [talkie-fixed.json](evidence/talkie-fixed.json) |
+| F110 | 话匣子消息按旧长度读取导致收包错位／断线 | 当前字段为 21 字节含 NUL，完整包 27 字节；输入最多 20 字节 UTF-8；双客户端触发后保持连接并继续施法 | [talkie-fixed.json](evidence/talkie-fixed.json) |
+| F111 | 他人触发隐藏话匣子看不到留言 | 原先丢弃隐藏陷阱实体导致无坐标；保留不可见单位位置供留言显示，不显示隐藏外观 | [talkie-fixed.json](evidence/talkie-fixed.json) |
+| F112 | 队员升级／转职后职业与等级仍旧 | 补 0x0abd 解析、注册和队伍更新；真实对端变化实时同步，保留队长和血量 | [party-info-fixed.json](evidence/party-info-fixed.json) |
+| F113 | 中文队名与角色名乱码 | 队伍列表改用正确字符串解码，重新进入游戏核对中文队名 | [party-name-fixed.json](evidence/party-name-fixed.json) |
+| F114 | 元素精灵扣材料但创建失败 | 修正有符号下限与无符号等级比较；命中／防御／魔防／回避以宽整数限制在 0..32767，避免数据库拒绝；四种三阶精灵实际召唤、控制及攻击 | [elemental-fixed.json](evidence/elemental-fixed.json) |
+| F115 | 元素分析／材料转换拖物品变成拖整个窗口 | 删除不存在 .head 导致的全窗口拖动绑定，只保留标题栏拖动；实际材料拖入与数量输入通过 | [elemental-analysis.json](evidence/elemental-analysis.json) |
+| F116 | 材料确认调用不存在的封包构造器 | 统一使用随协议选择的 ITEMLISTWIN_RES；桌面和移动共用。实机转换扣料／产出正常，取消不扣料且能继续施法 | [elemental-analysis.json](evidence/elemental-analysis.json)、[material-cancel.json](evidence/material-cancel.json) |
+| F117 | 较大 ID 的制造装置选择后不制作 | REQ_MAKINGITEM 新旧 ID 宽度分支反置，修正当前协议为 uint32；真实装置胶囊产出与材料扣除匹配 | [machine-crafted-fixed.json](evidence/machine-crafted-fixed.json) |
+| F118 | 武器精炼列表未知物品与错误索引 | 当前 0x221 条目改按 23 字节读取，物品和卡片保留 uint32；真实锻造木棒 +0→+1，矿石扣除正确 | [refine-fixed.json](evidence/refine-fixed.json) |
+| F119 | 武器修理列表及提交字段错位 | 0x0b65 按 24 字节解析，修正卡片／精炼／评级顺序；修理请求写完整 ID 和评级。真实损坏木棒修复、扣铁矿石且重新装备，精炼与锻造信息保留 | [repair-fixed.json](evidence/repair-fixed.json) |
+| F120 | 上下机甲后主机体防御与负重残留 | 进入／退出机甲执行完整属性重算；实机两轮防御 102→2→102→2，负重及速度同步恢复 | [mado-recalculation-verify.json](evidence/mado-recalculation-verify.json) |
+| F121 | 小型熔炉重复列出同一成品 | 配方资格检查后按成品 ID 去重，保留合法制作规则；新窗口铁／钢各一项 | [produce-dedup-fixed.json](evidence/produce-dedup-fixed.json) |
+| F122 | 毒药等共用物品选择错误显示制作箭矢／LIST | 统一共用窗口为“选择物品”，空列表提示相应调整；核对实际选择窗口 | [selection-title-fixed.json](evidence/selection-title-fixed.json) |
+| F123 | 随机传送及取消仍显示协议值／英文 | 显示为“随机传送”和“取消”，提交仍保留原协议目的地，不改变传送行为 | [teleport-label-fixed.json](evidence/teleport-label-fixed.json) |
+| F124 | 九个旧增益／探测技能缺主体反馈 | 为探测、狙杀瞄准、风之步与六个大主教技能补短时程序效果；全部取得真实回包和 ready／draws 记录，失败施放不新增效果；不是官方完整动画 | [support-effects-live.json](evidence/support-effects-live.json) |
+| F125 | 制作材料说明残留韩文且编码不明确 | 75 条说明使用审查后的中文覆盖并显式 UTF-8 读取；核对 ID、数量、顺序及 Gateway 哈希，官方源材料不改 | [support-effects-materials-check.json](evidence/support-effects-materials-check.json) |
 
 ## 跨职业共用区域效果修复
 
 **F126：地面施放缺坐标、一次性区域效果跟随角色及逐目标重复播放。** 修正共用 EffectManager／技能路由的固定位置处理，并将暴风雪、雷鸣风暴、光耀之堂、圣灵降临、生命体毒雾等区域主体与目标命中分开。来源为客户端 `2e4b417e`。各职业专属缺失资源和状态生命周期问题已在对应职业线列出，此项仅记录共用渲染路径，不宣称所有持续效果已经还原。资源读取／构建记录不能替代逐技能人工画面验收。
 
-完整的未解决清单见[尚未解决的事项](skill-review-pending.md)。
+完整的未解决清单见[尚未解决的事项](pending.md)。
 
 ## 排除项与仍待处理事项
 
@@ -270,6 +270,6 @@
 
 本页共 **126 个修复条目**。这是按上述根因与功能边界整理的记录数量，不是受影响技能数，不是失败技能数，也不等于逐项全部实机通过。包含历史代码回归修复及后续实机修复，后者没有被合并遗漏。
 
-核对了原审查正文、产品 changelog、对应提交的文件变更与当前工作区补丁。原轮次文档不恢复，最终修复以本页为主；历史实现可在对应仓库用本页短提交号查询。具体提交完整哈希、变更文件与补丁摘要见[来源索引](skill-review/evidence/fix-source-index.json)。客户端和服务端是独立仓库，测试链接要求相应仓库检出；它们已由各自仓库跟踪，不重复复制产品测试到根仓库。
+核对了原审查正文、产品 changelog、对应提交的文件变更与当前工作区补丁。原轮次文档不恢复，最终修复以本页为主；历史实现可在对应仓库用本页短提交号查询。具体提交完整哈希、变更文件与补丁摘要见[来源索引](evidence/fix-source-index.json)。客户端和服务端是独立仓库，测试链接要求相应仓库检出；它们已由各自仓库跟踪，不重复复制产品测试到根仓库。
 
-后续改变修复结论时应更新本页对应编号与证据，不新增重复条目；尚未解决的问题及下一批顺序统一维护在[未解决事项](skill-review-pending.md)中。本次没有重新运行这些历史回归或游戏验收，文档检查只验证来源、路径与引用完整性。
+后续改变修复结论时应更新本页对应编号与证据，不新增重复条目；尚未解决的问题及下一批顺序统一维护在[未解决事项](pending.md)中。本次没有重新运行这些历史回归或游戏验收，文档检查只验证来源、路径与引用完整性。
