@@ -8,7 +8,7 @@
   <a href="https://happyro-demo.kugarocks.com/applications/pwa/index.html">游戏演示</a> ·
   <a href="https://happyro-admin.kugarocks.com">后台演示</a> ·
   <a href="https://happyro.kugarocks.com/guide/downloads">资源下载</a> ·
-  <a href="https://happyro.kugarocks.com/guide/introduction">项目文档</a> ·
+  <a href="https://happyro.kugarocks.com/guide/quick-start">快速开始</a> ·
   <a href="https://happyro.kugarocks.com/deploy/docker">Docker 安装</a>
 </p>
 
@@ -24,7 +24,7 @@ HappyRO 是一个中文友好的网页端 RO 项目，提供中文游戏界面�
 
 <p><img src="docs/assets/readme/happyro-responsive-skills.png" alt="剑士狂击技能在平板横屏中的左右分栏与手机竖屏中的上下布局" width="100%"></p>
 
-操作说明见[玩家指南](https://happyro.kugarocks.com/game/)与[PWA 使用方法](https://happyro.kugarocks.com/game/pwa)。
+操作说明见[界面与操作](https://happyro.kugarocks.com/game/controls)、[快捷键与技能](https://happyro.kugarocks.com/game/shortcuts)及[PWA 使用方法](https://happyro.kugarocks.com/game/pwa)；频道、私聊和组队见[聊天与社交](https://happyro.kugarocks.com/game/social)。
 
 ## 图鉴与冒险工具
 
@@ -48,18 +48,23 @@ Web 管理后台提供账号与角色查询、物品与 Zeny 发放，以及经�
 
 <p><img src="docs/assets/readme/happyro-admin-settings.png" alt="HappyRO 管理后台按物品类别及普通魔物、Mini、MVP 分别设置掉落倍率" width="100%"></p>
 
-后台操作见[管理指南](https://happyro.kugarocks.com/admin/)，职业任务见[转职攻略](https://happyro.kugarocks.com/strategy/job-change/)。
+后台操作见[管理指南](https://happyro.kugarocks.com/admin/)，倍率与功能权限配置见[游戏设置](https://happyro.kugarocks.com/admin/game-settings)。
 
 ## 安装与体验
 
-参考 [Docker 安装手册](https://happyro.kugarocks.com/deploy/docker)，下载[离线包](https://happyro.kugarocks.com/guide/downloads)，包内包含 `linux/amd64` 与 `linux/arm64` 镜像、运行资源、配置模板和配套工具。
+首次体验可从[快速开始](https://happyro.kugarocks.com/guide/quick-start)选择入口。自行部署时，参考 [Docker 安装手册](https://happyro.kugarocks.com/deploy/docker)，下载[离线包](https://happyro.kugarocks.com/guide/downloads)，包内包含 `linux/amd64` 与 `linux/arm64` 镜像、运行资源、配置模板和配套工具。
 
 | 入口 | 内容 |
 | --- | --- |
-| [Docker 部署](https://happyro.kugarocks.com/deploy/docker) | 离线安装、首次启动与日常维护 |
+| [玩家指南](https://happyro.kugarocks.com/game/) / [转职攻略](https://happyro.kugarocks.com/strategy/job-change/) | 登录、日常操作与职业任务 |
+| [Docker 部署](https://happyro.kugarocks.com/deploy/docker) | 离线安装与首次启动 |
+| [HTTPS 与反向代理](https://happyro.kugarocks.com/deploy/reverse-proxy) | 域名访问、证书与 WebSocket 转发 |
+| [日常维护](https://happyro.kugarocks.com/deploy/maintenance) / [故障排查](https://happyro.kugarocks.com/deploy/troubleshooting) | 服务状态、日志、重启与常见问题 |
 | [升级](https://happyro.kugarocks.com/deploy/upgrade) / [备份与恢复](https://happyro.kugarocks.com/deploy/backup-restore) | 数据保留、版本升级与回退 |
 | [自定义功能](https://happyro.kugarocks.com/deploy/customization) | NPC、数据库与客户端资源定制 |
 | [源码开发](https://happyro.kugarocks.com/development/) | 依赖、资源准备、构建与本机服务 |
+
+文档与截图按当前主分支维护，开发中功能不代表已发布离线包均已包含；安装前请核对[下载说明](https://happyro.kugarocks.com/guide/downloads)和所用版本的发布说明。
 
 ## 项目组成
 
@@ -91,6 +96,7 @@ HappyRO 由根仓库、四个应用仓库和一个公开文档仓库组成：
 
 - [项目站点](https://happyro.kugarocks.com) · [GitHub Pages](https://happyro.org)
 - [更新日志](changelog/README.md) · [v0.5.0 发布准备与已知限制](changelog/releases/v0.5.0.md)
+- [贡献指南](https://happyro.kugarocks.com/development/contributing) · [联系与反馈](https://happyro.kugarocks.com/community/contact)
 - QQ 群：`662191549`（HappyRO）
 
 ## 开源协议
