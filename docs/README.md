@@ -46,5 +46,6 @@
 - 发布镜像：[强制发布规则](operations/docker-release.md)。
 - 清理目录或迁移主机前：[备份与恢复](operations/backup-recovery.md)。
 - 新增或修改文档：[文档维护](development/workflow/documentation.md)。
+- 更换 README 地图、角色或截图：[README 图片制作](development/readme-images/README.md)。
 
 文档中的“当前源码”依据仓库实现；带日期的主机观察和测试计数不代表当前状态。`work/runtime` 中的数据库和密钥不能当缓存清理。本文档审查不代表已发布新镜像或重新执行所有产品测试。
