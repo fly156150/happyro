@@ -12,8 +12,10 @@
 .tablet{position:absolute;left:36px;top:440px;width:696px;height:532px;padding:14px 18px;border:2px solid #6b7076;background:#24272a;border-radius:26px;box-shadow:0 12px 28px #141b2430}
 .tablet img{border-radius:10px}.phone{position:absolute;left:1252px;top:358px;width:300px;height:600px;padding:10px;border:3px solid #626970;background:#202428;border-radius:35px;box-shadow:0 12px 28px #141b2430}
 .phone img{border-radius:23px}.phone:after{content:"";position:absolute;bottom:15px;left:110px;width:76px;height:4px;border-radius:4px;background:#fff9}
-.skills{width:1600px;height:865px;background:transparent;display:flex;align-items:center;gap:30px;padding:20px 30px}
-.skills .wide{width:1100px;height:825px;border:8px solid #282c30;border-radius:18px;overflow:hidden}.skills .tall{width:410px;height:820px;border:8px solid #282c30;border-radius:22px;overflow:hidden}
+.skills{width:1600px;height:858px;background:transparent;display:flex;align-items:center;justify-content:center;gap:55px;padding:30px}
+.skills .wide{position:relative;width:1044px;height:798px;flex:none}.skills .tall{position:relative;width:399px;height:798px;flex:none}
+.skills .tablet{left:0;top:0;transform:scale(1.5);transform-origin:top left}
+.skills .phone{left:0;top:0;transform:scale(1.33);transform-origin:top left}
 </style>
 <div class="hero" id="hero">
  <div class="stand"></div><div class="foot"></div>
@@ -21,5 +23,5 @@
  <div class="tablet"><img src="tablet.png"></div>
  <div class="phone"><img src="phone.png"></div>
 </div>
-<div class="skills" id="skills"><div class="wide"><img src="tablet-skills.png"></div><div class="tall"><img src="phone-skills.png"></div></div>
+<div class="skills" id="skills"><div class="wide"><div class="tablet"><img src="tablet-skills.png"></div></div><div class="tall"><div class="phone"><img src="phone-skills.png"></div></div></div>
 </html>
