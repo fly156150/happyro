@@ -18,8 +18,8 @@
 
 | 图片 | 文件 | 像素尺寸 | 格式 |
 | --- | --- | --- | --- |
-| 三端首图 | `happyro-three-devices.jpg` | 1600 × 1000 | JPEG，质量 90 |
-| 跨端技能界面 | `happyro-responsive-skills.jpg` | 1600 × 1080 | JPEG，质量 90 |
+| 三端首图 | `happyro-three-devices.png` | 1600 × 1000 | PNG，透明背景 |
+| 跨端技能界面 | `happyro-responsive-skills.png` | 1600 × 865 | PNG，透明背景 |
 | 魔物图鉴 | `happyro-codex.png` | 880 × 680 | PNG |
 | 自动战斗 | `happyro-combat.png` | 920 × 670 | PNG |
 | 后台掉落倍率 | `happyro-admin-settings.png` | 1280 × 630 | PNG |

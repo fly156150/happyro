@@ -10,7 +10,7 @@
 
 ## 首图参数
 
-画布为 1600 × 1000，背景 `#f5f7f9`，不添加图片内标题、版本或宣传文案。通用 `box-sizing: border-box`；截图使用 `object-fit: contain` 保持比例。
+画布为 1600 × 1000，透明背景，不添加图片内标题、版本或宣传文案。通用 `box-sizing: border-box`；截图使用 `object-fit: contain` 保持比例。
 
 | 元素 | x, y | 宽 × 高 | 样式 |
 | --- | --- | --- | --- |
@@ -26,7 +26,7 @@
 
 ## 技能对比图参数
 
-画布 1600 × 1080，背景 `#f5f7f9`，Flex 横向排列、垂直居中，padding 30px，gap 30px。
+画布 1600 × 865，透明背景，Flex 横向排列、垂直居中，上下 padding 20px、左右 30px，gap 30px。
 
 | 容器 | CSS 声明尺寸 | 样式 |
 | --- | --- | --- |
@@ -45,12 +45,12 @@ await page.locator('img').evaluateAll(images =>
   Promise.all(images.map(image => image.decode()))
 );
 await page.locator('#hero').screenshot({
-  path: `${outputDir}/happyro-three-devices.jpg`,
-  type: 'jpeg', quality: 90
+  path: `${outputDir}/happyro-three-devices.png`,
+  type: 'png', omitBackground: true
 });
 await page.locator('#skills').screenshot({
-  path: `${outputDir}/happyro-responsive-skills.jpg`,
-  type: 'jpeg', quality: 90
+  path: `${outputDir}/happyro-responsive-skills.png`,
+  type: 'png', omitBackground: true
 });
 ```
 
@@ -64,5 +64,5 @@ await page.locator('#skills').screenshot({
 - 手机检查视口为 390 × 844；左右 padding 16px，图片宽 358px，无横向溢出。
 - 首图在约 800px 宽下显示高度约 500px。README 以 `width="100%"` 嵌入，保持自然比例。
 - 检查三端布局差异、角色遮挡、边框裁切、素材加载、缩小后的辨识度及原图细节。
-- 检查 PNG 文字是否清楚、JPEG 体积是否合理。具体尺寸和文件哈希记录在整套预览的 capture.json 中。
+- 检查 PNG 文字是否清楚、透明背景是否正确、文件体积是否合理。具体尺寸和文件哈希记录在整套预览的 capture.json 中。
 - 候选输出先预览，再替换正式图片；检查本地引用和 `git diff --check`。无明确要求不提交、不推送。

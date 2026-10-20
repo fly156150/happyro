@@ -70,7 +70,7 @@
 
 ## 三端首图
 
-输出：`happyro-three-devices.jpg`，合成方式见[合成与预览](composition.md)。
+输出：`happyro-three-devices.png`，合成方式见[合成与预览](composition.md)。
 
 | 输入文件名 | 截图方式 | 本次画面 |
 | --- | --- | --- |
@@ -84,7 +84,7 @@
 
 ## 跨端技能界面
 
-输出：`happyro-responsive-skills.jpg`。
+输出：`happyro-responsive-skills.png`。
 
 1. 沿用首图的平板和手机会话、角色与地图。
 2. 点击「菜单」→「技能」，保留「全部转职」「全部技能」筛选。
