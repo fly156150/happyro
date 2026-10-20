@@ -14,13 +14,13 @@
   <a href="https://happyro.kugarocks.com/container/docker">Docker 安装</a>
 </p>
 
-<p><img src="docs/assets/readme/happyro-three-devices.jpg" alt="HappyRO 在电脑、平板横屏与手机竖屏中的实际游戏界面" width="100%"></p>
+<p><img src="docs/assets/readme/happyro-three-devices.jpg" alt="剑士罗安在电脑、平板横屏与手机竖屏中的真实游戏界面" width="100%"></p>
 
 </div>
 
 HappyRO 将经典 RO 带到浏览器，提供中文游戏界面、触屏操作、游戏图鉴与冒险工具，并配备独立管理后台和双架构离线部署包。中文内容覆盖物品、技能、魔物、地图、系统消息与 NPC 对话，翻译范围与已知限制见[关于汉化](https://happyro.kugarocks.com/guide/localization)。
 
-> 本页按当前主分支介绍，截图来自本机游戏与后台；三端画面使用对应浏览器视口截取。当前开发版本为 [v0.5.0（未发布）](changelog/releases/v0.5.0.md)，公开已发布版本为 [v0.3.2](changelog/releases/v0.3.2.md)，离线包功能以对应发布说明为准。
+> 本页按当前主分支介绍，截图来自本机游戏与后台，游戏角色为剑士“罗安”；三端画面使用对应浏览器视口截取，制作参数见[README 图片规范](docs/development/readme-images/README.md)。当前开发版本为 [v0.5.0（未发布）](changelog/releases/v0.5.0.md)，公开已发布版本为 [v0.3.2](changelog/releases/v0.3.2.md)，离线包功能以对应发布说明为准。
 
 ## 触屏与跨端体验
 
@@ -28,7 +28,7 @@ HappyRO 将经典 RO 带到浏览器，提供中文游戏界面、触屏操作�
 
 通过 HTTPS 启动页可添加 PWA 到桌面。保持登录后重新打开进入选角，页面内意外断线可尝试恢复原角色；手机后台与页面回收的行为边界见[手机平板指南](https://happyro.kugarocks.com/game/mobile)。
 
-<p><img src="docs/assets/readme/happyro-responsive-skills.jpg" alt="同一技能界面在平板横屏中的左右分栏与手机竖屏中的上下布局" width="100%"></p>
+<p><img src="docs/assets/readme/happyro-responsive-skills.jpg" alt="剑士狂击技能在平板横屏中的左右分栏与手机竖屏中的上下布局" width="100%"></p>
 
 ## 图鉴与冒险工具
 
