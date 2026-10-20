@@ -9,7 +9,7 @@
   <a href="https://happyro-admin.kugarocks.com">后台演示</a> ·
   <a href="https://happyro.kugarocks.com/guide/downloads">资源下载</a> ·
   <a href="https://happyro.kugarocks.com/guide/introduction">项目文档</a> ·
-  <a href="https://happyro.kugarocks.com/container/docker">Docker 安装</a>
+  <a href="https://happyro.kugarocks.com/deploy/docker">Docker 安装</a>
 </p>
 
 <p><img src="docs/assets/readme/happyro-three-devices.png" alt="剑士罗安在电脑、平板横屏与手机竖屏中的真实游戏界面" width="100%"></p>
@@ -24,11 +24,15 @@ HappyRO 是一个中文友好的网页端 RO 项目，提供中文游戏界面�
 
 <p><img src="docs/assets/readme/happyro-responsive-skills.png" alt="剑士狂击技能在平板横屏中的左右分栏与手机竖屏中的上下布局" width="100%"></p>
 
+操作说明见[玩家指南](https://happyro.kugarocks.com/game/)与[PWA 使用方法](https://happyro.kugarocks.com/game/pwa)。
+
 ## 图鉴与冒险工具
 
 游戏内置完整的冒险工具，可查询物品属性与掉落来源、魔物资料与出现地图、NPC 位置及地图路线，并支持当前地图自动寻路。电脑、手机和平板均可使用。角色调整、物品与 Zeny 发放、魔物召唤、地图传送及游戏倍率设置等管理功能，则根据账号权限与服务器配置开放。
 
 <p><img src="docs/assets/readme/happyro-codex.png" alt="魔物图鉴中的中文资料、掉落物品与出现地图" width="100%"></p>
+
+详细用法见[图鉴与冒险工具](https://happyro.kugarocks.com/game/adventure-tools)。
 
 ## 自动战斗与拾取
 
@@ -36,22 +40,26 @@ HappyRO 是一个中文友好的网页端 RO 项目，提供中文游戏界面�
 
 <p><img src="docs/assets/readme/happyro-combat.png" alt="自动战斗的目标、攻击技能、搜索范围与随机传送设置" width="100%"></p>
 
+配置方法见[战斗与拾取](https://happyro.kugarocks.com/game/combat)。
+
 ## 管理后台
 
 Web 管理后台提供账号与角色查询、物品与 Zeny 发放，以及经验、掉落、精炼和冒险工具权限等游戏配置功能，方便玩家管理服务器与游戏规则。
 
 <p><img src="docs/assets/readme/happyro-admin-settings.png" alt="HappyRO 管理后台按物品类别及普通魔物、Mini、MVP 分别设置掉落倍率" width="100%"></p>
 
+后台操作见[管理指南](https://happyro.kugarocks.com/admin/)，职业任务见[转职攻略](https://happyro.kugarocks.com/strategy/job-change/)。
+
 ## 安装与体验
 
-参考 [Docker 安装手册](https://happyro.kugarocks.com/container/docker)，下载[离线包](https://happyro.kugarocks.com/guide/downloads)，包内包含 `linux/amd64` 与 `linux/arm64` 镜像、运行资源、配置模板和配套工具。
+参考 [Docker 安装手册](https://happyro.kugarocks.com/deploy/docker)，下载[离线包](https://happyro.kugarocks.com/guide/downloads)，包内包含 `linux/amd64` 与 `linux/arm64` 镜像、运行资源、配置模板和配套工具。
 
 | 入口 | 内容 |
 | --- | --- |
-| [Docker 部署](https://happyro.kugarocks.com/container/docker) | 离线安装、首次启动与日常维护 |
-| [升级与恢复](https://happyro.kugarocks.com/container/upgrade) | 数据保留、升级与回退 |
-| [自定义功能](https://happyro.kugarocks.com/container/customization) | NPC、数据库与客户端资源定制 |
-| [源码开发](docs/development/workflow/local-setup.md) | 依赖、资源准备、构建与本机服务 |
+| [Docker 部署](https://happyro.kugarocks.com/deploy/docker) | 离线安装、首次启动与日常维护 |
+| [升级](https://happyro.kugarocks.com/deploy/upgrade) / [备份与恢复](https://happyro.kugarocks.com/deploy/backup-restore) | 数据保留、版本升级与回退 |
+| [自定义功能](https://happyro.kugarocks.com/deploy/customization) | NPC、数据库与客户端资源定制 |
+| [源码开发](https://happyro.kugarocks.com/development/) | 依赖、资源准备、构建与本机服务 |
 
 ## 项目组成
 
