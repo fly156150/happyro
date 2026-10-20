@@ -66,6 +66,8 @@ HappyRO 由根仓库、四个应用仓库和一个公开文档仓库组成：
 | [happyro-admin](https://github.com/happyro/happyro-admin) | 游戏管理后台与 Laravel API |
 | [happyro-doc](https://github.com/happyro/happyro-doc) | 安装文档、玩家指南与公开文档站 |
 
+## 项目基线
+
 | 项目 | 版本或基线 |
 | --- | --- |
 | kRO 客户端资源 | 2021-11-05（`RAG_SETUP_211105.exe`） |
