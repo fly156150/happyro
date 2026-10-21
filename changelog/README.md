@@ -57,7 +57,7 @@ python3 tools/changelog/manage.py sync
 
 ## 版本摘要
 
-- [v0.5.0 · 未发布](releases/v0.5.0.md)：相对 v0.3.2 汇总当前变化，后续可继续补充，不表示已发布。
+- [v0.5.0 · 未发布](releases/v0.5.0.md)：从 v0.3.x 跃升的里程碑版本，汇总跨端体验、游戏功能与部署维护的大规模升级；当前仍未发布。
 - [v0.3.2](releases/v0.3.2.md)：GitHub Release 历史说明，发布于 2026-09-26。
 - [v0.3.1](releases/v0.3.1.md)：GitHub Release 历史说明，发布于 2026-09-25。
 - [v0.3.0](releases/v0.3.0.md)：GitHub Release 历史说明，发布于 2026-09-24。

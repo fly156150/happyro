@@ -52,6 +52,8 @@ Web 管理后台提供账号与角色查询、物品与 Zeny 发放，以及经�
 
 ## 安装与体验
 
+[v0.5.0](https://happyro.kugarocks.com/changelog/releases/v0.5.0) 是 HappyRO 的重要里程碑版本：此次跨端体验、游戏功能、中文内容与部署维护变更规模大，因此从 v0.3.x 直接跃升至 v0.5.0，跳过 v0.4.x。当前仍待正式发布，最近公开发布版本为 v0.3.2。
+
 首次体验可从[快速开始](https://happyro.kugarocks.com/guide/quick-start)选择入口。自行部署时，参考 [Docker 安装手册](https://happyro.kugarocks.com/deploy/docker)，下载[离线包](https://happyro.kugarocks.com/guide/downloads)，包内包含 `linux/amd64` 与 `linux/arm64` 镜像、运行资源、配置模板和配套工具。
 
 | 入口 | 内容 |
