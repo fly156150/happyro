@@ -70,7 +70,7 @@ Web 管理后台提供账号与角色查询、物品与 Zeny 发放，以及经�
 
 ## 项目组成
 
-HappyRO 由根仓库、四个应用仓库和一个公开文档仓库组成：
+HappyRO 由根仓库、五个应用仓库和一个公开文档仓库组成，共七个独立 Git 仓库：
 
 | 仓库 | 职责 |
 | --- | --- |
@@ -78,7 +78,8 @@ HappyRO 由根仓库、四个应用仓库和一个公开文档仓库组成：
 | [happyro-client](https://github.com/happyro/happyro-client) | 浏览器客户端、PWA 与游戏内冒险工具 |
 | [happyro-server](https://github.com/happyro/happyro-server) | rAthena 游戏服务与 Web API |
 | [happyro-gateway](https://github.com/happyro/happyro-gateway) | 静态资源、HTTP 与 WebSocket 网关 |
-| [happyro-admin](https://github.com/happyro/happyro-admin) | 游戏管理后台与 Laravel API |
+| [happyro-admin](https://github.com/happyro/happyro-admin) | React / Umi / Ant Design 管理前端 |
+| [happyro-api](https://github.com/happyro/happyro-api) | Go / Gin 后端，提供后台与玩家工具 API |
 | [happyro-doc](https://github.com/happyro/happyro-doc) | 安装文档、玩家指南与公开文档站 |
 
 ## 项目基线
