@@ -106,3 +106,7 @@ PWA 清单校验包含 `client-defaults.schema.json`，动态 `Config.runtime.js
 `CLIENT_SCRIPT_TEXT_MIN_CONTRAST` 默认 4.5，接受 4.5–7 的小数。颜色自动修正始终开启，作用于桌面 NPC 对话和选项、移动端 NPC 对话，以及共用可读性处理的任务说明。颜色与实际背景的对比度已达到目标时保留原色，否则向黑色或白色调整；若背景无法达到设定目标，使用两者中对比度更高的端点。
 
 此项是部署显示策略，不写入玩家 localStorage。改变配置后重启 Gateway 并刷新游戏页面；值越高，颜色可能偏离原始颜色越多。
+
+## 服务端视野
+
+服务端 `HAPPYRO_AREA_SIZE`（默认 18）与 `HAPPYRO_MAX_WALK_PATH`（默认 17）独立于客户端默认值，配置入口、生效顺序及重启要求见[地图服配置](configuration.md#地图服视野与行走)。

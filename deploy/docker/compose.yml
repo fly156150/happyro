@@ -8,6 +8,8 @@ x-server: &server
   restart: unless-stopped
   logging: *logging
   environment: &server-env
+    HAPPYRO_AREA_SIZE: ${HAPPYRO_AREA_SIZE:-}
+    HAPPYRO_MAX_WALK_PATH: ${HAPPYRO_MAX_WALK_PATH:-}
     DB_HOST: database
     DB_USER: happyro
     DB_MAIN_DATABASE: happyro
