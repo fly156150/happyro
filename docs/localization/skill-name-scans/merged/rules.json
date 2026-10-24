@@ -18,7 +18,7 @@
     "2535": "采用简洁中文标题，省去括注英文",
     "10000": "采用“公会”，与项目组织称谓统一"
   },
-  "applyToGame": false,
+  "applyToGame": true,
   "sourceManifestHashes": {
     "dvg": "15639bc82d4c24ec8efff0c243e3567fc3f26a8be8b5ae68dcecf6d965397f6f",
     "ro321": "0ec5b56de4c8f3d9d26c3076262f6fc694811778e723c6c812f49f1211cb0939",

@@ -47,8 +47,12 @@ python3 tools/resources/catalog/sync_item_names.py apply --no-color
 python3 tools/resources/catalog/sync_item_names.py check --no-color
 ```
 
-映射可从版本化快照与排除表精确复现；同步检查通过。目录工具 42 项测试、服务端物品名称判定测试和客户端物品来源测试通过。数值、资源路径和英文名已与 Git 基线逐项核对。未提交或推送本轮改动。
+映射可从版本化快照与排除表精确复现；同步检查通过。目录工具 42 项测试、服务端物品名称判定测试和客户端物品来源测试通过。数值、资源路径和英文名已与 Git 基线逐项核对。修正已纳入本次提交。
 
 ## 独立复查补漏
 
 [第二轮复查](review-followup.md)补齐魔物图鉴掉落表和锻造／制药材料表两类遗漏，并将它们纳入 apply/check。验证记录见 [review-verification.json](review-verification.json)。
+
+技能材料说明的后续核对见[第三轮复查](third-review.md)及其逐项记录。
+
+从服务端技能材料 ID 反查说明的核对结果见[第四轮复查](fourth-review.md)。

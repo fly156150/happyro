@@ -124,7 +124,7 @@ def main(argv):
     prose = json.loads(prose_path.read_text())
     original_prose = dict(prose)
     for reference in reviewed['skillProse']:
-        replacement = reference['prefix'] + names[reference['itemID']]['name']
+        replacement = reference['prefix'] + names[reference['itemID']]['name'] + reference['suffix']
         current = prose[reference['skillID']]
         if reference['old'] not in current and replacement not in current:
             raise ValueError(f'reviewed skill reference missing: {reference}')
