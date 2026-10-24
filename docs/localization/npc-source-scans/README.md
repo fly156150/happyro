@@ -14,6 +14,7 @@
 - [DVG 名称分片](dvg/README.md)
 - [RO321 名称分片](ro321/README.md)
 - [跨站位置候选](comparison/README.md)
+- [身份对齐与名称校准决策](merged/README.md)
 - [初始可行性采样](feasibility.json)：保留当时网页入口、规模和原始响应哈希，不能当成全量结果。
 
 每 250 条拆分，JSON 保留来源及重复观察，Markdown 便于阅读。各站 `manifest.json` 记录条数、分类、分片哈希；`pages.json` 记录 URL、抓取时间、编码、原始响应哈希和发现链接；`coverage.json` 记录尚未成功的入口。RO321 的总量以发现范围闭合后为准，不用最大 ID 或城市数推算全量。
