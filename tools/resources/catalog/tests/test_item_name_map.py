@@ -1,49 +1,53 @@
 import hashlib
 import json
 from pathlib import Path
-import subprocess
-import sys
 import tempfile
 import unittest
-
-ROOT = Path(__file__).resolve().parents[4]
-BUILDER = ROOT / 'tools/resources/catalog/build_item_names.py'
+from tools.resources.catalog.merge_item_names import load_sources, merge, SOURCES
 
 
 class MappingTests(unittest.TestCase):
-    def run_builder(self, directory, mismatch=False):
-        root = Path(directory)
+    def test_identity_priority_and_grid_provenance(self):
+        project = {str(i): {'AegisName': f'Item_{i}', 'names': {'zh-CN': '原名'}} for i in range(1, 6)}
+        def row(name, identity=None):
+            r = {'name': name, 'source': 'https://example.com/item'}
+            if identity is not None:
+                r['aegis'] = identity
+            return r
         sources = {
-            'dvg': {'501': {'name': '错误身份', 'aegis': 'Other_Item', 'source': 'https://ro.dvg.cn/item_info.php?id=501'},
-                    '502': {'name': '赤色药水', 'aegis': 'Orange_Potion', 'source': 'https://ro.dvg.cn/item_info.php?id=502'},
-                    '503': {'name': 'Yellow Potion', 'aegis': 'Yellow_Potion', 'source': 'https://ro.dvg.cn/item_info.php?id=503'},
-                    '504': {'name': '白色药水', 'aegis': '', 'source': 'https://ro.dvg.cn/item_info.php?id=504'}},
-            'ro321': {'501': {'name': '红色药水', 'aegis': 'Red_Potion', 'source': 'https://ro.ro321.com/index.php?page=re_item_db&item_id=501'},
-                      '502': {'name': '橙色药水', 'aegis': 'Orange_Potion', 'source': 'https://ro.ro321.com/index.php?page=re_item_db&item_id=502'}}}
-        for name, rows in sources.items():
-            (root / f'{name}-names.json').write_text(json.dumps(rows, ensure_ascii=False))
-        status = {'fetchedAt': '2026-10-24', **{name: {'records': len(rows), 'complete': False} for name, rows in sources.items()}}
-        if mismatch:
-            status['ro321']['records'] += 1
-        (root / 'source-status.json').write_text(json.dumps(status))
-        return subprocess.run([sys.executable, str(BUILDER), 'build', '--references', directory, '--output', str(root / 'out')], cwd=ROOT, capture_output=True, text=True)
+            'dvg-list': {'1': row('列表名 [1]', 'Item_1'), '2': row('English', 'Item_2'),
+                         '3': row('错误名称', 'Wrong'), '4': row('未命名道具', 'Item_4')},
+            'dvg-grid': {'1': row('网格名'), '2': row('网格中文'), '3': row('网格错误'), '5': row('无身份中文')},
+            'ro321': {'1': row('其他名称', 'Item_1'), '3': row('正确名称', 'Item_3'),
+                      '4': row('日本語カナ', 'Item_4'), '9': row('项目外名称', 'Item_9')}}
+        records, selected, unresolved, conflicts = merge(sources, project)
+        self.assertEqual(selected['1']['name'], '列表名')
+        self.assertIn('1', conflicts)
+        self.assertEqual(selected['2']['name'], '网格中文')
+        self.assertIsNone(selected['2']['sourceAegis'])
+        self.assertEqual(selected['2']['identitySources'], ['dvg-list'])
+        self.assertEqual(selected['3']['identitySources'], ['ro321'])
+        self.assertEqual(records['3']['candidates'][0]['decision'], 'identity_conflict')
+        self.assertEqual(set(unresolved), {'4', '5'})
+        self.assertEqual(records['9']['reason'], 'outside_project')
+        self.assertNotIn('9', selected)
+        exclusions = {'2': {'source': 'dvg-grid', 'name': '网格中文', 'reason': 'unverified_language'}}
+        records, selected, unresolved, _ = merge(sources, project, exclusions)
+        self.assertNotIn('2', selected)
+        self.assertIn('2', unresolved)
+        self.assertEqual(records['2']['candidates'][1]['decision'], 'unverified_language')
 
-    def test_source_identity_priority_and_snapshot_hash(self):
-        with tempfile.TemporaryDirectory() as directory:
-            result = self.run_builder(directory)
-            self.assertEqual(result.returncode, 0, result.stderr)
-            root = Path(directory)
-            mapping = json.loads((root / 'out/zh-CN.json').read_text())
-            self.assertEqual(mapping['items']['501']['name'], '红色药水')
-            self.assertEqual(mapping['items']['502']['name'], '赤色药水')
-            self.assertNotIn('503', mapping['items'])
-            self.assertNotIn('504', mapping['items'])
-            for name in ['dvg', 'ro321']:
-                self.assertEqual(mapping['sources'][name]['sha256'], hashlib.sha256((root / f'{name}-names.json').read_bytes()).hexdigest())
-
-    def test_inconsistent_snapshot_does_not_publish_mapping(self):
-        with tempfile.TemporaryDirectory() as directory:
-            result = self.run_builder(directory, mismatch=True)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn('record count mismatch', result.stderr)
-            self.assertFalse((Path(directory) / 'out/zh-CN.json').exists())
+    def test_corrupt_or_missing_shard_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for folder in SOURCES.values():
+                dest = root / folder; dest.mkdir(parents=True)
+                raw = json.dumps({'1': {'name': '名称'}}).encode()
+                (dest / '001.json').write_bytes(raw)
+                (dest / 'manifest.json').write_text(json.dumps({'records': 1, 'scanDate': '2026-10-24', 'parts': [
+                    {'file': '001.json', 'records': 1, 'sha256': hashlib.sha256(raw).hexdigest()}]}))
+            sources, _ = load_sources(root)
+            self.assertEqual(len(sources), 3)
+            (root / 'ro321/001.json').write_text('{}')
+            with self.assertRaisesRegex(ValueError, 'hash mismatch'):
+                load_sources(root)

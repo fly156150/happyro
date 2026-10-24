@@ -39613,7 +39613,7 @@
       ],
       "identifiedDescriptionName": [
         "专门为大盗打造的特殊束缚手铐。坚硬到不仅无法破坏，也无法精炼！",
-        "ATK +5。与染血铁球同时装备时ATK +10；与囚服同时装备时，囚服每精炼1级ATK +2；与脚镣同时装备时，脚镣每精炼1级ATK +1；与眼罩或眼罩[1]同时装备时ATK +10。",
+        "ATK +5。与染血铁球同时装备时ATK +10；与犯人服同时装备时，犯人服每精炼1级ATK +2；与脚镣同时装备时，脚镣每精炼1级ATK +1；与眼罩或眼罩[1]同时装备时ATK +10。",
         "类别：^777777饰品^000000",
         "防御：^7777770^000000      重量：^777777240^000000",
         "防具等级：^7777771^000000",
@@ -57427,9 +57427,9 @@
       ]
     },
     "4845": {
-      "unidentifiedDisplayName": "小石头",
+      "unidentifiedDisplayName": "鹅卵石",
       "unidentifiedResourceName": "돌",
-      "identifiedDisplayName": "小石头",
+      "identifiedDisplayName": "鹅卵石",
       "identifiedResourceName": "돌",
       "slotCount": 0,
       "ClassNum": 0,
@@ -73653,7 +73653,7 @@
     "5816": {
       "unidentifiedDisplayName": "帽子",
       "unidentifiedResourceName": "캡",
-      "identifiedDisplayName": "紫色牛仔帽",
+      "identifiedDisplayName": "新荒野之帽",
       "identifiedResourceName": "신카우보이모자",
       "slotCount": 0,
       "ClassNum": 411,
@@ -73671,9 +73671,9 @@
       ]
     },
     "5817": {
-      "unidentifiedDisplayName": "情人节的信物",
+      "unidentifiedDisplayName": "人气的象征",
       "unidentifiedResourceName": "세이프티링",
-      "identifiedDisplayName": "情人节的信物",
+      "identifiedDisplayName": "人气的象征",
       "identifiedResourceName": "세이프티링",
       "slotCount": 0,
       "ClassNum": 0,
@@ -74051,7 +74051,7 @@
     "5855": {
       "unidentifiedDisplayName": "棍棒",
       "unidentifiedResourceName": "로프",
-      "identifiedDisplayName": "钓鱼竿",
+      "identifiedDisplayName": "鱼竿",
       "identifiedResourceName": "물의채찍",
       "slotCount": 0,
       "ClassNum": 0,
@@ -133758,9 +133758,9 @@
       ]
     },
     "13547": {
-      "unidentifiedDisplayName": "武器修理卷轴箱",
+      "unidentifiedDisplayName": "武器修理卷轴箱子",
       "unidentifiedResourceName": "햇빛의상자",
-      "identifiedDisplayName": "武器修理卷轴箱",
+      "identifiedDisplayName": "武器修理卷轴箱子",
       "identifiedResourceName": "햇빛의상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -134182,9 +134182,9 @@
       ]
     },
     "13569": {
-      "unidentifiedDisplayName": "PVP 移动卷轴箱",
+      "unidentifiedDisplayName": "PVP_移动_卷抽_箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "PVP 移动卷轴箱",
+      "identifiedDisplayName": "PVP_移动_卷抽_箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -136672,9 +136672,9 @@
       ]
     },
     "13691": {
-      "unidentifiedDisplayName": "弗蕾雅外套箱",
+      "unidentifiedDisplayName": "菲力亚的长袍箱子",
       "unidentifiedResourceName": "햇빛의상자",
-      "identifiedDisplayName": "弗蕾雅外套箱",
+      "identifiedDisplayName": "菲力亚的长袍箱子",
       "identifiedResourceName": "햇빛의상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -136692,9 +136692,9 @@
       ]
     },
     "13692": {
-      "unidentifiedDisplayName": "弗蕾雅长靴箱",
+      "unidentifiedDisplayName": "菲力亚的长靴箱子",
       "unidentifiedResourceName": "햇빛의상자",
-      "identifiedDisplayName": "弗蕾雅长靴箱",
+      "identifiedDisplayName": "菲力亚的长靴箱子",
       "identifiedResourceName": "햇빛의상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -136712,9 +136712,9 @@
       ]
     },
     "13693": {
-      "unidentifiedDisplayName": "弗蕾雅披风箱",
+      "unidentifiedDisplayName": "菲力亚的披风箱子",
       "unidentifiedResourceName": "햇빛의상자",
-      "identifiedDisplayName": "弗蕾雅披风箱",
+      "identifiedDisplayName": "菲力亚的披风箱子",
       "identifiedResourceName": "햇빛의상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -136732,9 +136732,9 @@
       ]
     },
     "13694": {
-      "unidentifiedDisplayName": "弗蕾雅王冠箱",
+      "unidentifiedDisplayName": "菲力亚的冠冕箱子",
       "unidentifiedResourceName": "햇빛의상자",
-      "identifiedDisplayName": "弗蕾雅王冠箱",
+      "identifiedDisplayName": "菲力亚的冠冕箱子",
       "identifiedResourceName": "햇빛의상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -136772,9 +136772,9 @@
       ]
     },
     "13696": {
-      "unidentifiedDisplayName": "高级战斗教范箱",
+      "unidentifiedDisplayName": "高级经验值倍增书箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "高级战斗教范箱",
+      "identifiedDisplayName": "高级经验值倍增书箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -141256,9 +141256,9 @@
       ]
     },
     "13912": {
-      "unidentifiedDisplayName": "队伍祝福箱",
+      "unidentifiedDisplayName": "超大的_天使之赐福_箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "队伍祝福箱",
+      "identifiedDisplayName": "超大的_天使之赐福_箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -141276,9 +141276,9 @@
       ]
     },
     "13913": {
-      "unidentifiedDisplayName": "队伍敏捷提升箱",
+      "unidentifiedDisplayName": "超大的_加速术_箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "队伍敏捷提升箱",
+      "identifiedDisplayName": "超大的_加速术_箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -141296,9 +141296,9 @@
       ]
     },
     "13914": {
-      "unidentifiedDisplayName": "队伍阿修普里卡箱",
+      "unidentifiedDisplayName": "超大的_圣母之祈福_箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "队伍阿修普里卡箱",
+      "identifiedDisplayName": "超大的_圣母之祈福_箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -151732,9 +151732,9 @@
       ]
     },
     "14304": {
-      "unidentifiedDisplayName": "潜水面罩箱",
+      "unidentifiedDisplayName": "潜水面具箱子",
       "unidentifiedResourceName": "빨간상자",
-      "identifiedDisplayName": "潜水面罩箱",
+      "identifiedDisplayName": "潜水面具箱子",
       "identifiedResourceName": "빨간상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -153214,9 +153214,9 @@
       ]
     },
     "14349": {
-      "unidentifiedDisplayName": "精神药水 20 个箱",
+      "unidentifiedDisplayName": "精神药水20个箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "精神药水 20 个箱",
+      "identifiedDisplayName": "精神药水20个箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -153274,9 +153274,9 @@
       ]
     },
     "14351": {
-      "unidentifiedDisplayName": "提尔的祝福 20 个箱",
+      "unidentifiedDisplayName": "托尔的祝福20个箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "提尔的祝福 20 个箱",
+      "identifiedDisplayName": "托尔的祝福20个箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -153306,9 +153306,9 @@
       ]
     },
     "14352": {
-      "unidentifiedDisplayName": "提尔的祝福 50 个箱",
+      "unidentifiedDisplayName": "托尔的祝福50个箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "提尔的祝福 50 个箱",
+      "identifiedDisplayName": "托尔的祝福50个箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -154232,9 +154232,9 @@
       ]
     },
     "14393": {
-      "unidentifiedDisplayName": "万能符 1 个箱",
+      "unidentifiedDisplayName": "万能咒符箱子",
       "unidentifiedResourceName": "햇빛의상자",
-      "identifiedDisplayName": "万能符 1 个箱",
+      "identifiedDisplayName": "万能咒符箱子",
       "identifiedResourceName": "햇빛의상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -155274,9 +155274,9 @@
       ]
     },
     "14447": {
-      "unidentifiedDisplayName": "海盗的自尊箱",
+      "unidentifiedDisplayName": "海贼的自尊心箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "海盗的自尊箱",
+      "identifiedDisplayName": "海贼的自尊心箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -155458,9 +155458,9 @@
       ]
     },
     "14459": {
-      "unidentifiedDisplayName": "兔子魔术帽箱",
+      "unidentifiedDisplayName": "兔子魔法帽箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "兔子魔术帽箱",
+      "identifiedDisplayName": "兔子魔法帽箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -155476,9 +155476,9 @@
       ]
     },
     "14460": {
-      "unidentifiedDisplayName": "中国五周年头纱箱",
+      "unidentifiedDisplayName": "RO5周年纪念头纱箱子",
       "unidentifiedResourceName": "오래된보라상자",
-      "identifiedDisplayName": "中国五周年头纱箱",
+      "identifiedDisplayName": "RO5周年纪念头纱箱子",
       "identifiedResourceName": "오래된보라상자",
       "slotCount": 0,
       "ClassNum": 0,
@@ -155553,7 +155553,7 @@
       "slotCount": 0,
       "ClassNum": 0,
       "unidentifiedDescriptionName": [
-        "装有 1 顶紫色牛仔帽的箱子。",
+        "装有 1 顶新荒野之帽的箱子。",
         "^ffffff_^000000",
         "象征某国西部开拓者的帽子，帽子上插着的羽毛是亮点。",
         "INT + 2，VIT + 2，SP + 50。",
@@ -155566,7 +155566,7 @@
         "重量：^7777771^000000"
       ],
       "identifiedDescriptionName": [
-        "装有 1 顶紫色牛仔帽的箱子。",
+        "装有 1 顶新荒野之帽的箱子。",
         "^ffffff_^000000",
         "象征某国西部开拓者的帽子，帽子上插着的羽毛是亮点。",
         "INT + 2，VIT + 2，SP + 50。",
@@ -155621,7 +155621,7 @@
       "slotCount": 0,
       "ClassNum": 0,
       "unidentifiedDescriptionName": [
-        "装有 1 顶紫色牛仔帽的箱子。",
+        "装有 1 顶新荒野之帽的箱子。",
         "^ffffff_^000000",
         "象征某国西部开拓者的帽子，帽子上插着的羽毛是亮点。",
         "INT + 2，VIT + 2，SP + 50。",
@@ -155634,7 +155634,7 @@
         "重量：^7777771^000000"
       ],
       "identifiedDescriptionName": [
-        "装有 1 顶紫色牛仔帽的箱子。",
+        "装有 1 顶新荒野之帽的箱子。",
         "^ffffff_^000000",
         "象征某国西部开拓者的帽子，帽子上插着的羽毛是亮点。",
         "INT + 2，VIT + 2，SP + 50。",
@@ -157927,9 +157927,9 @@
       ]
     },
     "14588": {
-      "unidentifiedDisplayName": "队伍祝福卷轴",
+      "unidentifiedDisplayName": "超大的_天使之赐福_卷轴",
       "unidentifiedResourceName": "빛의주문서",
-      "identifiedDisplayName": "队伍祝福卷轴",
+      "identifiedDisplayName": "超大的_天使之赐福_卷轴",
       "identifiedResourceName": "빛의주문서",
       "slotCount": 0,
       "ClassNum": 0,
@@ -157945,9 +157945,9 @@
       ]
     },
     "14589": {
-      "unidentifiedDisplayName": "队伍敏捷提升卷轴",
+      "unidentifiedDisplayName": "超大的_加速术_卷轴",
       "unidentifiedResourceName": "빛의주문서",
-      "identifiedDisplayName": "队伍敏捷提升卷轴",
+      "identifiedDisplayName": "超大的_加速术_卷轴",
       "identifiedResourceName": "빛의주문서",
       "slotCount": 0,
       "ClassNum": 0,
@@ -157965,9 +157965,9 @@
       ]
     },
     "14590": {
-      "unidentifiedDisplayName": "队伍圣母之颂歌卷轴",
+      "unidentifiedDisplayName": "超大的_圣母之祈福_卷轴",
       "unidentifiedResourceName": "빛의주문서",
-      "identifiedDisplayName": "队伍圣母之颂歌卷轴",
+      "identifiedDisplayName": "超大的_圣母之祈福_卷轴",
       "identifiedResourceName": "빛의주문서",
       "slotCount": 0,
       "ClassNum": 0,
@@ -158850,11 +158850,11 @@
       "slotCount": 0,
       "ClassNum": 0,
       "unidentifiedDescriptionName": [
-        "装有贪婪影子装备的箱子。可从贪婪铠甲影子、贪婪鞋子影子、贪婪盾牌影子、贪婪武器影子、贪婪耳环影子、贪婪吊坠影子中随机获得一个。",
+        "装有贪婪影子装备的箱子。可从贪婪的影之铠甲、贪婪的影之鞋子、贪婪的影之盾牌、贪婪的影之武器、贪婪的影之耳环、贪婪的影之垂饰中随机获得一个。",
         "重量：^7777771^000000"
       ],
       "identifiedDescriptionName": [
-        "装有贪婪影子装备的箱子。可从贪婪铠甲影子、贪婪鞋子影子、贪婪盾牌影子、贪婪武器影子、贪婪耳环影子、贪婪吊坠影子中随机获得一个。",
+        "装有贪婪影子装备的箱子。可从贪婪的影之铠甲、贪婪的影之鞋子、贪婪的影之盾牌、贪婪的影之武器、贪婪的影之耳环、贪婪的影之垂饰中随机获得一个。",
         "重量：^7777771^000000"
       ]
     },
@@ -159855,17 +159855,17 @@
       ]
     },
     "15040": {
-      "unidentifiedDisplayName": "囚服",
+      "unidentifiedDisplayName": "犯人服",
       "unidentifiedResourceName": "코튼셔츠",
-      "identifiedDisplayName": "囚服",
+      "identifiedDisplayName": "犯人服",
       "identifiedResourceName": "낡은죄수복",
       "slotCount": 0,
       "ClassNum": 0,
       "unidentifiedDescriptionName": [
-        "所有囚犯都会穿的条纹制服，虽然各处沾有血迹般的污渍，但因陈旧而模糊。根据囚服精炼值增加HIT、FLEE。与脚镣一起装备时ATK + 5，并根据脚镣精炼值额外增加ATK。"
+        "所有囚犯都会穿的条纹制服，虽然各处沾有血迹般的污渍，但因陈旧而模糊。根据犯人服精炼值增加HIT、FLEE。与脚镣一起装备时ATK + 5，并根据脚镣精炼值额外增加ATK。"
       ],
       "identifiedDescriptionName": [
-        "所有囚犯都会穿的条纹制服，虽然各处沾有血迹般的污渍，但因陈旧而模糊。根据囚服精炼值增加HIT、FLEE。与脚镣一起装备时ATK + 5，并根据脚镣精炼值额外增加ATK。",
+        "所有囚犯都会穿的条纹制服，虽然各处沾有血迹般的污渍，但因陈旧而模糊。根据犯人服精炼值增加HIT、FLEE。与脚镣一起装备时ATK + 5，并根据脚镣精炼值额外增加ATK。",
         "系列：^777777铠甲^000000 防御：^7777775^000000",
         "重量：^777777150^000000",
         "要求等级：^77777750^000000",
@@ -160305,9 +160305,9 @@
       ]
     },
     "15068": {
-      "unidentifiedDisplayName": "强化天使守护",
+      "unidentifiedDisplayName": "改良的天使的加护",
       "unidentifiedResourceName": "코튼셔츠",
-      "identifiedDisplayName": "强化天使守护",
+      "identifiedDisplayName": "改良的天使的加护",
       "identifiedResourceName": "천사의가호",
       "slotCount": 1,
       "ClassNum": 0,
@@ -164247,9 +164247,9 @@
       ]
     },
     "16134": {
-      "unidentifiedDisplayName": "青蛙王子帽箱",
+      "unidentifiedDisplayName": "青蛙王子头饰箱子",
       "unidentifiedResourceName": "번호상자01",
-      "identifiedDisplayName": "青蛙王子帽箱",
+      "identifiedDisplayName": "青蛙王子头饰箱子",
       "identifiedResourceName": "번호상자01",
       "slotCount": 0,
       "ClassNum": 0,
@@ -166531,9 +166531,9 @@
       ]
     },
     "16247": {
-      "unidentifiedDisplayName": "降龙罗汉面具箱",
+      "unidentifiedDisplayName": "降龙罗汉脸谱箱子",
       "unidentifiedResourceName": "음식보자기",
-      "identifiedDisplayName": "降龙罗汉面具箱",
+      "identifiedDisplayName": "降龙罗汉脸谱箱子",
       "identifiedResourceName": "음식보자기",
       "slotCount": 0,
       "ClassNum": 0,
@@ -166549,9 +166549,9 @@
       ]
     },
     "16248": {
-      "unidentifiedDisplayName": "伏虎罗汉面具箱",
+      "unidentifiedDisplayName": "伏虎罗汉脸谱箱子",
       "unidentifiedResourceName": "음식보자기",
-      "identifiedDisplayName": "伏虎罗汉面具箱",
+      "identifiedDisplayName": "伏虎罗汉脸谱箱子",
       "identifiedResourceName": "음식보자기",
       "slotCount": 0,
       "ClassNum": 0,
@@ -190303,9 +190303,9 @@
       ]
     },
     "18519": {
-      "unidentifiedDisplayName": "饰品",
+      "unidentifiedDisplayName": "恶魔翅膀耳饰",
       "unidentifiedResourceName": "리본",
-      "identifiedDisplayName": "饰品",
+      "identifiedDisplayName": "恶魔翅膀耳饰",
       "identifiedResourceName": "악마날개귀",
       "slotCount": 1,
       "ClassNum": 152,
@@ -190443,9 +190443,9 @@
       ]
     },
     "18527": {
-      "unidentifiedDisplayName": "帽子",
+      "unidentifiedDisplayName": "阴森南瓜帽",
       "unidentifiedResourceName": "캡",
-      "identifiedDisplayName": "帽子",
+      "identifiedDisplayName": "阴森南瓜帽",
       "identifiedResourceName": "음침한호박모자",
       "slotCount": 0,
       "ClassNum": 691,
@@ -191171,9 +191171,9 @@
       ]
     },
     "18607": {
-      "unidentifiedDisplayName": "头盔",
+      "unidentifiedDisplayName": "红晕",
       "unidentifiedResourceName": "발그레",
-      "identifiedDisplayName": "头盔",
+      "identifiedDisplayName": "红晕",
       "identifiedResourceName": "발그레",
       "slotCount": 1,
       "ClassNum": 125,
@@ -191197,9 +191197,9 @@
       ]
     },
     "18608": {
-      "unidentifiedDisplayName": "饰品",
+      "unidentifiedDisplayName": "红色小发带",
       "unidentifiedResourceName": "리본",
-      "identifiedDisplayName": "饰品",
+      "identifiedDisplayName": "红色小发带",
       "identifiedResourceName": "양쪽귀밑리본",
       "slotCount": 1,
       "ClassNum": 169,
@@ -191225,9 +191225,9 @@
       ]
     },
     "18609": {
-      "unidentifiedDisplayName": "发带",
+      "unidentifiedDisplayName": "黑色眼罩",
       "unidentifiedResourceName": "머리띠",
-      "identifiedDisplayName": "发带",
+      "identifiedDisplayName": "黑色眼罩",
       "identifiedResourceName": "검은눈가리개",
       "slotCount": 1,
       "ClassNum": 187,
@@ -191609,9 +191609,9 @@
       ]
     },
     "18691": {
-      "unidentifiedDisplayName": "发带",
+      "unidentifiedDisplayName": "升天黑龙",
       "unidentifiedResourceName": "머리띠",
-      "identifiedDisplayName": "发带",
+      "identifiedDisplayName": "升天黑龙",
       "identifiedResourceName": "승천블랙드래곤",
       "slotCount": 0,
       "ClassNum": 863,
@@ -192024,9 +192024,9 @@
       ]
     },
     "18760": {
-      "unidentifiedDisplayName": "帽子",
+      "unidentifiedDisplayName": "改造的魔法师的帽子",
       "unidentifiedResourceName": "햇",
-      "identifiedDisplayName": "帽子",
+      "identifiedDisplayName": "改造的魔法师的帽子",
       "identifiedResourceName": "마법사의모자",
       "slotCount": 1,
       "ClassNum": 112,
@@ -192052,9 +192052,9 @@
       ]
     },
     "18761": {
-      "unidentifiedDisplayName": "帽子",
+      "unidentifiedDisplayName": "改造的魔术师的帽子",
       "unidentifiedResourceName": "햇",
-      "identifiedDisplayName": "帽子",
+      "identifiedDisplayName": "改造的魔术师的帽子",
       "identifiedResourceName": "마술사의모자",
       "slotCount": 1,
       "ClassNum": 130,
@@ -192136,9 +192136,9 @@
       ]
     },
     "18764": {
-      "unidentifiedDisplayName": "发带",
+      "unidentifiedDisplayName": "改造的兔子发圈",
       "unidentifiedResourceName": "머리띠",
-      "identifiedDisplayName": "发带",
+      "identifiedDisplayName": "改造的兔子发圈",
       "identifiedResourceName": "토끼머리띠",
       "slotCount": 1,
       "ClassNum": 15,
@@ -192164,9 +192164,9 @@
       ]
     },
     "18765": {
-      "unidentifiedDisplayName": "帽子",
+      "unidentifiedDisplayName": "进化的海盗船长帽",
       "unidentifiedResourceName": "햇",
-      "identifiedDisplayName": "帽子",
+      "identifiedDisplayName": "进化的海盗船长帽",
       "identifiedResourceName": "커세어",
       "slotCount": 1,
       "ClassNum": 105,
@@ -192192,9 +192192,9 @@
       ]
     },
     "18766": {
-      "unidentifiedDisplayName": "头盔",
+      "unidentifiedDisplayName": "进化的天使的祝福",
       "unidentifiedResourceName": "헬름",
-      "identifiedDisplayName": "头盔",
+      "identifiedDisplayName": "进化的天使的祝福",
       "identifiedResourceName": "천사의투구",
       "slotCount": 1,
       "ClassNum": 110,
@@ -192220,9 +192220,9 @@
       ]
     },
     "18767": {
-      "unidentifiedDisplayName": "帽子",
+      "unidentifiedDisplayName": "进化的太阳神的帽子",
       "unidentifiedResourceName": "햇",
-      "identifiedDisplayName": "帽子",
+      "identifiedDisplayName": "进化的太阳神的帽子",
       "identifiedResourceName": "태양신의모자",
       "slotCount": 1,
       "ClassNum": 138,
@@ -192340,7 +192340,7 @@
     "18772": {
       "unidentifiedDisplayName": "眼镜",
       "unidentifiedResourceName": "글래스",
-      "identifiedDisplayName": "改良望远镜",
+      "identifiedDisplayName": "改良的望远镜",
       "identifiedResourceName": "망원경",
       "slotCount": 0,
       "ClassNum": 83,
@@ -192360,7 +192360,7 @@
     "18773": {
       "unidentifiedDisplayName": "头盔",
       "unidentifiedResourceName": "헬름",
-      "identifiedDisplayName": "改良鱼鳍头盔",
+      "identifiedDisplayName": "改良的剑士头盔",
       "identifiedResourceName": "핀헬름",
       "slotCount": 0,
       "ClassNum": 100,
@@ -192380,7 +192380,7 @@
     "18774": {
       "unidentifiedDisplayName": "面具",
       "unidentifiedResourceName": "마스크",
-      "identifiedDisplayName": "改良刺客面具",
+      "identifiedDisplayName": "改良的刺客面具",
       "identifiedResourceName": "어새신마스크",
       "slotCount": 0,
       "ClassNum": 180,
@@ -192400,7 +192400,7 @@
     "18775": {
       "unidentifiedDisplayName": "面具",
       "unidentifiedResourceName": "스마일",
-      "identifiedDisplayName": "改良焊接面具",
+      "identifiedDisplayName": "改良的钢铁面具",
       "identifiedResourceName": "용접마스크",
       "slotCount": 0,
       "ClassNum": 79,
@@ -192421,7 +192421,7 @@
     "18776": {
       "unidentifiedDisplayName": "发带",
       "unidentifiedResourceName": "머리띠",
-      "identifiedDisplayName": "改良天使之吻",
+      "identifiedDisplayName": "改良的天使之吻",
       "identifiedResourceName": "천사의입맞춤",
       "slotCount": 1,
       "ClassNum": 255,
@@ -192908,7 +192908,7 @@
     "18936": {
       "unidentifiedDisplayName": "饰品",
       "unidentifiedResourceName": "리본",
-      "identifiedDisplayName": "叼在嘴里的黄金鱼",
+      "identifiedDisplayName": "咬在嘴里的黄金鱼",
       "identifiedResourceName": "입에문황금물고기",
       "slotCount": 0,
       "ClassNum": 1081,
@@ -197630,9 +197630,9 @@
       "costume": true
     },
     "19542": {
-      "unidentifiedDisplayName": "时装·恶魔低语",
+      "unidentifiedDisplayName": "时装_恶魔的呢喃",
       "unidentifiedResourceName": "햇",
-      "identifiedDisplayName": "时装·恶魔低语",
+      "identifiedDisplayName": "时装_恶魔的呢喃",
       "identifiedResourceName": "악마의속삭임",
       "slotCount": 0,
       "ClassNum": 712,
@@ -197877,9 +197877,9 @@
       "costume": true
     },
     "19555": {
-      "unidentifiedDisplayName": "时装·新月头盔",
+      "unidentifiedDisplayName": "时装_大名的头盔",
       "unidentifiedResourceName": "헬름",
-      "identifiedDisplayName": "时装·新月头盔",
+      "identifiedDisplayName": "时装_大名的头盔",
       "identifiedResourceName": "초승달투구",
       "slotCount": 0,
       "ClassNum": 213,
@@ -198086,9 +198086,9 @@
       "costume": true
     },
     "19566": {
-      "unidentifiedDisplayName": "时装·武士面具",
+      "unidentifiedDisplayName": "时装_武士道面具",
       "unidentifiedResourceName": "마스크",
-      "identifiedDisplayName": "时装·武士面具",
+      "identifiedDisplayName": "时装_武士道面具",
       "identifiedResourceName": "사무라이마스크",
       "slotCount": 0,
       "ClassNum": 644,
@@ -199023,9 +199023,9 @@
       "costume": true
     },
     "19653": {
-      "unidentifiedDisplayName": "时装·神圣行军帽",
+      "unidentifiedDisplayName": "时装_巡游帽子",
       "unidentifiedResourceName": "햇",
-      "identifiedDisplayName": "时装·神圣行军帽",
+      "identifiedDisplayName": "时装_巡游帽子",
       "identifiedResourceName": "마칭햇",
       "slotCount": 0,
       "ClassNum": 269,
@@ -200972,7 +200972,7 @@
     "19857": {
       "unidentifiedDisplayName": "帽子",
       "unidentifiedResourceName": "리본",
-      "identifiedDisplayName": "服饰大虾帽",
+      "identifiedDisplayName": "龙虾帽子",
       "identifiedResourceName": "왕새우모자",
       "slotCount": 0,
       "ClassNum": 728,
@@ -201826,7 +201826,7 @@
     "19954": {
       "unidentifiedDisplayName": "饰品",
       "unidentifiedResourceName": "리본",
-      "identifiedDisplayName": "服饰3D眼镜",
+      "identifiedDisplayName": "时装_3D眼镜",
       "identifiedResourceName": "3D안경",
       "slotCount": 0,
       "ClassNum": 661,
@@ -201866,7 +201866,7 @@
     "19959": {
       "unidentifiedDisplayName": "头饰",
       "unidentifiedResourceName": "캡",
-      "identifiedDisplayName": "服饰垂耳阿吉欧普",
+      "identifiedDisplayName": "时装_耷拉着的艾吉欧蜈蚣",
       "identifiedResourceName": "늘어진아르지오프",
       "slotCount": 0,
       "ClassNum": 1138,
@@ -203866,7 +203866,7 @@
     "20162": {
       "unidentifiedDisplayName": "帽子",
       "unidentifiedResourceName": "햇",
-      "identifiedDisplayName": "服饰羊毛帽1",
+      "identifiedDisplayName": "服装_羊毛帽",
       "identifiedResourceName": "양털모자1",
       "slotCount": 0,
       "ClassNum": 1277,
@@ -203885,7 +203885,7 @@
     "20163": {
       "unidentifiedDisplayName": "帽子",
       "unidentifiedResourceName": "햇",
-      "identifiedDisplayName": "服饰羊毛帽2",
+      "identifiedDisplayName": "服装_羊毛帽",
       "identifiedResourceName": "양털모자2",
       "slotCount": 0,
       "ClassNum": 1278,
@@ -208589,7 +208589,7 @@
     "20710": {
       "unidentifiedDisplayName": "披风",
       "unidentifiedResourceName": "후드",
-      "identifiedDisplayName": "改良天使温暖",
+      "identifiedDisplayName": "改良的天使的温气",
       "identifiedResourceName": "천사의온기",
       "slotCount": 1,
       "ClassNum": 0,
@@ -210997,7 +210997,7 @@
     "22014": {
       "unidentifiedDisplayName": "鞋子",
       "unidentifiedResourceName": "슈즈",
-      "identifiedDisplayName": "改良变异长靴",
+      "identifiedDisplayName": "进化的怪异靴子",
       "identifiedResourceName": "배리언트슈즈",
       "slotCount": 1,
       "ClassNum": 0,
@@ -211016,7 +211016,7 @@
     "22015": {
       "unidentifiedDisplayName": "鞋子",
       "unidentifiedResourceName": "샌들",
-      "identifiedDisplayName": "改良天使降临",
+      "identifiedDisplayName": "改良的天使的降临",
       "identifiedResourceName": "천사의재래",
       "slotCount": 1,
       "ClassNum": 0,
@@ -211149,7 +211149,7 @@
     "22045": {
       "unidentifiedDisplayName": "鞋子",
       "unidentifiedResourceName": "샌들",
-      "identifiedDisplayName": "夏日凉鞋",
+      "identifiedDisplayName": "夏用凉鞋",
       "identifiedResourceName": "고급샌들",
       "slotCount": 0,
       "ClassNum": 0,
@@ -221201,19 +221201,19 @@
       ]
     },
     "23248": {
-      "unidentifiedDisplayName": "宝石影子啪嗒箱",
+      "unidentifiedDisplayName": "影子魔力矿石精灵百宝箱",
       "unidentifiedResourceName": "라피네뚝딱상자",
-      "identifiedDisplayName": "宝石影子啪嗒箱",
+      "identifiedDisplayName": "影子魔力矿石精灵百宝箱",
       "identifiedResourceName": "라피네뚝딱상자",
       "slotCount": 0,
       "ClassNum": 0,
       "unidentifiedDescriptionName": [
-        "宝石影子啪嗒箱。",
+        "影子魔力矿石精灵百宝箱。",
         "放入任意 3 个各部位 +7 以上精炼的宝石影子后合成，会获得影子魔力矿石手套II 或影子魔力矿石神盾II 中的 1 个。",
         "^ff0000作为材料的物品精炼等级不会影响结果。^000000"
       ],
       "identifiedDescriptionName": [
-        "宝石影子啪嗒箱。",
+        "影子魔力矿石精灵百宝箱。",
         "放入任意 3 个各部位 +7 以上精炼的宝石影子后合成，会获得影子魔力矿石手套II 或影子魔力矿石神盾II 中的 1 个。",
         "^ff0000作为材料的物品精炼等级不会影响结果。^000000",
         "^777777",
@@ -221221,19 +221221,19 @@
       ]
     },
     "23249": {
-      "unidentifiedDisplayName": "承载者影子啪嗒箱",
+      "unidentifiedDisplayName": "影子送信者精灵百宝箱",
       "unidentifiedResourceName": "라피네뚝딱상자",
-      "identifiedDisplayName": "承载者影子啪嗒箱",
+      "identifiedDisplayName": "影子送信者精灵百宝箱",
       "identifiedResourceName": "라피네뚝딱상자",
       "slotCount": 0,
       "ClassNum": 0,
       "unidentifiedDescriptionName": [
-        "承载者影子啪嗒箱。",
+        "影子送信者精灵百宝箱。",
         "放入任意 3 个各部位 +7 以上精炼的承载者影子后合成，会获得影子送信者铠甲II 或影子送信者战靴II 中的 1 个。",
         "^ff0000作为材料的物品精炼等级不会影响结果。^000000"
       ],
       "identifiedDescriptionName": [
-        "承载者影子啪嗒箱。",
+        "影子送信者精灵百宝箱。",
         "放入任意 3 个各部位 +7 以上精炼的承载者影子后合成，会获得影子送信者铠甲II 或影子送信者战靴II 中的 1 个。",
         "^ff0000作为材料的物品精炼等级不会影响结果。^000000",
         "^777777",
@@ -226674,9 +226674,9 @@
       ]
     },
     "23820": {
-      "unidentifiedDisplayName": "大嘴鸟发带配方",
+      "unidentifiedDisplayName": "七彩大嘴鸟发饰组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "大嘴鸟发带配方",
+      "identifiedDisplayName": "七彩大嘴鸟发饰组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -226732,9 +226732,9 @@
       ]
     },
     "23822": {
-      "unidentifiedDisplayName": "八式炼狱之翼配方",
+      "unidentifiedDisplayName": "炼狱羽翼组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "八式炼狱之翼配方",
+      "identifiedDisplayName": "炼狱羽翼组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -226762,9 +226762,9 @@
       ]
     },
     "23823": {
-      "unidentifiedDisplayName": "慵懒猫咪配方",
+      "unidentifiedDisplayName": "长长猫耳朵帽子组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "慵懒猫咪配方",
+      "identifiedDisplayName": "长长猫耳朵帽子组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -226903,9 +226903,9 @@
       ]
     },
     "23828": {
-      "unidentifiedDisplayName": "优雅影子配方",
+      "unidentifiedDisplayName": "影子高尚组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "优雅影子配方",
+      "identifiedDisplayName": "影子高尚组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -226926,9 +226926,9 @@
       ]
     },
     "23829": {
-      "unidentifiedDisplayName": "紧张影子配方",
+      "unidentifiedDisplayName": "影子张力组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "紧张影子配方",
+      "identifiedDisplayName": "影子张力组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -226949,9 +226949,9 @@
       ]
     },
     "23830": {
-      "unidentifiedDisplayName": "恢复影子配方",
+      "unidentifiedDisplayName": "影子恢复组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "恢复影子配方",
+      "identifiedDisplayName": "影子恢复组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -226972,9 +226972,9 @@
       ]
     },
     "23831": {
-      "unidentifiedDisplayName": "治疗影子配方",
+      "unidentifiedDisplayName": "影子治愈量组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "治疗影子配方",
+      "identifiedDisplayName": "影子治愈量组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227056,9 +227056,9 @@
       ]
     },
     "23834": {
-      "unidentifiedDisplayName": "白素贞玩偶帽配方",
+      "unidentifiedDisplayName": "素贞娃娃头饰组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "白素贞玩偶帽配方",
+      "identifiedDisplayName": "素贞娃娃头饰组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227086,9 +227086,9 @@
       ]
     },
     "23835": {
-      "unidentifiedDisplayName": "糖果包包配方",
+      "unidentifiedDisplayName": "糖果袋背包组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "糖果包包配方",
+      "identifiedDisplayName": "糖果袋背包组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227109,9 +227109,9 @@
       ]
     },
     "23836": {
-      "unidentifiedDisplayName": "金鱼头帽配方",
+      "unidentifiedDisplayName": "金鱼帽组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "金鱼头帽配方",
+      "identifiedDisplayName": "金鱼帽组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227139,9 +227139,9 @@
       ]
     },
     "23837": {
-      "unidentifiedDisplayName": "生存配方",
+      "unidentifiedDisplayName": "修行生存组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "生存配方",
+      "identifiedDisplayName": "修行生存组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227162,9 +227162,9 @@
       ]
     },
     "23838": {
-      "unidentifiedDisplayName": "玩具注射器配方",
+      "unidentifiedDisplayName": "玩具针筒组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "玩具注射器配方",
+      "identifiedDisplayName": "玩具针筒组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227189,9 +227189,9 @@
       ]
     },
     "23839": {
-      "unidentifiedDisplayName": "靛蓝后蝴蝶结配方",
+      "unidentifiedDisplayName": "蔚蓝蝴蝶结组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "靛蓝后蝴蝶结配方",
+      "identifiedDisplayName": "蔚蓝蝴蝶结组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227221,9 +227221,9 @@
       ]
     },
     "23840": {
-      "unidentifiedDisplayName": "魔法增幅器配方",
+      "unidentifiedDisplayName": "魔法助推器组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "魔法增幅器配方",
+      "identifiedDisplayName": "魔法助推器组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227248,9 +227248,9 @@
       ]
     },
     "23841": {
-      "unidentifiedDisplayName": "玫瑰念珠项链配方",
+      "unidentifiedDisplayName": "玫瑰园之链组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "玫瑰念珠项链配方",
+      "identifiedDisplayName": "玫瑰园之链组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227277,9 +227277,9 @@
       ]
     },
     "23842": {
-      "unidentifiedDisplayName": "精灵王冠配方",
+      "unidentifiedDisplayName": "精灵王冠组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "精灵王冠配方",
+      "identifiedDisplayName": "精灵王冠组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227308,9 +227308,9 @@
       ]
     },
     "23843": {
-      "unidentifiedDisplayName": "近卫兵帽配方",
+      "unidentifiedDisplayName": "近卫兵帽子组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "近卫兵帽配方",
+      "identifiedDisplayName": "近卫兵帽子组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227339,9 +227339,9 @@
       ]
     },
     "23844": {
-      "unidentifiedDisplayName": "盗贼头巾配方",
+      "unidentifiedDisplayName": "盗贼头巾组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "盗贼头巾配方",
+      "identifiedDisplayName": "盗贼头巾组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227371,9 +227371,9 @@
       ]
     },
     "23845": {
-      "unidentifiedDisplayName": "堕天使的祝福配方",
+      "unidentifiedDisplayName": "堕落天使祝福组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "堕天使的祝福配方",
+      "identifiedDisplayName": "堕落天使祝福组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227400,9 +227400,9 @@
       ]
     },
     "23846": {
-      "unidentifiedDisplayName": "兔子魔术帽配方",
+      "unidentifiedDisplayName": "兔子魔法帽组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "兔子魔术帽配方",
+      "identifiedDisplayName": "兔子魔法帽组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227429,9 +227429,9 @@
       ]
     },
     "23847": {
-      "unidentifiedDisplayName": "阿努比斯头盔配方",
+      "unidentifiedDisplayName": "胡狼头神头盔组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "阿努比斯头盔配方",
+      "identifiedDisplayName": "胡狼头神头盔组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227611,9 +227611,9 @@
       ]
     },
     "23853": {
-      "unidentifiedDisplayName": "小鸡帽配方",
+      "unidentifiedDisplayName": "跳跃的小鸡组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "小鸡帽配方",
+      "identifiedDisplayName": "跳跃的小鸡组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227641,9 +227641,9 @@
       ]
     },
     "23854": {
-      "unidentifiedDisplayName": "职业影子配方",
+      "unidentifiedDisplayName": "影子职业组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "职业影子配方",
+      "identifiedDisplayName": "影子职业组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227662,9 +227662,9 @@
       ]
     },
     "23855": {
-      "unidentifiedDisplayName": "法术影子配方",
+      "unidentifiedDisplayName": "影子念咒组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "法术影子配方",
+      "identifiedDisplayName": "影子念咒组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227685,9 +227685,9 @@
       ]
     },
     "23856": {
-      "unidentifiedDisplayName": "体型影子配方",
+      "unidentifiedDisplayName": "影子体型组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "体型影子配方",
+      "identifiedDisplayName": "影子体型组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227709,9 +227709,9 @@
       ]
     },
     "23857": {
-      "unidentifiedDisplayName": "竞赛影子配方",
+      "unidentifiedDisplayName": "影子种族组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "竞赛影子配方",
+      "identifiedDisplayName": "影子种族组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227732,9 +227732,9 @@
       ]
     },
     "23858": {
-      "unidentifiedDisplayName": "稳定性影子配方",
+      "unidentifiedDisplayName": "影子抗性组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "稳定性影子配方",
+      "identifiedDisplayName": "影子抗性组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227750,7 +227750,7 @@
         "影子锆 20 个",
         "^ffffff_^000000",
         "[可获得道具]",
-        "稳定性盾牌影子、塑形师铠甲影子、塑形师鞋子影子、失眠者铠甲影子、失眠者鞋子影子、无畏铠甲影子、无畏鞋子影子、调和者铠甲影子、调和者鞋子影子、解冻武器影子、解冻耳环影子、解冻坠饰影子、中性武器影子、中性耳环影子、中性坠饰影子、除咒耳环影子、除咒坠饰影子、活力耳环影子、活力坠饰影子",
+        "稳定性盾牌影子、塑形师铠甲影子、塑形师鞋子影子、失眠者铠甲影子、失眠者鞋子影子、无畏铠甲影子、无畏鞋子影子、调和者铠甲影子、调和者鞋子影子、解冻武器影子、解冻耳环影子、解冻坠饰影子、中性武器影子、中性耳环影子、中性坠饰影子、除咒耳环影子、除咒坠饰影子、生命影之耳环、生命影之垂饰",
         "重量：^7777771^000000"
       ]
     },
@@ -227825,9 +227825,9 @@
       ]
     },
     "23862": {
-      "unidentifiedDisplayName": "EXP 影子配方",
+      "unidentifiedDisplayName": "影子经验值组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "EXP 影子配方",
+      "identifiedDisplayName": "影子经验值组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227871,9 +227871,9 @@
       ]
     },
     "23864": {
-      "unidentifiedDisplayName": "大天使之翼配方",
+      "unidentifiedDisplayName": "永恒之翼组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "大天使之翼配方",
+      "identifiedDisplayName": "永恒之翼组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227966,9 +227966,9 @@
       ]
     },
     "23867": {
-      "unidentifiedDisplayName": "爱心翅膀发带配方",
+      "unidentifiedDisplayName": "心型羽翼发带组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "爱心翅膀发带配方",
+      "identifiedDisplayName": "心型羽翼发带组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -227994,9 +227994,9 @@
       ]
     },
     "23868": {
-      "unidentifiedDisplayName": "赛格伦之翼配方",
+      "unidentifiedDisplayName": "希格露恩羽翼组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "赛格伦之翼配方",
+      "identifiedDisplayName": "希格露恩羽翼组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228025,9 +228025,9 @@
       ]
     },
     "23869": {
-      "unidentifiedDisplayName": "猫咪头饰配方",
+      "unidentifiedDisplayName": "俏皮蕾丝小猫发带组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "猫咪头饰配方",
+      "identifiedDisplayName": "俏皮蕾丝小猫发带组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228056,9 +228056,9 @@
       ]
     },
     "23870": {
-      "unidentifiedDisplayName": "贵族面具配方",
+      "unidentifiedDisplayName": "贵族假面组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "贵族面具配方",
+      "identifiedDisplayName": "贵族假面组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228182,9 +228182,9 @@
       ]
     },
     "23875": {
-      "unidentifiedDisplayName": "致命打击影子配方",
+      "unidentifiedDisplayName": "影子致命攻击组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "致命打击影子配方",
+      "identifiedDisplayName": "影子致命攻击组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228205,9 +228205,9 @@
       ]
     },
     "23876": {
-      "unidentifiedDisplayName": "堕落天使之翼配方",
+      "unidentifiedDisplayName": "暗天使之翼组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "堕落天使之翼配方",
+      "identifiedDisplayName": "暗天使之翼组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228238,9 +228238,9 @@
       ]
     },
     "23877": {
-      "unidentifiedDisplayName": "冒险家背包配方",
+      "unidentifiedDisplayName": "冒险家背包组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "冒险家背包配方",
+      "identifiedDisplayName": "冒险家背包组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228354,9 +228354,9 @@
       ]
     },
     "23881": {
-      "unidentifiedDisplayName": "巨蛇的气息配方",
+      "unidentifiedDisplayName": "巨神蛇的气息组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "巨蛇的气息配方",
+      "identifiedDisplayName": "巨神蛇的气息组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228389,9 +228389,9 @@
       ]
     },
     "23882": {
-      "unidentifiedDisplayName": "判官帽配方",
+      "unidentifiedDisplayName": "判官帽子组合书",
       "unidentifiedResourceName": "Bs_Item_M_Scroll",
-      "identifiedDisplayName": "判官帽配方",
+      "identifiedDisplayName": "判官帽子组合书",
       "identifiedResourceName": "Bs_Item_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228602,9 +228602,9 @@
       ]
     },
     "23888": {
-      "unidentifiedDisplayName": "穿透影子配方",
+      "unidentifiedDisplayName": "影子贯穿组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "穿透影子配方",
+      "identifiedDisplayName": "影子贯穿组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228625,9 +228625,9 @@
       ]
     },
     "23889": {
-      "unidentifiedDisplayName": "暴风影子配方",
+      "unidentifiedDisplayName": "影子风暴组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "暴风影子配方",
+      "identifiedDisplayName": "影子风暴组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228648,9 +228648,9 @@
       ]
     },
     "23890": {
-      "unidentifiedDisplayName": "闪击影子配方",
+      "unidentifiedDisplayName": "影子突击组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "闪击影子配方",
+      "identifiedDisplayName": "影子突击组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -228717,9 +228717,9 @@
       ]
     },
     "23893": {
-      "unidentifiedDisplayName": "无限影子配方",
+      "unidentifiedDisplayName": "影子无极组合书",
       "unidentifiedResourceName": "Bs_Shadow_M_Scroll",
-      "identifiedDisplayName": "无限影子配方",
+      "identifiedDisplayName": "影子无极组合书",
       "identifiedResourceName": "Bs_Shadow_M_Scroll",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231022,9 +231022,9 @@
       "costume": true
     },
     "24090": {
-      "unidentifiedDisplayName": "稳定盾牌影子",
+      "unidentifiedDisplayName": "稳定的影之盾牌",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "稳定盾牌影子",
+      "identifiedDisplayName": "稳定的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231040,9 +231040,9 @@
       "costume": true
     },
     "24091": {
-      "unidentifiedDisplayName": "石化防护铠甲影子",
+      "unidentifiedDisplayName": "抗石化的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "石化防护铠甲影子",
+      "identifiedDisplayName": "抗石化的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231058,9 +231058,9 @@
       "costume": true
     },
     "24092": {
-      "unidentifiedDisplayName": "石化防护战靴影子",
+      "unidentifiedDisplayName": "抗石化的影之鞋子",
       "unidentifiedResourceName": "슈즈쉐도우",
-      "identifiedDisplayName": "石化防护战靴影子",
+      "identifiedDisplayName": "抗石化的影之鞋子",
       "identifiedResourceName": "슈즈쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231076,9 +231076,9 @@
       "costume": true
     },
     "24093": {
-      "unidentifiedDisplayName": "失眠防护铠甲影子",
+      "unidentifiedDisplayName": "不眠的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "失眠防护铠甲影子",
+      "identifiedDisplayName": "不眠的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231094,9 +231094,9 @@
       "costume": true
     },
     "24094": {
-      "unidentifiedDisplayName": "失眠防护战靴影子",
+      "unidentifiedDisplayName": "不眠的影之鞋子",
       "unidentifiedResourceName": "슈즈쉐도우",
-      "identifiedDisplayName": "失眠防护战靴影子",
+      "identifiedDisplayName": "不眠的影之鞋子",
       "identifiedResourceName": "슈즈쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231112,9 +231112,9 @@
       "costume": true
     },
     "24095": {
-      "unidentifiedDisplayName": "沉默防护铠甲影子",
+      "unidentifiedDisplayName": "卓越的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "沉默防护铠甲影子",
+      "identifiedDisplayName": "卓越的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231130,9 +231130,9 @@
       "costume": true
     },
     "24096": {
-      "unidentifiedDisplayName": "沉默防护战靴影子",
+      "unidentifiedDisplayName": "卓越的影之鞋子",
       "unidentifiedResourceName": "슈즈쉐도우",
-      "identifiedDisplayName": "沉默防护战靴影子",
+      "identifiedDisplayName": "卓越的影之鞋子",
       "identifiedResourceName": "슈즈쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231148,9 +231148,9 @@
       "costume": true
     },
     "24097": {
-      "unidentifiedDisplayName": "黑暗防护铠甲影子",
+      "unidentifiedDisplayName": "预视的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "黑暗防护铠甲影子",
+      "identifiedDisplayName": "预视的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231166,9 +231166,9 @@
       "costume": true
     },
     "24098": {
-      "unidentifiedDisplayName": "黑暗防护战靴影子",
+      "unidentifiedDisplayName": "预视的影之鞋子",
       "unidentifiedResourceName": "슈즈쉐도우",
-      "identifiedDisplayName": "黑暗防护战靴影子",
+      "identifiedDisplayName": "预视的影之鞋子",
       "identifiedResourceName": "슈즈쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231184,9 +231184,9 @@
       "costume": true
     },
     "24099": {
-      "unidentifiedDisplayName": "抗冰冻武器影子",
+      "unidentifiedDisplayName": "解冻的影之武器",
       "unidentifiedResourceName": "웨폰쉐도우",
-      "identifiedDisplayName": "抗冰冻武器影子",
+      "identifiedDisplayName": "解冻的影之武器",
       "identifiedResourceName": "웨폰쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231202,9 +231202,9 @@
       "costume": true
     },
     "24100": {
-      "unidentifiedDisplayName": "抗冰冻耳环影子",
+      "unidentifiedDisplayName": "解冻的影之耳环",
       "unidentifiedResourceName": "이어링쉐도우",
-      "identifiedDisplayName": "抗冰冻耳环影子",
+      "identifiedDisplayName": "解冻的影之耳环",
       "identifiedResourceName": "이어링쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231220,9 +231220,9 @@
       "costume": true
     },
     "24101": {
-      "unidentifiedDisplayName": "抗冰冻吊坠影子",
+      "unidentifiedDisplayName": "解冻的影之垂饰",
       "unidentifiedResourceName": "펜던트쉐도우",
-      "identifiedDisplayName": "抗冰冻吊坠影子",
+      "identifiedDisplayName": "解冻的影之垂饰",
       "identifiedResourceName": "펜던트쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231238,9 +231238,9 @@
       "costume": true
     },
     "24102": {
-      "unidentifiedDisplayName": "活力耳环影子",
+      "unidentifiedDisplayName": "生命影之耳环",
       "unidentifiedResourceName": "이어링쉐도우",
-      "identifiedDisplayName": "活力耳环影子",
+      "identifiedDisplayName": "生命影之耳环",
       "identifiedResourceName": "이어링쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231256,9 +231256,9 @@
       "costume": true
     },
     "24103": {
-      "unidentifiedDisplayName": "活力吊坠影子",
+      "unidentifiedDisplayName": "生命影之垂饰",
       "unidentifiedResourceName": "펜던트쉐도우",
-      "identifiedDisplayName": "活力吊坠影子",
+      "identifiedDisplayName": "生命影之垂饰",
       "identifiedResourceName": "펜던트쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231274,9 +231274,9 @@
       "costume": true
     },
     "24104": {
-      "unidentifiedDisplayName": "抗眩晕武器影子",
+      "unidentifiedDisplayName": "术者的影之武器",
       "unidentifiedResourceName": "웨폰쉐도우",
-      "identifiedDisplayName": "抗眩晕武器影子",
+      "identifiedDisplayName": "术者的影之武器",
       "identifiedResourceName": "웨폰쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231292,9 +231292,9 @@
       "costume": true
     },
     "24105": {
-      "unidentifiedDisplayName": "抗眩晕耳环影子",
+      "unidentifiedDisplayName": "术者的影之耳环",
       "unidentifiedResourceName": "이어링쉐도우",
-      "identifiedDisplayName": "抗眩晕耳环影子",
+      "identifiedDisplayName": "术者的影之耳环",
       "identifiedResourceName": "이어링쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231310,9 +231310,9 @@
       "costume": true
     },
     "24106": {
-      "unidentifiedDisplayName": "抗眩晕吊坠影子",
+      "unidentifiedDisplayName": "术者的影之垂饰",
       "unidentifiedResourceName": "펜던트쉐도우",
-      "identifiedDisplayName": "抗眩晕吊坠影子",
+      "identifiedDisplayName": "术者的影之垂饰",
       "identifiedResourceName": "펜던트쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231328,9 +231328,9 @@
       "costume": true
     },
     "24107": {
-      "unidentifiedDisplayName": "抗诅咒耳环影子",
+      "unidentifiedDisplayName": "不诅咒的影之耳环",
       "unidentifiedResourceName": "이어링쉐도우",
-      "identifiedDisplayName": "抗诅咒耳环影子",
+      "identifiedDisplayName": "不诅咒的影之耳环",
       "identifiedResourceName": "이어링쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231346,9 +231346,9 @@
       "costume": true
     },
     "24108": {
-      "unidentifiedDisplayName": "抗诅咒吊坠影子",
+      "unidentifiedDisplayName": "不诅咒的影之垂饰",
       "unidentifiedResourceName": "펜던트쉐도우",
-      "identifiedDisplayName": "抗诅咒吊坠影子",
+      "identifiedDisplayName": "不诅咒的影之垂饰",
       "identifiedResourceName": "펜던트쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231454,9 +231454,9 @@
       "costume": true
     },
     "24114": {
-      "unidentifiedDisplayName": "贪婪铠甲影子",
+      "unidentifiedDisplayName": "贪婪的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "贪婪铠甲影子",
+      "identifiedDisplayName": "贪婪的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231472,9 +231472,9 @@
       "costume": true
     },
     "24115": {
-      "unidentifiedDisplayName": "贪婪战靴影子",
+      "unidentifiedDisplayName": "贪婪的影之鞋子",
       "unidentifiedResourceName": "슈즈쉐도우",
-      "identifiedDisplayName": "贪婪战靴影子",
+      "identifiedDisplayName": "贪婪的影之鞋子",
       "identifiedResourceName": "슈즈쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231488,9 +231488,9 @@
       "costume": true
     },
     "24116": {
-      "unidentifiedDisplayName": "贪婪盾牌影子",
+      "unidentifiedDisplayName": "贪婪的影之盾牌",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "贪婪盾牌影子",
+      "identifiedDisplayName": "贪婪的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231504,9 +231504,9 @@
       "costume": true
     },
     "24117": {
-      "unidentifiedDisplayName": "贪婪武器影子",
+      "unidentifiedDisplayName": "贪婪的影之武器",
       "unidentifiedResourceName": "웨폰쉐도우",
-      "identifiedDisplayName": "贪婪武器影子",
+      "identifiedDisplayName": "贪婪的影之武器",
       "identifiedResourceName": "웨폰쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231520,9 +231520,9 @@
       "costume": true
     },
     "24118": {
-      "unidentifiedDisplayName": "贪婪耳环影子",
+      "unidentifiedDisplayName": "贪婪的影之耳环",
       "unidentifiedResourceName": "이어링쉐도우",
-      "identifiedDisplayName": "贪婪耳环影子",
+      "identifiedDisplayName": "贪婪的影之耳环",
       "identifiedResourceName": "이어링쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231536,9 +231536,9 @@
       "costume": true
     },
     "24119": {
-      "unidentifiedDisplayName": "贪婪吊坠影子",
+      "unidentifiedDisplayName": "贪婪的影之垂饰",
       "unidentifiedResourceName": "펜던트쉐도우",
-      "identifiedDisplayName": "贪婪吊坠影子",
+      "identifiedDisplayName": "贪婪的影之垂饰",
       "identifiedResourceName": "펜던트쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231552,9 +231552,9 @@
       "costume": true
     },
     "24120": {
-      "unidentifiedDisplayName": "治愈铠甲影子",
+      "unidentifiedDisplayName": "治愈的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "治愈铠甲影子",
+      "identifiedDisplayName": "治愈的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231568,9 +231568,9 @@
       "costume": true
     },
     "24121": {
-      "unidentifiedDisplayName": "治愈战靴影子",
+      "unidentifiedDisplayName": "治愈的影之鞋子",
       "unidentifiedResourceName": "슈즈쉐도우",
-      "identifiedDisplayName": "治愈战靴影子",
+      "identifiedDisplayName": "治愈的影之鞋子",
       "identifiedResourceName": "슈즈쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231584,9 +231584,9 @@
       "costume": true
     },
     "24122": {
-      "unidentifiedDisplayName": "治愈盾牌影子",
+      "unidentifiedDisplayName": "治愈的影之盾牌",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "治愈盾牌影子",
+      "identifiedDisplayName": "治愈的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231600,9 +231600,9 @@
       "costume": true
     },
     "24123": {
-      "unidentifiedDisplayName": "治愈武器影子",
+      "unidentifiedDisplayName": "治愈的影之武器",
       "unidentifiedResourceName": "웨폰쉐도우",
-      "identifiedDisplayName": "治愈武器影子",
+      "identifiedDisplayName": "治愈的影之武器",
       "identifiedResourceName": "웨폰쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231616,9 +231616,9 @@
       "costume": true
     },
     "24124": {
-      "unidentifiedDisplayName": "治愈耳环影子",
+      "unidentifiedDisplayName": "治愈的影之耳环",
       "unidentifiedResourceName": "이어링쉐도우",
-      "identifiedDisplayName": "治愈耳环影子",
+      "identifiedDisplayName": "治愈的影之耳环",
       "identifiedResourceName": "이어링쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231632,9 +231632,9 @@
       "costume": true
     },
     "24125": {
-      "unidentifiedDisplayName": "治愈吊坠影子",
+      "unidentifiedDisplayName": "治愈的影之垂饰",
       "unidentifiedResourceName": "펜던트쉐도우",
-      "identifiedDisplayName": "治愈吊坠影子",
+      "identifiedDisplayName": "治愈的影之垂饰",
       "identifiedResourceName": "펜던트쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231648,9 +231648,9 @@
       "costume": true
     },
     "24126": {
-      "unidentifiedDisplayName": "隐匿铠甲影子",
+      "unidentifiedDisplayName": "隐匿的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "隐匿铠甲影子",
+      "identifiedDisplayName": "隐匿的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231664,9 +231664,9 @@
       "costume": true
     },
     "24127": {
-      "unidentifiedDisplayName": "隐匿战靴影子",
+      "unidentifiedDisplayName": "隐匿的影之鞋子",
       "unidentifiedResourceName": "슈즈쉐도우",
-      "identifiedDisplayName": "隐匿战靴影子",
+      "identifiedDisplayName": "隐匿的影之鞋子",
       "identifiedResourceName": "슈즈쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231680,9 +231680,9 @@
       "costume": true
     },
     "24128": {
-      "unidentifiedDisplayName": "隐匿盾牌影子",
+      "unidentifiedDisplayName": "隐匿的影之盾牌",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "隐匿盾牌影子",
+      "identifiedDisplayName": "隐匿的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231696,9 +231696,9 @@
       "costume": true
     },
     "24129": {
-      "unidentifiedDisplayName": "隐匿武器影子",
+      "unidentifiedDisplayName": "隐匿的影之武器",
       "unidentifiedResourceName": "웨폰쉐도우",
-      "identifiedDisplayName": "隐匿武器影子",
+      "identifiedDisplayName": "隐匿的影之武器",
       "identifiedResourceName": "웨폰쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231712,9 +231712,9 @@
       "costume": true
     },
     "24130": {
-      "unidentifiedDisplayName": "隐匿耳环影子",
+      "unidentifiedDisplayName": "隐匿的影之耳环",
       "unidentifiedResourceName": "이어링쉐도우",
-      "identifiedDisplayName": "隐匿耳环影子",
+      "identifiedDisplayName": "隐匿的影之耳环",
       "identifiedResourceName": "이어링쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231728,9 +231728,9 @@
       "costume": true
     },
     "24131": {
-      "unidentifiedDisplayName": "隐匿吊坠影子",
+      "unidentifiedDisplayName": "隐匿的影之垂饰",
       "unidentifiedResourceName": "펜던트쉐도우",
-      "identifiedDisplayName": "隐匿吊坠影子",
+      "identifiedDisplayName": "隐匿的影之垂饰",
       "identifiedResourceName": "펜던트쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231744,9 +231744,9 @@
       "costume": true
     },
     "24132": {
-      "unidentifiedDisplayName": "伪装铠甲影子",
+      "unidentifiedDisplayName": "伪装的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "伪装铠甲影子",
+      "identifiedDisplayName": "伪装的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231760,9 +231760,9 @@
       "costume": true
     },
     "24133": {
-      "unidentifiedDisplayName": "伪装战靴影子",
+      "unidentifiedDisplayName": "伪装的影之鞋子",
       "unidentifiedResourceName": "슈즈쉐도우",
-      "identifiedDisplayName": "伪装战靴影子",
+      "identifiedDisplayName": "伪装的影之鞋子",
       "identifiedResourceName": "슈즈쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231776,9 +231776,9 @@
       "costume": true
     },
     "24134": {
-      "unidentifiedDisplayName": "伪装盾牌影子",
+      "unidentifiedDisplayName": "伪装的影之盾牌",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "伪装盾牌影子",
+      "identifiedDisplayName": "伪装的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231792,9 +231792,9 @@
       "costume": true
     },
     "24135": {
-      "unidentifiedDisplayName": "伪装武器影子",
+      "unidentifiedDisplayName": "伪装的影之武器",
       "unidentifiedResourceName": "웨폰쉐도우",
-      "identifiedDisplayName": "伪装武器影子",
+      "identifiedDisplayName": "伪装的影之武器",
       "identifiedResourceName": "웨폰쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231808,9 +231808,9 @@
       "costume": true
     },
     "24136": {
-      "unidentifiedDisplayName": "伪装耳环影子",
+      "unidentifiedDisplayName": "伪装的影之耳环",
       "unidentifiedResourceName": "이어링쉐도우",
-      "identifiedDisplayName": "伪装耳环影子",
+      "identifiedDisplayName": "伪装的影之耳环",
       "identifiedResourceName": "이어링쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231824,9 +231824,9 @@
       "costume": true
     },
     "24137": {
-      "unidentifiedDisplayName": "伪装吊坠影子",
+      "unidentifiedDisplayName": "伪装的影之垂饰",
       "unidentifiedResourceName": "펜던트쉐도우",
-      "identifiedDisplayName": "伪装吊坠影子",
+      "identifiedDisplayName": "伪装的影之垂饰",
       "identifiedResourceName": "펜던트쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231840,9 +231840,9 @@
       "costume": true
     },
     "24138": {
-      "unidentifiedDisplayName": "传送铠甲影子",
+      "unidentifiedDisplayName": "瞬间移动的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "传送铠甲影子",
+      "identifiedDisplayName": "瞬间移动的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231856,9 +231856,9 @@
       "costume": true
     },
     "24139": {
-      "unidentifiedDisplayName": "传送战靴影子",
+      "unidentifiedDisplayName": "瞬间移动的影之鞋子",
       "unidentifiedResourceName": "슈즈쉐도우",
-      "identifiedDisplayName": "传送战靴影子",
+      "identifiedDisplayName": "瞬间移动的影之鞋子",
       "identifiedResourceName": "슈즈쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231872,9 +231872,9 @@
       "costume": true
     },
     "24140": {
-      "unidentifiedDisplayName": "传送盾牌影子",
+      "unidentifiedDisplayName": "瞬间移动的影之盾牌",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "传送盾牌影子",
+      "identifiedDisplayName": "瞬间移动的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231888,9 +231888,9 @@
       "costume": true
     },
     "24141": {
-      "unidentifiedDisplayName": "传送武器影子",
+      "unidentifiedDisplayName": "瞬间移动的影之武器",
       "unidentifiedResourceName": "웨폰쉐도우",
-      "identifiedDisplayName": "传送武器影子",
+      "identifiedDisplayName": "瞬间移动的影之武器",
       "identifiedResourceName": "웨폰쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231904,9 +231904,9 @@
       "costume": true
     },
     "24142": {
-      "unidentifiedDisplayName": "传送耳环影子",
+      "unidentifiedDisplayName": "瞬间移动的影之耳环",
       "unidentifiedResourceName": "이어링쉐도우",
-      "identifiedDisplayName": "传送耳环影子",
+      "identifiedDisplayName": "瞬间移动的影之耳环",
       "identifiedResourceName": "이어링쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231920,9 +231920,9 @@
       "costume": true
     },
     "24143": {
-      "unidentifiedDisplayName": "传送吊坠影子",
+      "unidentifiedDisplayName": "瞬间移动的影之垂饰",
       "unidentifiedResourceName": "펜던트쉐도우",
-      "identifiedDisplayName": "传送吊坠影子",
+      "identifiedDisplayName": "瞬间移动的影之垂饰",
       "identifiedResourceName": "펜던트쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231936,9 +231936,9 @@
       "costume": true
     },
     "24144": {
-      "unidentifiedDisplayName": "偷窃铠甲影子",
+      "unidentifiedDisplayName": "偷窃的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "偷窃铠甲影子",
+      "identifiedDisplayName": "偷窃的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231952,9 +231952,9 @@
       "costume": true
     },
     "24145": {
-      "unidentifiedDisplayName": "偷窃战靴影子",
+      "unidentifiedDisplayName": "偷窃的影之鞋子",
       "unidentifiedResourceName": "슈즈쉐도우",
-      "identifiedDisplayName": "偷窃战靴影子",
+      "identifiedDisplayName": "偷窃的影之鞋子",
       "identifiedResourceName": "슈즈쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231968,9 +231968,9 @@
       "costume": true
     },
     "24146": {
-      "unidentifiedDisplayName": "偷窃盾牌影子",
+      "unidentifiedDisplayName": "偷窃的影之盾牌",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "偷窃盾牌影子",
+      "identifiedDisplayName": "偷窃的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -231984,9 +231984,9 @@
       "costume": true
     },
     "24147": {
-      "unidentifiedDisplayName": "偷窃武器影子",
+      "unidentifiedDisplayName": "偷窃的影之武器",
       "unidentifiedResourceName": "웨폰쉐도우",
-      "identifiedDisplayName": "偷窃武器影子",
+      "identifiedDisplayName": "偷窃的影之武器",
       "identifiedResourceName": "웨폰쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232000,9 +232000,9 @@
       "costume": true
     },
     "24148": {
-      "unidentifiedDisplayName": "偷窃耳环影子",
+      "unidentifiedDisplayName": "偷窃的影之耳环",
       "unidentifiedResourceName": "이어링쉐도우",
-      "identifiedDisplayName": "偷窃耳环影子",
+      "identifiedDisplayName": "偷窃的影之耳环",
       "identifiedResourceName": "이어링쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232016,9 +232016,9 @@
       "costume": true
     },
     "24149": {
-      "unidentifiedDisplayName": "偷窃吊坠影子",
+      "unidentifiedDisplayName": "偷窃的影之垂饰",
       "unidentifiedResourceName": "펜던트쉐도우",
-      "identifiedDisplayName": "偷窃吊坠影子",
+      "identifiedDisplayName": "偷窃的影之垂饰",
       "identifiedResourceName": "펜던트쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232608,9 +232608,9 @@
       "costume": true
     },
     "24186": {
-      "unidentifiedDisplayName": "基础铠甲影子",
+      "unidentifiedDisplayName": "基础的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "基础铠甲影子",
+      "identifiedDisplayName": "基础的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232624,9 +232624,9 @@
       "costume": true
     },
     "24187": {
-      "unidentifiedDisplayName": "神圣铠甲影子",
+      "unidentifiedDisplayName": "圣洁的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "神圣铠甲影子",
+      "identifiedDisplayName": "圣洁的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232640,9 +232640,9 @@
       "costume": true
     },
     "24188": {
-      "unidentifiedDisplayName": "撒哈力铠甲影子",
+      "unidentifiedDisplayName": "不毛之地的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "撒哈力铠甲影子",
+      "identifiedDisplayName": "不毛之地的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232656,9 +232656,9 @@
       "costume": true
     },
     "24189": {
-      "unidentifiedDisplayName": "安德尼斯铠甲影子",
+      "unidentifiedDisplayName": "下之影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "安德尼斯铠甲影子",
+      "identifiedDisplayName": "下之影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232672,9 +232672,9 @@
       "costume": true
     },
     "24190": {
-      "unidentifiedDisplayName": "烈焰铠甲影子",
+      "unidentifiedDisplayName": "火焰的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "烈焰铠甲影子",
+      "identifiedDisplayName": "火焰的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232688,9 +232688,9 @@
       "costume": true
     },
     "24191": {
-      "unidentifiedDisplayName": "疾风铠甲影子",
+      "unidentifiedDisplayName": "强风的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "疾风铠甲影子",
+      "identifiedDisplayName": "强风的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232704,9 +232704,9 @@
       "costume": true
     },
     "24192": {
-      "unidentifiedDisplayName": "毒液铠甲影子",
+      "unidentifiedDisplayName": "放毒的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "毒液铠甲影子",
+      "identifiedDisplayName": "放毒的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232720,9 +232720,9 @@
       "costume": true
     },
     "24193": {
-      "unidentifiedDisplayName": "诅咒铠甲影子",
+      "unidentifiedDisplayName": "避邪的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "诅咒铠甲影子",
+      "identifiedDisplayName": "避邪的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232752,9 +232752,9 @@
       "costume": true
     },
     "24195": {
-      "unidentifiedDisplayName": "神圣铠甲影子",
+      "unidentifiedDisplayName": "圣洁的影之铠甲",
       "unidentifiedResourceName": "아머쉐도우",
-      "identifiedDisplayName": "神圣铠甲影子",
+      "identifiedDisplayName": "圣洁的影之铠甲",
       "identifiedResourceName": "아머쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232800,9 +232800,9 @@
       "costume": true
     },
     "24198": {
-      "unidentifiedDisplayName": "基础盾牌影子",
+      "unidentifiedDisplayName": "基础的影之盾牌",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "基础盾牌影子",
+      "identifiedDisplayName": "基础的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232816,9 +232816,9 @@
       "costume": true
     },
     "24199": {
-      "unidentifiedDisplayName": "神圣盾牌影子",
+      "unidentifiedDisplayName": "圣洁的_盾牌_ 阴暗",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "神圣盾牌影子",
+      "identifiedDisplayName": "圣洁的_盾牌_ 阴暗",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232832,9 +232832,9 @@
       "costume": true
     },
     "24200": {
-      "unidentifiedDisplayName": "撒哈力盾牌影子",
+      "unidentifiedDisplayName": "不毛之地的影之盾牌",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "撒哈力盾牌影子",
+      "identifiedDisplayName": "不毛之地的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232850,7 +232850,7 @@
     "24201": {
       "unidentifiedDisplayName": "盾牌影子",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "大地盾牌影子",
+      "identifiedDisplayName": "下之影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232874,7 +232874,7 @@
     "24202": {
       "unidentifiedDisplayName": "盾牌影子",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "烈焰盾牌影子",
+      "identifiedDisplayName": "火焰的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232898,7 +232898,7 @@
     "24203": {
       "unidentifiedDisplayName": "盾牌影子",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "疾风盾牌影子",
+      "identifiedDisplayName": "强风的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232922,7 +232922,7 @@
     "24204": {
       "unidentifiedDisplayName": "盾牌影子",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "剧毒盾牌影子",
+      "identifiedDisplayName": "放毒的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -232994,7 +232994,7 @@
     "24207": {
       "unidentifiedDisplayName": "盾牌影子",
       "unidentifiedResourceName": "쉴드쉐도우",
-      "identifiedDisplayName": "神威盾牌影子",
+      "identifiedDisplayName": "圣洁的影之盾牌",
       "identifiedResourceName": "쉴드쉐도우",
       "slotCount": 0,
       "ClassNum": 0,
@@ -233583,7 +233583,7 @@
     "24233": {
       "unidentifiedDisplayName": "武器影子",
       "unidentifiedResourceName": "웨폰쉐도우",
-      "identifiedDisplayName": "超越武器影子",
+      "identifiedDisplayName": "超越影子武器",
       "identifiedResourceName": "웨폰쉐도우",
       "slotCount": 0,
       "ClassNum": 0,

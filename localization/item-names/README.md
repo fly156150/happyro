@@ -1,21 +1,17 @@
 # 物品名称来源
 
-当前状态：RO321 全部 13 个 Renewal 公开分类扫描完成，2,421 页、29,006 个唯一 ID，独立完整性审计通过。结果留待用户合并，未据此更新产品翻译。详情见 [扫描进度](PROGRESS.md)。
-
-HappyRO 的物品中文名称按物品 ID 引入公开资料，不自行翻译，也不再由魔物名称拼接卡片名。当前默认优先使用 [RO 小册子](https://ro.dvg.cn/item_list.php)，没有可确认中文名时使用 [RO321 Renewal 数据库](https://ro.ro321.com/index.php?page=re_item_db)。
+当前状态：已合并两站完整扫描结果，并将可靠映射同步至当前 Renewal 产品数据。完整来源、规则、分片、冲突与验证见 [合并结果](../../docs/localization/item-name-scans/merged/README.md)。
 
 ## 当前覆盖与限制
 
-当前产品映射的历史输入：2026-10-24 获取小册子 1,483 页、29,649 个 ID，以及当时 RO321 的 759 页、9,096 个 ID（另含 1 次单条核对）。后续 RO321 完整扫描结果已独立保存，尚未合并到下列产品映射。
-
-- [zh-CN.json](zh-CN.json)：15,733 个核对通过的 ID，其中小册子 15,565 个、RO321 补充 168 个。每条记录保存实际采用名称、原始标题、内部标识及来源 URL。
-- [unresolved.json](unresolved.json)：13,623 个服务端 ID 缺少可确认中文名或存在标识冲突，保留已有名称，不用自译、英文占位或 `(null)` 填补。
-- 当前客户端的 16,127 个 ID 均可在小册子中找到；其中 11,942 个有通过核对的中文映射，其余 4,185 个不能视为中文名称已审核。
-- 更新服务端 14,681 个名称、客户端 10,636 个名称。相同名称的已有条目也在映射中保留来源。
-- 只维护当前 Renewal 数据。Pre-Renewal 的相同 ID 可能代表不同物品，不套用本映射。
-- 5816 等来源内部标识与本地冲突的 ID 不强行替换；保留于待核对列表。来源标题末尾的 `[1]` 等插槽展示单独拆出，不写入物品名称，也不修改洞数。
-
-这次尚未完成全物品名称替换。必须补齐 RO321 资料或取得站点提供的数据导出后，才能继续处理缺口；不能把无来源条目算作已完成。
+- [zh-CN.json](zh-CN.json)：15,968 个项目 ID，小册子列表 15,565、网格 24、RO321 379。每项保存来源原名及内部标识；网格的身份依据单独记录。
+- [unresolved.json](unresolved.json)：13,388 个项目 ID 无可靠中文候选，保留现名，不自行翻译。
+- [source-conflicts.json](source-conflicts.json)：137 项合格中文名冲突，逐项记录选用与候选；采用小册子列表、网格、RO321 的优先顺序。
+- [source-exclusions.json](source-exclusions.json)：排除 33 项语言未经确认的网格候选，不把纯汉字日文当作中文。
+- [reviewed-references.json](reviewed-references.json)：14 项物品说明引用及 23 项 NPC 奖励标签，按实际物品 ID 同步。
+- 当前客户端 16,127 个 ID 中，12,121 个有可靠映射。未映射条目不声称翻译通过。
+- 本轮较提交基线新增 235 个映射；实际更新服务端 232 个名称、客户端 178 个名称。
+- 仅使用项目固定的 Renewal／PACKETVER=20211103 语义。Pre-Renewal 不套用本映射；同名技能、其他 ID 的装备及通用未鉴定名称不做全局替换。
 
 ## 同步流程
 
@@ -24,7 +20,7 @@ HappyRO 的物品中文名称按物品 ID 引入公开资料，不自行翻译�
 python3 tools/resources/catalog/item_names.py fetch --source dvg --output work/item-name-sources
 # RO321 按明确的 ID 列表查询；ids.json 是数字 ID 数组。
 python3 tools/resources/catalog/item_names.py fetch --source ro321 --ids work/item-name-sources/ids.json --output work/item-name-sources --limit 20 --interval 8
-python3 tools/resources/catalog/build_item_names.py build --references work/item-name-sources
+python3 tools/resources/catalog/build_item_names.py build --references docs/localization/item-name-scans
 python3 tools/resources/catalog/sync_item_names.py apply
 python3 tools/resources/catalog/main.py items server
 python3 tools/resources/catalog/main.py items client

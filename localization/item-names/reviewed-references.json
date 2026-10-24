@@ -1,0 +1,244 @@
+{
+  "itemDescriptions": [
+    {
+      "ownerID": "14463",
+      "old": "紫色牛仔帽",
+      "itemID": "5409",
+      "evidence": "item_db_usable.yml: getitem 5409,1"
+    },
+    {
+      "ownerID": "14465",
+      "old": "紫色牛仔帽",
+      "itemID": "5409",
+      "evidence": "item_db_usable.yml: getitem 5409,1"
+    },
+    {
+      "ownerID": "14726",
+      "old": "贪婪铠甲影子",
+      "itemID": "24114",
+      "evidence": "Greed_Shadow_Box / S_Greed equipment set"
+    },
+    {
+      "ownerID": "14726",
+      "old": "贪婪鞋子影子",
+      "itemID": "24115",
+      "evidence": "Greed_Shadow_Box / S_Greed equipment set"
+    },
+    {
+      "ownerID": "14726",
+      "old": "贪婪盾牌影子",
+      "itemID": "24116",
+      "evidence": "Greed_Shadow_Box / S_Greed equipment set"
+    },
+    {
+      "ownerID": "14726",
+      "old": "贪婪武器影子",
+      "itemID": "24117",
+      "evidence": "Greed_Shadow_Box / S_Greed equipment set"
+    },
+    {
+      "ownerID": "14726",
+      "old": "贪婪耳环影子",
+      "itemID": "24118",
+      "evidence": "Greed_Shadow_Box / S_Greed equipment set"
+    },
+    {
+      "ownerID": "14726",
+      "old": "贪婪吊坠影子",
+      "itemID": "24119",
+      "evidence": "Greed_Shadow_Box / S_Greed equipment set"
+    },
+    {
+      "ownerID": "15040",
+      "old": "囚服",
+      "itemID": "15040",
+      "evidence": "self description"
+    },
+    {
+      "ownerID": "23248",
+      "old": "宝石影子啪嗒箱",
+      "itemID": "23248",
+      "evidence": "self description"
+    },
+    {
+      "ownerID": "23249",
+      "old": "承载者影子啪嗒箱",
+      "itemID": "23249",
+      "evidence": "self description"
+    },
+    {
+      "ownerID": "2913",
+      "old": "囚服",
+      "itemID": "15040",
+      "evidence": "Thief_Handcuff / Prison_Uniform combo"
+    },
+    {
+      "ownerID": "23858",
+      "old": "活力耳环影子",
+      "itemID": "24102",
+      "evidence": "Vitality_Earing_S / Vitality_Pendant_S material names"
+    },
+    {
+      "ownerID": "23858",
+      "old": "活力坠饰影子",
+      "itemID": "24103",
+      "evidence": "Vitality_Earing_S / Vitality_Pendant_S material names"
+    }
+  ],
+  "scriptLabels": [
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 新法师帽\";",
+      "itemID": "18760",
+      "evidence": "Adjacent reward branches contain getitem 18760,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 新魔术师帽\";",
+      "itemID": "18761",
+      "evidence": "Adjacent reward branches contain getitem 18761,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 新狐面具\";",
+      "itemID": "18762",
+      "evidence": "Adjacent reward branches contain getitem 18762,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 新小丑帽\";",
+      "itemID": "18763",
+      "evidence": "Adjacent reward branches contain getitem 18763,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 新兔耳发带\";",
+      "itemID": "18764",
+      "evidence": "Adjacent reward branches contain getitem 18764,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 新木乃伊帽\";",
+      "itemID": "18769",
+      "evidence": "Adjacent reward branches contain getitem 18769,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 新邦古恩帽\";",
+      "itemID": "18770",
+      "evidence": "Adjacent reward branches contain getitem 18770,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 新幻影歌剧面具\";",
+      "itemID": "18771",
+      "evidence": "Adjacent reward branches contain getitem 18771,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 优质望远镜\";",
+      "itemID": "18772",
+      "evidence": "Adjacent reward branches contain getitem 18772,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 优质鱼鳍头盔\";",
+      "itemID": "18773",
+      "evidence": "Adjacent reward branches contain getitem 18773,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 优质刺客面具\";",
+      "itemID": "18774",
+      "evidence": "Adjacent reward branches contain getitem 18774,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 优质焊接面具\";",
+      "itemID": "18775",
+      "evidence": "Adjacent reward branches contain getitem 18775,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 优质防御戒指\";",
+      "itemID": "2956",
+      "evidence": "Adjacent reward branches contain getitem 2956,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 优质天使护佑\";",
+      "itemID": "15068",
+      "evidence": "Adjacent reward branches contain getitem 15068,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 优质天使守护\";",
+      "itemID": "2183",
+      "evidence": "Adjacent reward branches contain getitem 2183,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 优质天使开衫\";",
+      "itemID": "20710",
+      "evidence": "Adjacent reward branches contain getitem 20710,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 优质天使转生\";",
+      "itemID": "22015",
+      "evidence": "Adjacent reward branches contain getitem 22015,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 强化海盗船长帽\";",
+      "itemID": "18765",
+      "evidence": "Adjacent reward branches contain getitem 18765,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 增强型骨制头盔\";",
+      "itemID": "18768",
+      "evidence": "Adjacent reward branches contain getitem 18768,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 强化天使头盔\";",
+      "itemID": "18766",
+      "evidence": "Adjacent reward branches contain getitem 18766,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 强化变异长靴\";",
+      "itemID": "22014",
+      "evidence": "Adjacent reward branches contain getitem 22014,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 强化火焰领主戒指\";",
+      "itemID": "2957",
+      "evidence": "Adjacent reward branches contain getitem 2957,1"
+    },
+    {
+      "path": "npc/re/quests/newgears/2012_headgears.txt",
+      "old": "mes \"- 强化共鸣戒指\";",
+      "itemID": "2958",
+      "evidence": "Adjacent reward branches contain getitem 2958,1"
+    }
+  ],
+  "skillProse": [
+    {
+      "skillID": "477",
+      "old": "精炼 1 级武器需要神之金属原石",
+      "itemID": "1010",
+      "prefix": "精炼 1 级武器需要",
+      "evidence": "skill_weaponrefine material[0] = ITEMID_PHRACON (1010)"
+    },
+    {
+      "skillID": "477",
+      "old": "2 级武器需要铝原石",
+      "itemID": "1011",
+      "prefix": "2 级武器需要",
+      "evidence": "skill_weaponrefine material[1] = ITEMID_EMVERETARCON (1011)"
+    }
+  ]
+}
