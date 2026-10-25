@@ -1,0 +1,54 @@
+[
+  {
+    "path": "repos/happyro-server/npc/custom/official/GeffenMagicTournament.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/MazeofOz.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/ThorGunsuBase.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/VillaofHighPriest.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/archbishop.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/guillotine_cross.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/rune_knight.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/championmobs.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/dungeons/lhz_dun.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/fields/manuk.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/quests/quests_18.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "reviewedIds": 2675,
+  "changedNames": 88,
+  "checks": [
+    "source-backed names",
+    "server/client/API/adventure names",
+    "complete ID coverage",
+    "unchanged monster mechanics and identities",
+    "current sprite mappings",
+    "current UTF-8 packet labels",
+    "alternate server display names",
+    "adventure source hash",
+    "same-ID English mercenary titles",
+    "exact reviewed NPC script replacements"
+  ]
+}

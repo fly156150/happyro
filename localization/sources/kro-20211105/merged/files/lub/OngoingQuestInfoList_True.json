@@ -33233,7 +33233,7 @@
     },
     "7110": {
       "Title": "刺客公会的特殊任务 9",
-      "Summary": "处理隐匿的神官",
+      "Summary": "处理潜逃的神官",
       "IconName": "ico_jq.bmp",
       "NpcSpr": "",
       "NpcNavi": "",
@@ -69563,7 +69563,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "拜托伊姆里尔叫苏阿德来。在等待苏阿德时，和<NAVI>[马拉姆]<INFO>gw_fild01,35,102,0,101,0</INFO></NAVI>对话吧。"
+        "拜托伊姆里尔叫苏亚德来。在等待苏亚德时，和<NAVI>[马拉姆]<INFO>gw_fild01,35,102,0,101,0</INFO></NAVI>对话吧。"
       ]
     },
     "11724": {
@@ -69578,7 +69578,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "获得了苏阿德允许进入灰狼村的许可。在村子里和<NAVI>[伊姆里尔]<INFO>wolfvill,143,113,0,101,0</INFO></NAVI>对话吧。"
+        "获得了苏亚德允许进入灰狼村的许可。在村子里和<NAVI>[伊姆里尔]<INFO>wolfvill,143,113,0,101,0</INFO></NAVI>对话吧。"
       ]
     },
     "11725": {
@@ -69743,7 +69743,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "遇到了迷宫守护老人。回村向苏阿德报告欧兹迷宫的调查内容，并与<NAVI>[伊姆里尔]<INFO>wolfvill,143,113,0,101,0</INFO></NAVI>对话吧。"
+        "遇到了迷宫守护老人。回村向苏亚德报告欧兹迷宫的调查内容，并与<NAVI>[伊姆里尔]<INFO>wolfvill,143,113,0,101,0</INFO></NAVI>对话吧。"
       ]
     },
     "11736": {
@@ -98932,7 +98932,7 @@
     },
     "16567": {
       "Title": "灰狼森林大集会",
-      "Summary": "与苏阿德交谈",
+      "Summary": "与苏亚德交谈",
       "IconName": "ico_ep.bmp",
       "NpcSpr": "4_EP18_SUAD",
       "NpcNavi": "wolfvill",
@@ -98942,7 +98942,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "灰狼森林的大集会即将开始。去<NAVI>[苏阿德]<INFO>wolfvill,144,151,0,101,0</INFO></NAVI>和人们聚集的地方参加集会。"
+        "灰狼森林的大集会即将开始。去<NAVI>[苏亚德]<INFO>wolfvill,144,151,0,101,0</INFO></NAVI>和人们聚集的地方参加集会。"
       ]
     },
     "16568": {
@@ -99007,7 +99007,7 @@
     },
     "16572": {
       "Title": "灰狼森林大会",
-      "Summary": "与苏阿德交谈",
+      "Summary": "与苏亚德交谈",
       "IconName": "ico_ep.bmp",
       "NpcSpr": "4_EP18_SUAD",
       "NpcNavi": "wolfvill",
@@ -99017,7 +99017,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "已经充分听取了灰狼森林居民的意见。回去找<NAVI>[苏阿德]<INFO>wolfvill,144,151,0,101,0</INFO></NAVI>。"
+        "已经充分听取了灰狼森林居民的意见。回去找<NAVI>[苏亚德]<INFO>wolfvill,144,151,0,101,0</INFO></NAVI>。"
       ]
     },
     "16573": {
@@ -99127,7 +99127,7 @@
     },
     "16580": {
       "Title": "武器的来源",
-      "Summary": "与苏阿德交谈",
+      "Summary": "与苏亚德交谈",
       "IconName": "ico_ep.bmp",
       "NpcSpr": "4_EP18_SUAD",
       "NpcNavi": "wolfvill",
@@ -99137,7 +99137,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "尽快把在托尔军事基地查到的情况告诉<NAVI>[苏阿德]<INFO>wolfvill,140,112,0,101,0</INFO></NAVI>。"
+        "尽快把在托尔军事基地查到的情况告诉<NAVI>[苏亚德]<INFO>wolfvill,140,112,0,101,0</INFO></NAVI>。"
       ]
     },
     "16581": {

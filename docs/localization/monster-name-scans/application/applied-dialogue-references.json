@@ -1,0 +1,44 @@
+[
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/archbishop.txt",
+    "line": 1014,
+    "monsterId": 2036,
+    "before": "mapannounce \"job3_arch02\",\"女武神的噩梦：一个无能的女武神幻影在人类的帮助下来到了这里。想体验那场噩梦吗？\",bc_map,\"0xFF0000\";",
+    "after": "mapannounce \"job3_arch02\",\"瓦尔基里的噩梦：一个无能的女武神幻影在人类的帮助下来到了这里。想体验那场噩梦吗？\",bc_map,\"0xFF0000\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/archbishop.txt",
+    "line": 1050,
+    "monsterId": 2036,
+    "before": "mapannounce \"job3_arch02\",\"女武神的噩梦：你的胜利只是假象！哈哈哈哈！\",bc_map,\"0xFF0000\";",
+    "after": "mapannounce \"job3_arch02\",\"瓦尔基里的噩梦：你的胜利只是假象！哈哈哈哈！\",bc_map,\"0xFF0000\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/archbishop.txt",
+    "line": 1084,
+    "monsterId": 2036,
+    "before": "mapannounce \"job3_arch02\",\"女武神的噩梦：你真幼稚。我邀请你参加恶魔的派对，一定会让你玩得开心！\",bc_map,\"0xFF0000\";",
+    "after": "mapannounce \"job3_arch02\",\"瓦尔基里的噩梦：你真幼稚。我邀请你参加恶魔的派对，一定会让你玩得开心！\",bc_map,\"0xFF0000\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/archbishop.txt",
+    "line": 1602,
+    "monsterId": 2036,
+    "before": "mapannounce \"job3_arch02\",\"女武神的噩梦：我再也坚持不住了！\",bc_map,\"0xFF0000\";",
+    "after": "mapannounce \"job3_arch02\",\"瓦尔基里的噩梦：我再也坚持不住了！\",bc_map,\"0xFF0000\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/guillotine_cross.txt",
+    "line": 2407,
+    "monsterId": 2031,
+    "before": "mapannounce \"job3_guil02\",\"蒲公英：……哈，你真强又真黏！\",bc_map,\"0xA8A8A8\"; //FW_NORMAL 12 0 0",
+    "after": "mapannounce \"job3_guil02\",\"蒲公英干部：……哈，你真强又真黏！\",bc_map,\"0xA8A8A8\"; //FW_NORMAL 12 0 0"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/guillotine_cross.txt",
+    "line": 2411,
+    "monsterId": 2031,
+    "before": "mapannounce \"job3_guil02\",\"蒲公英逃走了。\",bc_map,\"0x7b68ee\"; //FW_NORMAL 12 0 0",
+    "after": "mapannounce \"job3_guil02\",\"蒲公英干部逃走了。\",bc_map,\"0x7b68ee\"; //FW_NORMAL 12 0 0"
+  }
+]

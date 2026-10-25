@@ -1,0 +1,437 @@
+[
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/rune_knight.txt",
+    "line": 1713,
+    "id": 1484,
+    "before": "monster \"job3_rune02\",0,0,\"兽人腐尸\",1484,1,\"job_rune_edq#1st_tcmc::OnMyMobDead\";",
+    "after": "monster \"job3_rune02\",0,0,\"阿修罗狂战士\",1484,1,\"job_rune_edq#1st_tcmc::OnMyMobDead\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/rune_knight.txt",
+    "line": 1748,
+    "id": 1484,
+    "before": "monster \"job3_rune02\",0,0,\"兽人腐尸\",1484,1,\"job_rune_edq#1st_tcmc2::OnMyMobDead\";",
+    "after": "monster \"job3_rune02\",0,0,\"阿修罗狂战士\",1484,1,\"job_rune_edq#1st_tcmc2::OnMyMobDead\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/dungeons/lhz_dun.txt",
+    "line": 68,
+    "id": 1640,
+    "before": "lhz_dun03,114,138,12,16\tmonster\t暗领主赛依连\t1640,1,2700000,2400000",
+    "after": "lhz_dun03,114,138,12,16\tmonster\t骑士领主 赛依连\t1640,1,2700000,2400000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/dungeons/lhz_dun.txt",
+    "line": 69,
+    "id": 1644,
+    "before": "lhz_dun03,139,117,20,11\tmonster\t暗●神射手 迪文\t1644,1,2700000,2500000",
+    "after": "lhz_dun03,139,117,20,11\tmonster\t神射手 迪文\t1644,1,2700000,2500000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/dungeons/lhz_dun.txt",
+    "line": 70,
+    "id": 1642,
+    "before": "lhz_dun03,163,138,12,16\tmonster\t暗工匠哈沃得\t1642,1,3000000,2700000",
+    "after": "lhz_dun03,163,138,12,16\tmonster\t神工匠 哈沃得\t1642,1,3000000,2700000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/dungeons/lhz_dun.txt",
+    "line": 71,
+    "id": 1643,
+    "before": "lhz_dun03,138,138,36,34\tmonster\t暗神官玛嘉雷特\t1643,1,3300000,3000000",
+    "after": "lhz_dun03,138,138,36,34\tmonster\t神官 玛嘉雷特\t1643,1,3300000,3000000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/rune_knight.txt",
+    "line": 2087,
+    "id": 2039,
+    "before": "monster \"job3_rune02\",40,40,\"行刑者\",2039,1,\"job_rune_edq#3rd_tc1::OnMyMobDead\";",
+    "after": "monster \"job3_rune02\",40,40,\"魔剑行刑者\",2039,1,\"job_rune_edq#3rd_tc1::OnMyMobDead\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/rune_knight.txt",
+    "line": 2111,
+    "id": 2040,
+    "before": "monster \"job3_rune02\",40,40,\"兽牙怪\",2040,1,\"job_rune_edq#3rd_tc2::OnMyMobDead\";",
+    "after": "monster \"job3_rune02\",40,40,\"魔剑兽牙怪\",2040,1,\"job_rune_edq#3rd_tc2::OnMyMobDead\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/dungeons/lhz_dun.txt",
+    "line": 120,
+    "id": 2228,
+    "before": "lhz_dun04,0,0\tmonster\t暗圣殿兰达\t2228,1,3300000,3000000",
+    "after": "lhz_dun04,0,0\tmonster\t圣殿十字军 兰达\t2228,1,3300000,3000000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/dungeons/lhz_dun.txt",
+    "line": 122,
+    "id": 2230,
+    "before": "lhz_dun04,0,0\tmonster\t暗●智者 西里亚\t2230,1,3300000,3000000",
+    "after": "lhz_dun04,0,0\tmonster\t智者 西里亚\t2230,1,3300000,3000000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/dungeons/lhz_dun.txt",
+    "line": 123,
+    "id": 2231,
+    "before": "lhz_dun04,0,0\tmonster\t暗宗师陈理欧\t2231,1,3300000,3000000",
+    "after": "lhz_dun04,0,0\tmonster\t武术宗师 陈理欧\t2231,1,3300000,3000000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/dungeons/lhz_dun.txt",
+    "line": 124,
+    "id": 2232,
+    "before": "lhz_dun04,0,0\tmonster\t暗太保科迪\t2232,1,3300000,3000000",
+    "after": "lhz_dun04,0,0\tmonster\t神行太保 科迪\t2232,1,3300000,3000000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/fields/manuk.txt",
+    "line": 37,
+    "id": 1990,
+    "before": "man_fild03,0,0\tmonster\t硬石猛玛\t1990,1,14400000",
+    "after": "man_fild03,0,0\tmonster\t硬石猛犸\t1990,1,14400000"
+  },
+  {
+    "path": "repos/happyro-server/npc/custom/official/GeffenMagicTournament.txt",
+    "line": 4643,
+    "id": 2914,
+    "before": "monster instance_mapname(\"1@gef\"), 114, 137, \"Geffen Shoplifter\", 2914, 1, instance_npcname(\"Geffen Shoplifter#33\") + \"::OnMobKilled\";",
+    "after": "monster instance_mapname(\"1@gef\"), 114, 137, \"吉芬盗贼\", 2914, 1, instance_npcname(\"Geffen Shoplifter#33\") + \"::OnMobKilled\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "line": 912,
+    "id": [
+      3512,
+      3520
+    ],
+    "before": "areamonster 'map_pop1$,139,90,104,90,\"愤怒的信徒\",.@mbel,7, .@event$;",
+    "after": "areamonster 'map_pop1$,139,90,104,90,\"生气的信徒\",.@mbel,7, .@event$;"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "line": 2485,
+    "id": [
+      3512,
+      3520
+    ],
+    "before": "monster 'map_pop2$,120,117,\"愤怒的信徒\",.@mbel,1, .@event$;",
+    "after": "monster 'map_pop2$,120,117,\"生气的信徒\",.@mbel,1, .@event$;"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "line": 2486,
+    "id": [
+      3512,
+      3520
+    ],
+    "before": "monster 'map_pop2$,114,120,\"愤怒的信徒\",.@mbel,1, .@event$;",
+    "after": "monster 'map_pop2$,114,120,\"生气的信徒\",.@mbel,1, .@event$;"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "line": 2487,
+    "id": [
+      3512,
+      3520
+    ],
+    "before": "monster 'map_pop2$,120,112,\"愤怒的信徒\",.@mbel,1, .@event$;",
+    "after": "monster 'map_pop2$,120,112,\"生气的信徒\",.@mbel,1, .@event$;"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "line": 2488,
+    "id": [
+      3512,
+      3520
+    ],
+    "before": "monster 'map_pop2$,112,117,\"愤怒的信徒\",.@mbel,1, .@event$;",
+    "after": "monster 'map_pop2$,112,117,\"生气的信徒\",.@mbel,1, .@event$;"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "line": 2519,
+    "id": [
+      3512,
+      3520
+    ],
+    "before": "monster 'map_pop2$,54,113,\"愤怒的信徒\",.@mbel,1, .@event$;",
+    "after": "monster 'map_pop2$,54,113,\"生气的信徒\",.@mbel,1, .@event$;"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "line": 2520,
+    "id": [
+      3512,
+      3520
+    ],
+    "before": "monster 'map_pop2$,52,116,\"愤怒的信徒\",.@mbel,1, .@event$;",
+    "after": "monster 'map_pop2$,52,116,\"生气的信徒\",.@mbel,1, .@event$;"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "line": 2521,
+    "id": [
+      3512,
+      3520
+    ],
+    "before": "monster 'map_pop2$,56,116,\"愤怒的信徒\",.@mbel,1, .@event$;",
+    "after": "monster 'map_pop2$,56,116,\"生气的信徒\",.@mbel,1, .@event$;"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "line": 2522,
+    "id": [
+      3512,
+      3520
+    ],
+    "before": "monster 'map_pop2$,58,119,\"愤怒的信徒\",.@mbel,1, .@event$;",
+    "after": "monster 'map_pop2$,58,119,\"生气的信徒\",.@mbel,1, .@event$;"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/EddaHalfMoonInTheDaylight.txt",
+    "line": 2523,
+    "id": [
+      3512,
+      3520
+    ],
+    "before": "monster 'map_pop2$,51,112,\"愤怒的信徒\",.@mbel,1, .@event$;",
+    "after": "monster 'map_pop2$,51,112,\"生气的信徒\",.@mbel,1, .@event$;"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/archbishop.txt",
+    "line": 1042,
+    "id": 2036,
+    "before": "areamonster \"job3_arch02\",108,322,118,332,\"女武神的噩梦\",2036,1,\"#arch_val01::OnMyMobDead\";",
+    "after": "areamonster \"job3_arch02\",108,322,118,332,\"瓦尔基里的噩梦\",2036,1,\"#arch_val01::OnMyMobDead\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/archbishop.txt",
+    "line": 1077,
+    "id": 2036,
+    "before": "areamonster \"job3_arch02\",239,41,249,51,\"女武神的噩梦\",2036,1,\"#arch_val02::OnMyMobDead\";",
+    "after": "areamonster \"job3_arch02\",239,41,249,51,\"瓦尔基里的噩梦\",2036,1,\"#arch_val02::OnMyMobDead\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/guillotine_cross.txt",
+    "line": 2473,
+    "id": 2031,
+    "before": "monster \"job3_guil02\",51,43,\"蒲公英\",2031,1,\"A man with black clothes::OnMyMobDead\";",
+    "after": "monster \"job3_guil02\",51,43,\"蒲公英干部\",2031,1,\"A man with black clothes::OnMyMobDead\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/jobs/3-1/guillotine_cross.txt",
+    "line": 3498,
+    "id": 2030,
+    "before": "monster \"job3_guil03\",111,51,\"拉赫祭司\",2030,1,\"Priest from Rachel::OnMyMobDead\";",
+    "after": "monster \"job3_guil03\",111,51,\"潜逃的神官\",2030,1,\"Priest from Rachel::OnMyMobDead\";"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1069,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,35,215,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,35,215,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1070,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,34,212,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,34,212,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1071,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,36,212,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,36,212,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1072,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,33,209,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,33,209,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1073,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,38,209,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,38,209,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1194,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,45,96,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,45,96,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1195,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,47,94,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,47,94,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1196,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,43,96,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,43,96,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1197,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,47,98,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,47,98,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1198,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,44,98,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,44,98,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1342,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,88,44,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,88,44,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1343,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,87,46,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,87,46,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1344,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,87,42,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,87,42,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1345,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,85,46,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,85,46,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1346,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,85,42,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,85,42,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1529,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,203,95,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,203,95,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1530,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,201,96,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,201,96,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1531,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,201,93,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,201,93,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1532,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,199,98,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,199,98,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 1533,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,199,92,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,199,92,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 2025,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,113,203,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,113,203,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 2026,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,118,203,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,118,203,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 2027,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,112,201,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,112,201,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 2028,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,121,203,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,121,203,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 2029,
+    "id": 21310,
+    "before": "monster 'map_2nyr$,121,201,\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_2nyr$,121,201,\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/Wolves.txt",
+    "line": 2675,
+    "id": 21310,
+    "before": "monster 'map_1nyr$, getarg(.@i), getarg(.@i+1),\"神殿守卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A",
+    "after": "monster 'map_1nyr$, getarg(.@i), getarg(.@i+1),\"神殿护卫\",21310,1, .@label$;\t// EP18_MD_GUARD_A"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/championmobs.txt",
+    "line": 251,
+    "id": 2680,
+    "before": "prt_fild07,0,0\tmonster\t狡猾蝗虫\t2680,3,180000",
+    "after": "prt_fild07,0,0\tmonster\t狡猾摇滚蝗虫\t2680,3,180000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/championmobs.txt",
+    "line": 277,
+    "id": 2801,
+    "before": "ra_san03,0,0\tmonster\t精英异型\t2801,2,180000",
+    "after": "ra_san03,0,0\tmonster\t精英异形\t2801,2,180000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/mobs/championmobs.txt",
+    "line": 291,
+    "id": 2721,
+    "before": "tha_t05,0,0\tmonster\t精英鹗枭首领\t2721,2,180000",
+    "after": "tha_t05,0,0\tmonster\t精英鸮袅首领\t2721,2,180000"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/VillaofHighPriest.txt",
+    "id": 21315,
+    "before": "\"扭曲之神\",21315,1,",
+    "after": "\"欺瞒之神\",21315,1,"
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "reviewedIds": 2675,
+  "changedNames": 88,
+  "statusCounts": {
+    "kept-source-supported": 2188,
+    "corrected": 88,
+    "kept-qualified-label": 77,
+    "kept-display-label": 71,
+    "kept-unconfirmed": 60,
+    "kept-third-party-supported": 71,
+    "kept-project-label": 120
+  },
+  "thirdPartyPages": 574,
+  "changedSpawnLabels": 58,
+  "changedCombatAnnouncements": 6,
+  "changedQuestReferences": 2,
+  "refreshedSpriteRecords": 143
+}
