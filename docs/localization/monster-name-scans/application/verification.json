@@ -1,8 +1,9 @@
 {
   "status": "passed",
   "reviewedIds": 2675,
-  "changedNames": 88,
+  "changedNames": 96,
   "verifiedNavigationLabels": 49,
+  "verifiedOrdinarySpawnLabels": 3311,
   "checks": [
     "source-backed names",
     "server/client/API/adventure names",
@@ -14,7 +15,9 @@
     "adventure source hash",
     "same-ID English mercenary titles",
     "exact reviewed NPC script replacements",
-    "changed mercenary names",
-    "ID-bound navigation labels and quest summaries"
+    "all shared monster/mercenary names",
+    "ID-bound navigation labels and quest summaries",
+    "reviewed hunting and cooldown quest fields",
+    "enabled ordinary map spawn labels"
   ]
 }

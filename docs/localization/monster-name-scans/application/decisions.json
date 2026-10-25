@@ -23112,20 +23112,18 @@
     "id": 2041,
     "aegis": "MYSTELTAINN_R",
     "old": "弑神者",
-    "name": "弑神者",
-    "serverName": "弑神者",
-    "status": "kept-display-label",
-    "reason": "保留显示名，不把来源数据库的变体后缀直接加入名称",
+    "name": "魔剑弑神者",
+    "serverName": "魔剑弑神者",
+    "status": "corrected",
+    "reason": "二次来源复核：同 ID 台服完整中文与两站内部身份一致，区分普通魔物和召唤／活动变体；不采用数据库后缀",
     "evidence": [
       {
-        "source": "dvg",
-        "url": "https://ro.dvg.cn/monster_info.php?id=2041",
-        "name": "魔剑"
-      },
-      {
-        "source": "ro321",
-        "url": "https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2041",
-        "name": "弑神者_R"
+        "source": "divine-pride:twRO",
+        "url": "https://www.divine-pride.net/database/monster/2041",
+        "name": "魔剑弑神者",
+        "originalName": "魔劍弒神者",
+        "normalization": "ICU Traditional-Simplified",
+        "sha256": "6f5a305f7f6dfdb75b61085d6b697a5c7f010928b5dd8beb5a1557fe7da63bd5"
       }
     ],
     "thirdParty": {
@@ -26535,20 +26533,18 @@
     "id": 2195,
     "aegis": "MD_G_KUKRE",
     "old": "库克雷",
-    "name": "库克雷",
-    "serverName": "库克雷",
-    "status": "kept-display-label",
-    "reason": "保留显示名，不把来源数据库的变体后缀直接加入名称",
+    "name": "古代库克雷",
+    "serverName": "古代库克雷",
+    "status": "corrected",
+    "reason": "二次来源复核：同 ID 台服完整中文与两站内部身份一致，区分普通魔物和召唤／活动变体；不采用数据库后缀",
     "evidence": [
       {
-        "source": "dvg",
-        "url": "https://ro.dvg.cn/monster_info.php?id=2195",
-        "name": "Ancient Kukre"
-      },
-      {
-        "source": "ro321",
-        "url": "https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2195",
-        "name": "库克雷_G"
+        "source": "divine-pride:twRO",
+        "url": "https://www.divine-pride.net/database/monster/2195",
+        "name": "古代库克雷",
+        "originalName": "古代庫克雷",
+        "normalization": "ICU Traditional-Simplified",
+        "sha256": "e5eacae5a2f037e55d2e0cc820acb4bc07def045a51fa7b8c9e31ae2850ea695"
       }
     ],
     "thirdParty": {
@@ -26566,20 +26562,18 @@
     "id": 2196,
     "aegis": "MD_G_STROUF",
     "old": "海神",
-    "name": "海神",
-    "serverName": "海神",
-    "status": "kept-display-label",
-    "reason": "保留显示名，不把来源数据库的变体后缀直接加入名称",
+    "name": "古代海神",
+    "serverName": "古代海神",
+    "status": "corrected",
+    "reason": "二次来源复核：同 ID 台服完整中文与两站内部身份一致，区分普通魔物和召唤／活动变体；不采用数据库后缀",
     "evidence": [
       {
-        "source": "dvg",
-        "url": "https://ro.dvg.cn/monster_info.php?id=2196",
-        "name": "Ancient Sea Lord"
-      },
-      {
-        "source": "ro321",
-        "url": "https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2196",
-        "name": "海神_G"
+        "source": "divine-pride:twRO",
+        "url": "https://www.divine-pride.net/database/monster/2196",
+        "name": "古代海神",
+        "originalName": "古代海神",
+        "normalization": "ICU Traditional-Simplified",
+        "sha256": "ad850d96cfbcf112bbf9705a25faf96940b306819f24e0290331d2570ab592c5"
       }
     ],
     "thirdParty": {
@@ -26807,20 +26801,18 @@
     "id": 2209,
     "aegis": "E_THIEF_BUG",
     "old": "盗虫",
-    "name": "盗虫",
-    "serverName": "盗虫",
-    "status": "kept-display-label",
-    "reason": "保留显示名，不把来源数据库的变体后缀直接加入名称",
+    "name": "敏捷的黑影",
+    "serverName": "敏捷的黑影",
+    "status": "corrected",
+    "reason": "二次来源复核：同 ID 台服完整中文与两站内部身份一致，区分普通魔物和召唤／活动变体；不采用数据库后缀",
     "evidence": [
       {
-        "source": "dvg",
-        "url": "https://ro.dvg.cn/monster_info.php?id=2209",
-        "name": "Quick Dark Shadow"
-      },
-      {
-        "source": "ro321",
-        "url": "https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2209",
-        "name": "浮勒盗虫_E"
+        "source": "divine-pride:twRO",
+        "url": "https://www.divine-pride.net/database/monster/2209",
+        "name": "敏捷的黑影",
+        "originalName": "敏捷的黑影",
+        "normalization": "ICU Traditional-Simplified",
+        "sha256": "52f1ca3ff58958284cd8e673f61354a4dae7a0b20103939080715dd6456fe653"
       }
     ],
     "thirdParty": {
@@ -26982,20 +26974,18 @@
     "id": 2215,
     "aegis": "M_KASA",
     "old": "火鸟",
-    "name": "火鸟",
-    "serverName": "火鸟",
-    "status": "kept-display-label",
-    "reason": "保留显示名，不把来源数据库的变体后缀直接加入名称",
+    "name": "不死鸟",
+    "serverName": "不死鸟",
+    "status": "corrected",
+    "reason": "二次来源复核：同 ID 台服完整中文与两站内部身份一致，区分普通魔物和召唤／活动变体；不采用数据库后缀",
     "evidence": [
       {
-        "source": "dvg",
-        "url": "https://ro.dvg.cn/monster_info.php?id=2215",
-        "name": "Kasa"
-      },
-      {
-        "source": "ro321",
-        "url": "https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2215",
-        "name": "不死鸟_M"
+        "source": "divine-pride:twRO",
+        "url": "https://www.divine-pride.net/database/monster/2215",
+        "name": "不死鸟",
+        "originalName": "不死鳥",
+        "normalization": "ICU Traditional-Simplified",
+        "sha256": "597470871459d5a486e1e68c66a8e170a82909ae12740535719adf0d00a1bb9d"
       }
     ],
     "thirdParty": {
@@ -27013,20 +27003,18 @@
     "id": 2216,
     "aegis": "M_SALAMANDER",
     "old": "火蜥蜴",
-    "name": "火蜥蜴",
-    "serverName": "火蜥蜴",
-    "status": "kept-display-label",
-    "reason": "保留显示名，不把来源数据库的变体后缀直接加入名称",
+    "name": "熔岩蜥蜴",
+    "serverName": "熔岩蜥蜴",
+    "status": "corrected",
+    "reason": "二次来源复核：同 ID 台服完整中文与两站内部身份一致，区分普通魔物和召唤／活动变体；不采用数据库后缀",
     "evidence": [
       {
-        "source": "dvg",
-        "url": "https://ro.dvg.cn/monster_info.php?id=2216",
-        "name": "Salamander"
-      },
-      {
-        "source": "ro321",
-        "url": "https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2216",
-        "name": "熔岩蜥蜴_M"
+        "source": "divine-pride:twRO",
+        "url": "https://www.divine-pride.net/database/monster/2216",
+        "name": "熔岩蜥蜴",
+        "originalName": "熔岩蜥蜴",
+        "normalization": "ICU Traditional-Simplified",
+        "sha256": "429cd7de10e281b608c53b114a368d3552891f9cdc35b9206eecbbb9e06059ba"
       }
     ],
     "thirdParty": {
@@ -27075,20 +27063,18 @@
     "id": 2218,
     "aegis": "E_OCTOPUS_LEG",
     "old": "章鱼脚",
-    "name": "章鱼脚",
-    "serverName": "章鱼脚",
-    "status": "kept-display-label",
-    "reason": "保留显示名，不把来源数据库的变体后缀直接加入名称",
+    "name": "出游章鱼的腿",
+    "serverName": "出游章鱼的腿",
+    "status": "corrected",
+    "reason": "二次来源复核：同 ID 台服完整中文与两站内部身份一致，区分普通魔物和召唤／活动变体；不采用数据库后缀",
     "evidence": [
       {
-        "source": "dvg",
-        "url": "https://ro.dvg.cn/monster_info.php?id=2218",
-        "name": "Picnic Octopus Leg"
-      },
-      {
-        "source": "ro321",
-        "url": "https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2218",
-        "name": "章鱼脚_E"
+        "source": "divine-pride:twRO",
+        "url": "https://www.divine-pride.net/database/monster/2218",
+        "name": "出游章鱼的腿",
+        "originalName": "出遊章魚的腿",
+        "normalization": "ICU Traditional-Simplified",
+        "sha256": "a7f41ba8fc7bc7dc285fe9d95b7aa666241f3be4db6dfd452ce58913e89eac12"
       }
     ],
     "thirdParty": {
@@ -28125,20 +28111,18 @@
     "id": 2258,
     "aegis": "I_PIAMETTE_",
     "old": "碧亚玫特",
-    "name": "碧亚玫特",
-    "serverName": "碧亚玫特",
-    "status": "kept-display-label",
-    "reason": "保留显示名，不把来源数据库的变体后缀直接加入名称",
+    "name": "皮亚米特",
+    "serverName": "皮亚米特",
+    "status": "corrected",
+    "reason": "二次来源复核：同 ID 台服完整中文与两站内部身份一致，区分普通魔物和召唤／活动变体；不采用数据库后缀",
     "evidence": [
       {
-        "source": "dvg",
-        "url": "https://ro.dvg.cn/monster_info.php?id=2258",
-        "name": "Piamette"
-      },
-      {
-        "source": "ro321",
-        "url": "https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2258",
-        "name": "皮亚米特_"
+        "source": "divine-pride:twRO",
+        "url": "https://www.divine-pride.net/database/monster/2258",
+        "name": "皮亚米特",
+        "originalName": "皮亞米特",
+        "normalization": "ICU Traditional-Simplified",
+        "sha256": "81251c4dd83d0fb9dc6be9b2f656938e0e9ad498aac5a4c5007ff450c6b667af"
       }
     ],
     "thirdParty": {

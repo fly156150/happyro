@@ -78,7 +78,7 @@ def verify():
         }, mid
         if 'JapaneseName' in old:
             assert new['JapaneseName'] == r['serverName'], mid
-        if r['status'] == 'corrected' and mid in mercenaries:
+        if mid in mercenaries:
             assert mercenaries[mid] == (r['aegis'], r['name']), mid
         if mid in (3569, 3570):
             assert english_mercenaries[mid] == (r['aegis'], new['names']['en-US']), mid
@@ -93,6 +93,39 @@ def verify():
             assert any(r['name'] == name.strip() for e in r['evidence'] for name in e['name'].split(' / ')), mid
             changes.append(mid)
     assert wire_names == expected_wire_names, 'Stale or incorrect default wire labels'
+    enabled_scripts = set()
+    visited_configs = set()
+
+    def visit_config(relative):
+        if relative in visited_configs:
+            return
+        visited_configs.add(relative)
+        text = (ROOT / 'repos/happyro-server' / relative).read_text()
+        text = re.sub(r'/\*.*?\*/', '', text, flags=re.S)
+        for line in text.splitlines():
+            match = re.fullmatch(r'(import|npc):\s*(\S+)', line.split('//', 1)[0].strip())
+            if match:
+                if match[1] == 'import':
+                    visit_config(match[2])
+                else:
+                    enabled_scripts.add(match[2])
+
+    for config in ('npc/re/scripts_main.conf', 'conf/script_athena.conf'):
+        visit_config(config)
+    static_spawn_count = 0
+    for relative in enabled_scripts:
+        if not relative.startswith('npc/re/mobs/'):
+            continue
+        for line in (ROOT / 'repos/happyro-server' / relative).read_text().splitlines():
+            if line.lstrip().startswith('//'):
+                continue
+            match = re.search(r'\t(?:boss_)?monster\t([^\t]+)\t(\d+),', line)
+            if not match:
+                continue
+            label, mid = match[1].split(',', 1)[0], int(match[2])
+            if mid in server:
+                assert label in (server[mid][1], api[str(mid)]['names']['zh-CN'], '--en--', '--ja--'), (relative, mid, label)
+                static_spawn_count += 1
     by_aegis = {r['aegis']: r for r in decisions}
     navigation_pattern = re.compile(r'<NAVI>\[([^\]]+)\]<INFO>([^,<>]+),0,0,3,[^<>]+</INFO></NAVI>')
     navigation_count = 0
@@ -105,6 +138,17 @@ def verify():
     for r in read(DOCS / 'application/navigation-quest-summaries.json'):
         record = read(ROOT / r['path'])['data'][str(r['questId'])]
         assert record[r['field']] == r['after'], r
+    quest_text = (ROOT / 'repos/happyro-server/db/re/quest_db.yml').read_text()
+    quest_targets = {}
+    for block in re.split(r'^  - Id: ', quest_text, flags=re.M)[1:]:
+        quest_targets[int(block.splitlines()[0])] = set(re.findall(r'^      - Mob: (\S+)', block, re.M))
+    quest_tables = {}
+    for r in read(DOCS / 'application/deep-quest-field-fixes.json'):
+        assert r['aegis'] in quest_targets[r['targetQuestId']], r
+        assert by_aegis[r['aegis']]['name'] == r['name'], r
+        if r['path'] not in quest_tables:
+            quest_tables[r['path']] = read(ROOT / r['path'])['data']
+        assert quest_tables[r['path']][str(r['questId'])][r['field']] == r['after'], r
     references = read(DOCS / 'application/applied-spawn-references.json') + read(
         DOCS / 'application/applied-dialogue-references.json')
     character_references = read(DOCS / 'application/character-references.json')
@@ -122,11 +166,13 @@ def verify():
         assert expected.replace('\r\n', '\n') == (ROOT / path).read_text(), path
     result = {'status': 'passed', 'reviewedIds': len(decisions), 'changedNames': len(changes),
               'verifiedNavigationLabels': navigation_count,
+              'verifiedOrdinarySpawnLabels': static_spawn_count,
               'checks': ['source-backed names', 'server/client/API/adventure names', 'complete ID coverage',
                          'unchanged monster mechanics and identities', 'current sprite mappings',
                          'current UTF-8 packet labels', 'alternate server display names', 'adventure source hash',
                          'same-ID English mercenary titles', 'exact reviewed NPC script replacements',
-                         'changed mercenary names', 'ID-bound navigation labels and quest summaries']}
+                         'all shared monster/mercenary names', 'ID-bound navigation labels and quest summaries',
+                         'reviewed hunting and cooldown quest fields', 'enabled ordinary map spawn labels']}
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return result
 

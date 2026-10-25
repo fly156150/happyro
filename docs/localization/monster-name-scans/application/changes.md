@@ -43,6 +43,13 @@
 | 2038 | VALKYRIE_B | 兰特克力斯 | 瓦尔基里 | [dvg](https://ro.dvg.cn/monster_info.php?id=2038) |
 | 2039 | EXECUTIONER_R | 行刑者 | 魔剑行刑者 | [dvg](https://ro.dvg.cn/monster_info.php?id=2039) |
 | 2040 | TIRFING_R | 兽牙怪 | 魔剑兽牙怪 | [dvg](https://ro.dvg.cn/monster_info.php?id=2040) |
+| 2041 | MYSTELTAINN_R | 弑神者 | 魔剑弑神者 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2041) |
+| 2195 | MD_G_KUKRE | 库克雷 | 古代库克雷 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2195) |
+| 2196 | MD_G_STROUF | 海神 | 古代海神 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2196) |
+| 2209 | E_THIEF_BUG | 盗虫 | 敏捷的黑影 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2209) |
+| 2215 | M_KASA | 火鸟 | 不死鸟 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2215) |
+| 2216 | M_SALAMANDER | 火蜥蜴 | 熔岩蜥蜴 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2216) |
+| 2218 | E_OCTOPUS_LEG | 章鱼脚 | 出游章鱼的腿 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2218) |
 | 2220 | E_QUVE | 万圣魔 | 恶魔的使者 | [dvg](https://ro.dvg.cn/monster_info.php?id=2220) |
 | 2228 | G_RANDEL | 暗●圣殿十字军 兰达 | 圣殿十字军 兰达 | [dvg](https://ro.dvg.cn/monster_info.php?id=2228)、[ro321](https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2228) |
 | 2230 | G_CELIA | 暗●智者 西里亚 | 智者 西里亚 | [dvg](https://ro.dvg.cn/monster_info.php?id=2230)、[ro321](https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2230) |
@@ -52,6 +59,7 @@
 | 2234 | G_TRENTINI | 暗●冷艳舞姬 特兰提尼 | 冷艳舞姬 特兰提尼 | [ro321](https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2234) |
 | 2245 | EXP_TEST | 经验测试 | 经验值测试 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2245) |
 | 2257 | I_PIAMETTE | 碧亚玫特 | 皮亚米特 | [ro321](https://ro.ro321.com/index.php?page=re_mob_db&mob_id=2257) |
+| 2258 | I_PIAMETTE_ | 碧亚玫特 | 皮亚米特 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2258) |
 | 2325 | M_BAPHOMET_ | 巴风特 | 小巴风特 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2325) |
 | 2377 | E_NOVUS_ | 黄诺博斯 | 失控的幼体 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2377) |
 | 2680 | C5_ROCKER | 狡猾蝗虫 | 狡猾摇滚蝗虫 | [divine-pride:twRO](https://www.divine-pride.net/database/monster/2680) |
