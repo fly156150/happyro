@@ -78,6 +78,8 @@ def verify():
         }, mid
         if 'JapaneseName' in old:
             assert new['JapaneseName'] == r['serverName'], mid
+        if r['status'] == 'corrected' and mid in mercenaries:
+            assert mercenaries[mid] == (r['aegis'], r['name']), mid
         if mid in (3569, 3570):
             assert english_mercenaries[mid] == (r['aegis'], new['names']['en-US']), mid
             assert mercenaries[mid] == (r['aegis'], r['name']), mid
@@ -91,6 +93,18 @@ def verify():
             assert any(r['name'] == name.strip() for e in r['evidence'] for name in e['name'].split(' / ')), mid
             changes.append(mid)
     assert wire_names == expected_wire_names, 'Stale or incorrect default wire labels'
+    by_aegis = {r['aegis']: r for r in decisions}
+    navigation_pattern = re.compile(r'<NAVI>\[([^\]]+)\]<INFO>([^,<>]+),0,0,3,[^<>]+</INFO></NAVI>')
+    navigation_count = 0
+    for path in (ROOT / 'localization/sources/kro-20211105/merged/files/lub').glob('*.json'):
+        for match in navigation_pattern.finditer(path.read_text()):
+            label, aegis = match.groups()
+            if aegis in by_aegis:
+                assert label == by_aegis[aegis]['name'], (path.name, aegis, label)
+                navigation_count += 1
+    for r in read(DOCS / 'application/navigation-quest-summaries.json'):
+        record = read(ROOT / r['path'])['data'][str(r['questId'])]
+        assert record[r['field']] == r['after'], r
     references = read(DOCS / 'application/applied-spawn-references.json') + read(
         DOCS / 'application/applied-dialogue-references.json')
     character_references = read(DOCS / 'application/character-references.json')
@@ -107,10 +121,12 @@ def verify():
             expected = expected.replace(old, new)
         assert expected.replace('\r\n', '\n') == (ROOT / path).read_text(), path
     result = {'status': 'passed', 'reviewedIds': len(decisions), 'changedNames': len(changes),
+              'verifiedNavigationLabels': navigation_count,
               'checks': ['source-backed names', 'server/client/API/adventure names', 'complete ID coverage',
                          'unchanged monster mechanics and identities', 'current sprite mappings',
                          'current UTF-8 packet labels', 'alternate server display names', 'adventure source hash',
-                         'same-ID English mercenary titles', 'exact reviewed NPC script replacements']}
+                         'same-ID English mercenary titles', 'exact reviewed NPC script replacements',
+                         'changed mercenary names', 'ID-bound navigation labels and quest summaries']}
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return result
 

@@ -29767,7 +29767,7 @@
       "RewardEXP": 4300000,
       "RewardJEXP": 2800000,
       "Description": [
-        "村子正在计划讨伐巨石族。分别消灭5只<NAVI>[古代三角兽]<INFO>ILL_TRI_JOINT,0,0,3,-222,1</INFO></NAVI>、<NAVI>[古代钟乳石魔像]<INFO>ILL_STALACTIC_GOLEM,0,0,3,-222,1</INFO></NAVI>、<NAVI>[古代巨石怪]<INFO>ILL_MEGALITH,0,0,3,-222,1</INFO></NAVI>后，向<NAVI>[防卫负责人卢安达]<INFO>com_d02_i,241,255,0,101,0</INFO></NAVI>报告。"
+        "村子正在计划讨伐巨石族。分别消灭5只<NAVI>[古代三叶虫]<INFO>ILL_TRI_JOINT,0,0,3,-222,1</INFO></NAVI>、<NAVI>[古代钟乳巨石怪]<INFO>ILL_STALACTIC_GOLEM,0,0,3,-222,1</INFO></NAVI>、<NAVI>[古代邪恶摩艾]<INFO>ILL_MEGALITH,0,0,3,-222,1</INFO></NAVI>后，向<NAVI>[防卫负责人卢安达]<INFO>com_d02_i,241,255,0,101,0</INFO></NAVI>报告。"
       ]
     },
     "5853": {
@@ -29802,7 +29802,7 @@
       "RewardEXP": 4300000,
       "RewardJEXP": 2800000,
       "Description": [
-        "村子正在计划讨伐巨石族。分别消灭5只<NAVI>[古代石头射手]<INFO>ILL_STONE_SHOOTER,0,0,3,-222,1</INFO></NAVI>、<NAVI>[古代乌坦射手]<INFO>ILL_WOOTAN_SHOOTER,0,0,3,-222,1</INFO></NAVI>、<NAVI>[古代乌坦战士]<INFO>ILL_WOOTAN_FIGHTER,0,0,3,-222,1</INFO></NAVI>后，向<NAVI>[防卫负责人卢安达]<INFO>com_d02_i,241,255,0,101,0</INFO></NAVI>报告。"
+        "村子正在计划讨伐巨石族。分别消灭5只<NAVI>[古代石炮火树]<INFO>ILL_STONE_SHOOTER,0,0,3,-222,1</INFO></NAVI>、<NAVI>[古代伍坦弹弓手]<INFO>ILL_WOOTAN_SHOOTER,0,0,3,-222,1</INFO></NAVI>、<NAVI>[古代伍坦战士]<INFO>ILL_WOOTAN_FIGHTER,0,0,3,-222,1</INFO></NAVI>后，向<NAVI>[防卫负责人卢安达]<INFO>com_d02_i,241,255,0,101,0</INFO></NAVI>报告。"
       ]
     },
     "5855": {
@@ -30187,7 +30187,7 @@
     },
     "5893": {
       "Title": "污水处理厂清扫Ⅰ",
-      "Summary": "污水贝纳姆44个体",
+      "Summary": "下水道贝纳姆44个体",
       "IconName": "ico_dq.bmp",
       "NpcSpr": "EP17_2_OMEGA_CLEANER",
       "NpcNavi": "",
@@ -30198,14 +30198,14 @@
       "RewardJEXP": 0,
       "Description": [
         "<NAVI>[清扫机器人Ω]<INFO>ba_in01,24,322,0,101,0</INFO></NAVI>因无法清扫而悲伤。",
-        "去^0000FF教训^00000044个<NAVI>[污水贝纳姆]<INFO>EP17_2_VENENUM3,0,0,3,-222,1</INFO></NAVI>。",
+        "去^0000FF教训^00000044个<NAVI>[下水道贝纳姆]<INFO>EP17_2_VENENUM3,0,0,3,-222,1</INFO></NAVI>。",
         " ",
         "必须完成污水处理厂清扫Ⅰ、Ⅱ、Ⅲ后才能领取奖励。"
       ]
     },
     "5894": {
       "Title": "污水处理厂清扫Ⅱ",
-      "Summary": "污水克兰普44个体",
+      "Summary": "下水道蓝鼠44个体",
       "IconName": "ico_dq.bmp",
       "NpcSpr": "EP17_2_OMEGA_CLEANER",
       "NpcNavi": "",
@@ -30216,14 +30216,14 @@
       "RewardJEXP": 0,
       "Description": [
         "<NAVI>[清扫机器人Ω]<INFO>ba_in01,24,322,0,101,0</INFO></NAVI>因无法清扫而悲伤。",
-        "去^0000FF教训^00000044个<NAVI>[污水克兰普]<INFO>EP17_2_CRAMP,0,0,3,-222,1</INFO></NAVI>。",
+        "去^0000FF教训^00000044个<NAVI>[下水道蓝鼠]<INFO>EP17_2_CRAMP,0,0,3,-222,1</INFO></NAVI>。",
         " ",
         "必须完成污水处理厂清扫Ⅰ、Ⅱ、Ⅲ后才能领取奖励。"
       ]
     },
     "5895": {
       "Title": "污水处理厂清扫Ⅲ",
-      "Summary": "污水瀑布44个体",
+      "Summary": "下水道瀑布44个体",
       "IconName": "ico_dq.bmp",
       "NpcSpr": "EP17_2_OMEGA_CLEANER",
       "NpcNavi": "",
@@ -30234,7 +30234,7 @@
       "RewardJEXP": 0,
       "Description": [
         "<NAVI>[清扫机器人Ω]<INFO>ba_in01,24,322,0,101,0</INFO></NAVI>因无法清扫而悲伤。",
-        "去^0000FF教训^00000044个<NAVI>[污水瀑布]<INFO>EP17_2_WATERFALL,0,0,3,-222,1</INFO></NAVI>。",
+        "去^0000FF教训^00000044个<NAVI>[下水道瀑布]<INFO>EP17_2_WATERFALL,0,0,3,-222,1</INFO></NAVI>。",
         " ",
         "必须完成污水处理厂清扫Ⅰ、Ⅱ、Ⅲ后才能领取奖励。"
       ]
@@ -30272,7 +30272,7 @@
     },
     "5898": {
       "Title": "第1魔力发电站清扫Ⅱ",
-      "Summary": "魔力中毒多洛尔44个体",
+      "Summary": "魔瘾朵洛尔44个体",
       "IconName": "ico_dq.bmp",
       "NpcSpr": "EP17_2_OMEGA_CLEANER",
       "NpcNavi": "",
@@ -30283,12 +30283,12 @@
       "RewardJEXP": 0,
       "Description": [
         "<NAVI>[清扫机器人Ω]<INFO>ba_in01,24,322,0,101,0</INFO></NAVI>因无法清扫而悲伤。",
-        "去^0000FF教训^00000044个<NAVI>[魔力中毒多洛尔]<INFO>EP17_2_DOLOR3,0,0,3,-222,1</INFO></NAVI>。"
+        "去^0000FF教训^00000044个<NAVI>[魔瘾朵洛尔]<INFO>EP17_2_DOLOR3,0,0,3,-222,1</INFO></NAVI>。"
       ]
     },
     "5899": {
       "Title": "第1魔力发电站清扫Ⅲ",
-      "Summary": "释放的魔力44个体",
+      "Summary": "释放魔力44个体",
       "IconName": "ico_dq.bmp",
       "NpcSpr": "EP17_2_OMEGA_CLEANER",
       "NpcNavi": "",
@@ -30299,7 +30299,7 @@
       "RewardJEXP": 0,
       "Description": [
         "<NAVI>[清扫机器人Ω]<INFO>ba_in01,24,322,0,101,0</INFO></NAVI>因无法清扫而悲伤。",
-        "去^0000FF教训^00000044个<NAVI>[释放的魔力]<INFO>EP17_2_PLASMA_Y,0,0,3,-222,1</INFO></NAVI>。"
+        "去^0000FF教训^00000044个<NAVI>[释放魔力]<INFO>EP17_2_PLASMA_Y,0,0,3,-222,1</INFO></NAVI>。"
       ]
     },
     "5900": {
@@ -30563,7 +30563,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[艾音布罗克原野]<INFO>ein_fild06,257,351,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员因菲尤]<INFO>ein_fild06,257,351,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[霍尔登]<INFO>MOLE,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[金属波利]<INFO>METALING,0,0,3,-222,1</INFO></NAVI>"
+        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[艾音布罗克原野]<INFO>ein_fild06,257,351,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员因菲尤]<INFO>ein_fild06,257,351,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[摩尔]<INFO>MOLE,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[金属波利]<INFO>METALING,0,0,3,-222,1</INFO></NAVI>"
       ]
     },
     "5917": {
@@ -30593,7 +30593,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[里希塔乐镇原野]<INFO>lhz_fild01,240,107,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员里菲里]<INFO>lhz_fild01,240,107,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[拉佛勒西亚]<INFO>RAFFLESIA,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[茎蠕虫]<INFO>STEM_WORM,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[金属波利]<INFO>METALING,0,0,3,-222,1</INFO></NAVI>"
+        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[里希塔乐镇原野]<INFO>lhz_fild01,240,107,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员里菲里]<INFO>lhz_fild01,240,107,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[草精]<INFO>RAFFLESIA,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[灰森灵]<INFO>STEM_WORM,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[金属波利]<INFO>METALING,0,0,3,-222,1</INFO></NAVI>"
       ]
     },
     "5919": {
@@ -30623,7 +30623,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[吉芬野外]<INFO>gef_fild06,209,31,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员盖菲尔]<INFO>gef_fild06,209,31,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[地面小恶魔]<INFO>PETIT,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[螳螂]<INFO>MANTIS,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[响尾蛇]<INFO>SIDE_WINDER,0,0,3,-222,1</INFO></NAVI>"
+        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[吉芬野外]<INFO>gef_fild06,209,31,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员盖菲尔]<INFO>gef_fild06,209,31,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[毕帝特地龙]<INFO>PETIT,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[螳螂]<INFO>MANTIS,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[黑蛇]<INFO>SIDE_WINDER,0,0,3,-222,1</INFO></NAVI>"
       ]
     },
     "5921": {
@@ -30653,7 +30653,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[乌龟岛]<INFO>tur_dun01,159,46,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员特尔]<INFO>tur_dun01,159,46,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[春兔]<INFO>SPRING_RABBIT,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[龙尾]<INFO>DRAGON_TAIL,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[佩米特]<INFO>PERMETER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[瘟疫]<INFO>PEST,0,0,3,-222,1</INFO></NAVI>"
+        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[乌龟岛]<INFO>tur_dun01,159,46,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员特尔]<INFO>tur_dun01,159,46,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[弹簧兔]<INFO>SPRING_RABBIT,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[刺尾蜻蜓]<INFO>DRAGON_TAIL,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[果树龟]<INFO>PERMETER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[单眼虫]<INFO>PEST,0,0,3,-222,1</INFO></NAVI>"
       ]
     },
     "5923": {
@@ -30683,7 +30683,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[达纳托斯之塔前]<INFO>hu_fild01,133,157,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员休普]<INFO>hu_fild01,133,157,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[诺巴斯]<INFO>NOVUS,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[诺巴斯]<INFO>NOVUS_,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[地理学家]<INFO>GEOGRAPHER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[龙蛋]<INFO>DRAGON_EGG,0,0,3,-222,1</INFO></NAVI>"
+        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[达纳托斯之塔前]<INFO>hu_fild01,133,157,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员休普]<INFO>hu_fild01,133,157,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[诺博斯(红)]<INFO>NOVUS,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[黄诺博斯]<INFO>NOVUS_,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[邪恶向日葵]<INFO>GEOGRAPHER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[龙蛋]<INFO>DRAGON_EGG,0,0,3,-222,1</INFO></NAVI>"
       ]
     },
     "5925": {
@@ -30713,7 +30713,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[星光珊瑚地带]<INFO>mal_dun01,141,126,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员母德温]<INFO>mal_dun01,141,126,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[红色艾鲁玛]<INFO>RED_ERUMA,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[希欧拉瓦]<INFO>SIORAVA,0,0,3,-222,1</INFO></NAVI>"
+        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[星光珊瑚地带]<INFO>mal_dun01,141,126,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员母德温]<INFO>mal_dun01,141,126,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[红海星]<INFO>RED_ERUMA,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[胖胖波利]<INFO>SIORAVA,0,0,3,-222,1</INFO></NAVI>"
       ]
     },
     "5927": {
@@ -30743,7 +30743,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[乌龟岛地城]<INFO>tur_dun02,151,256,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员提顿]<INFO>tur_dun02,151,256,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[索利德]<INFO>SOLIDER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[佩米特]<INFO>PERMETER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[瘟疫]<INFO>PEST,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[冰巨人]<INFO>FREEZER,0,0,3,-222,1</INFO></NAVI>"
+        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[乌龟岛地城]<INFO>tur_dun02,151,256,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员提顿]<INFO>tur_dun02,151,256,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[岩石龟]<INFO>SOLIDER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[果树龟]<INFO>PERMETER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[单眼虫]<INFO>PEST,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[水灵龟]<INFO>FREEZER,0,0,3,-222,1</INFO></NAVI>"
       ]
     },
     "5929": {
@@ -30773,7 +30773,7 @@
       "RewardEXP": 0,
       "RewardJEXP": 0,
       "Description": [
-        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[杨格村]<INFO>tur_dun03,125,186,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员特森瑟]<INFO>tur_dun03,125,186,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[突袭者]<INFO>ASSULTER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[佩米特]<INFO>PERMETER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[冰巨人]<INFO>FREEZER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[希特]<INFO>HEATER,0,0,3,-222,1</INFO></NAVI>"
+        "朱诺怪物学会讨伐委托\n\t\t接到了讨伐<NAVI>[杨格村]<INFO>tur_dun03,125,186,0,101,0</INFO></NAVI>80只怪物的委托。完成讨伐后向<NAVI>[调查员特森瑟]<INFO>tur_dun03,125,186,0,101,0</INFO></NAVI>报告。\n\t\t\n\t\t讨伐目标\n\t\t<NAVI>[风灵龟]<INFO>ASSULTER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[果树龟]<INFO>PERMETER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[水灵龟]<INFO>FREEZER,0,0,3,-222,1</INFO></NAVI>\n\t\t<NAVI>[火焰龟]<INFO>HEATER,0,0,3,-222,1</INFO></NAVI>"
       ]
     },
     "5931": {

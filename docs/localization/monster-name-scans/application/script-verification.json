@@ -50,5 +50,9 @@
   {
     "path": "repos/happyro-server/npc/re/quests/quests_18.txt",
     "controlFlowAndNumericArgumentsUnchanged": true
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/VillaofDeception.txt",
+    "controlFlowAndNumericArgumentsUnchanged": true
   }
 ]

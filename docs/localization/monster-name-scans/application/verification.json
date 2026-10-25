@@ -2,6 +2,7 @@
   "status": "passed",
   "reviewedIds": 2675,
   "changedNames": 88,
+  "verifiedNavigationLabels": 49,
   "checks": [
     "source-backed names",
     "server/client/API/adventure names",
@@ -12,6 +13,8 @@
     "alternate server display names",
     "adventure source hash",
     "same-ID English mercenary titles",
-    "exact reviewed NPC script replacements"
+    "exact reviewed NPC script replacements",
+    "changed mercenary names",
+    "ID-bound navigation labels and quest summaries"
   ]
 }

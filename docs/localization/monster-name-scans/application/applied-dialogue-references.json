@@ -40,5 +40,14 @@
     "monsterId": 2031,
     "before": "mapannounce \"job3_guil02\",\"蒲公英逃走了。\",bc_map,\"0x7b68ee\"; //FW_NORMAL 12 0 0",
     "after": "mapannounce \"job3_guil02\",\"蒲公英干部逃走了。\",bc_map,\"0x7b68ee\"; //FW_NORMAL 12 0 0"
+  },
+  {
+    "path": "repos/happyro-server/npc/re/instances/VillaofDeception.txt",
+    "monsterIds": [
+      21317,
+      21361
+    ],
+    "before": "提示：扭曲之神芙蕾雅越靠近吊灯，力量越弱。",
+    "after": "提示：扭曲之神越靠近吊灯，力量越弱。"
   }
 ]

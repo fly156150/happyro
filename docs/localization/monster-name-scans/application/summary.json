@@ -12,7 +12,8 @@
   },
   "thirdPartyPages": 574,
   "changedSpawnLabels": 58,
-  "changedCombatAnnouncements": 6,
+  "changedCombatAnnouncements": 7,
   "changedQuestReferences": 2,
-  "refreshedSpriteRecords": 143
+  "refreshedSpriteRecords": 143,
+  "correctedNavigationLabels": 40
 }
