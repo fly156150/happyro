@@ -92,18 +92,23 @@ class WorkflowPublishTests(unittest.TestCase):
         for command in ('run', 'rebuild'):
             for enabled in (False, True):
                 with patch.object(workflow, 'execute') as execute:
-                    release.main([command, '--version', 'v9.0.0'] + (['--push'] if enabled else []))
+                    release.main(['offline', 'create', *(['--rebuild'] if command == 'rebuild' else []), '--version', 'v9.0.0'] + (['--push'] if enabled else []))
                     self.assertEqual(execute.call_args.args[0].push, enabled)
+        state, _ = self.layout.create({})
+        state.update(status='packaged', package={'path': str(self.layout.zip)})
+        self.layout.save(state)
         with patch.object(publish, 'publish') as push:
-            release.main(['push', '--workspace', str(self.root), '--images', str(self.root / 'oci'),
-                          '--bundle', str(self.root / 'bundle')])
+            release.main(['offline', 'push', '--workspace', str(self.root), '--version', self.layout.version])
             push.assert_called_once()
-            self.assertEqual(push.call_args.args[0].images, self.root / 'oci')
+            self.assertEqual(push.call_args.args[0].images, self.layout.images)
+            self.assertEqual(push.call_args.args[0].bundle, self.layout.bundle)
 
     def test_managed_standalone_push_holds_and_passes_lock(self):
+        state, _ = self.layout.create({})
+        state.update(status='packaged', package={'path': str(self.layout.zip)})
+        self.layout.save(state)
         with patch.object(publish, 'publish') as push:
-            release.main(['push', '--workspace', str(self.root), '--images', str(self.layout.images),
-                          '--bundle', str(self.layout.bundle)])
+            release.main(['offline', 'push', '--workspace', str(self.root), '--version', self.layout.version])
             self.assertIsInstance(push.call_args.args[0].lock_fd, int)
 
     def test_skopeo_copy_inherits_release_lock(self):

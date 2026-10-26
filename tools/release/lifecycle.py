@@ -54,20 +54,30 @@ def atomic_json(path, value):
         Path(temporary).unlink(missing_ok=True)
 
 
-class Layout:
+class VersionLayout:
+    """Registration/locking shared by artifacts with distinct delivery layouts."""
+    artifact_directory = ''
+    record_directory = ''
+
     def __init__(self, workspace, version):
         self.root = Path(workspace).resolve(strict=True)
         self.version = checked_version(version)
-        self.artifacts = self.root / 'artifacts/releases' / version
-        self.records = self.root / 'work/releases' / version
+        self.artifacts = self.root / self.artifact_directory / version
+        self.records = self.root / self.record_directory / version
         self.state_path = self.records / 'state.json'
-        self.lock_path = self.root / 'work/releases/.locks' / f'{version}.lock'
-        self.images = self.artifacts / 'images'
-        self.bundle = self.artifacts / 'bundle'
-        self.zip = self.artifacts / f'happyro-{version}.zip'
-        self.split_paths = [self.artifacts / f'happyro-{version}-{suffix}'
-                            for suffix in ('runtimes.zip', 'images.zip', 'split.json')]
+        self.lock_path = self.root / self.record_directory / '.locks' / f'{version}.lock'
         self.validate_paths()
+
+    @property
+    def temporary_patterns(self):
+        return (f'.{OWNER}.*.tmp',)
+
+    @property
+    def intermediates(self):
+        return ()
+
+    def validate_deletion(self):
+        pass
 
     def validate_paths(self):
         for path in (self.artifacts, self.records, self.state_path, self.lock_path):
@@ -78,7 +88,7 @@ class Layout:
         if not self.state_path.exists():
             return None
         data = json.loads(self.state_path.read_text())
-        if (data.get('schema') != 1 or data.get('workspace') != str(self.root)
+        if (not isinstance(data, dict) or data.get('schema') != 1 or data.get('workspace') != str(self.root)
                 or data.get('version') != self.version
                 or data.get('artifacts') != self.artifacts.relative_to(self.root).as_posix()
                 or not re.fullmatch(r'[0-9TZ.]+-[a-f0-9]{8}', data.get('run_id', ''))):
@@ -92,7 +102,7 @@ class Layout:
     def create(self, source_state):
         self.validate_paths()
         if self.artifacts.exists():
-            raise ValueError(f'Release output already exists: {self.artifacts}; use rebuild to replace it')
+            raise ValueError(f'Release output already exists: {self.artifacts}; use create --rebuild to replace it')
         run_id = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ') + '-' + uuid.uuid4().hex[:8]
         state = {'schema': 1, 'workspace': str(self.root), 'version': self.version,
                  'artifacts': self.artifacts.relative_to(self.root).as_posix(),
@@ -105,6 +115,56 @@ class Layout:
         log_dir = self.records / 'logs' / run_id
         plain_path(self.root, log_dir).mkdir(parents=True, exist_ok=False)
         return state, log_dir
+
+
+class Layout(VersionLayout):
+    artifact_directory = 'artifacts/releases'
+    record_directory = 'work/releases'
+
+    def __init__(self, workspace, version):
+        super().__init__(workspace, version)
+        self.images = self.artifacts / 'images'
+        self.bundle = self.artifacts / 'bundle'
+        self.zip = self.artifacts / f'happyro-{version}.zip'
+        self.split_paths = [self.artifacts / f'happyro-{version}-{suffix}'
+                            for suffix in ('runtimes.zip', 'images.zip', 'split.json')]
+
+    @property
+    def temporary_patterns(self):
+        return (*super().temporary_patterns, f'.{self.zip.name}.*.tmp', '.split-*.tmp')
+
+    @property
+    def deliveries(self):
+        return (self.zip, *self.split_paths)
+
+    @property
+    def intermediates(self):
+        return (self.images, self.bundle)
+
+    def validate_deletion(self):
+        if (self.bundle / 'custom').exists():
+            raise ValueError('Deployment custom/ is not disposable release data')
+        if any(path.is_file() for path in (self.bundle / 'data').rglob('*')):
+            raise ValueError('Deployment data/ is not empty; refusing cleanup')
+
+
+class ResourceLayout(VersionLayout):
+    artifact_directory = 'artifacts/resources'
+    record_directory = 'work/resource-transfers'
+
+    def __init__(self, workspace, version):
+        super().__init__(workspace, version)
+        self.archive = self.artifacts / f'happyro-{version}-resources-transfer.tar.gz'
+        self.checksum = self.archive.with_name(self.archive.name + '.sha256')
+        self.manifest = self.artifacts / 'resources-manifest.json'
+
+    @property
+    def temporary_patterns(self):
+        return (*super().temporary_patterns, f'.{self.archive.name}.*.tmp', f'.{self.manifest.name}.*.tmp')
+
+    @property
+    def deliveries(self):
+        return (self.archive, self.checksum, self.manifest)
 
 
 @contextmanager
@@ -156,7 +216,7 @@ def require_managed_lock(workspace, path):
     plain_path(root, candidate)
     descriptor = os.environ.get(LOCK_ENV)
     if descriptor is None:
-        raise ValueError('Managed release directories are written through run/rebuild only')
+        raise ValueError('Managed release directories are written through offline create or managed stage commands only')
     actual = os.fstat(int(descriptor))
     expected = layout.lock_path.stat()
     if (actual.st_dev, actual.st_ino) != (expected.st_dev, expected.st_ino):
@@ -190,13 +250,10 @@ def cleanup_plan(layout, include_package=False):
         if state['status'] not in ('created', 'cleaning') or any(
                 not p.name.startswith(f'.{OWNER}.') or not p.name.endswith('.tmp') for p in children):
             raise ValueError('Missing release ownership marker; refusing to guess ownership')
-    deliveries = {layout.zip, *layout.split_paths}
-    allowed = {'images', 'bundle', OWNER, *(p.name for p in deliveries)}
+    deliveries = set(layout.deliveries)
+    allowed = {OWNER, *(p.name for p in (*layout.intermediates, *layout.deliveries))}
     for child in children:
-        if child.name not in allowed and not (
-                child.name.startswith(f'.{layout.zip.name}.') and child.name.endswith('.tmp')) and not (
-                child.name.startswith(f'.{OWNER}.') and child.name.endswith('.tmp')) and not (
-                child.name.startswith('.split-') and child.name.endswith('.tmp')):
+        if child.name not in allowed and not any(child.match(pattern) for pattern in layout.temporary_patterns):
             raise ValueError(f'Unexpected file in managed output: {child}')
     # Validate the entire deletion set before deleting any entry. A staging
     # directory initialized as a deployment is never treated as disposable.
@@ -207,11 +264,7 @@ def cleanup_plan(layout, include_package=False):
             raise ValueError(f'Non-regular artifact: {path}')
         if path.name in ('.env', '.git'):
             raise ValueError(f'Deployment/private data in release output: {path}')
-    if (layout.bundle / 'custom').exists():
-        raise ValueError('Deployment custom/ is not disposable release data')
-    data = layout.bundle / 'data'
-    if data.exists() and any(path.is_file() for path in data.rglob('*')):
-        raise ValueError('Deployment data/ is not empty; refusing cleanup')
+    layout.validate_deletion()
     return state_temps + [p for p in children if p.name != OWNER and (include_package or p not in deliveries)]
 
 
@@ -222,7 +275,7 @@ def clean_locked(layout, include_package=False, execute=False):
         progress.message(('Remove: ' if execute else 'Would remove: ') + str(path))
     if not plan:
         progress.message('No disposable artifacts found.')
-    retained = [p for p in (layout.zip, *layout.split_paths) if p.exists()]
+    retained = [p for p in layout.deliveries if p.exists()]
     if not include_package:
         for path in retained:
             progress.message(f'Keep delivery: {path}')
@@ -241,14 +294,8 @@ def clean_locked(layout, include_package=False, execute=False):
         (layout.artifacts / OWNER).unlink(missing_ok=True)
         layout.artifacts.rmdir()
     if state is not None:
-        state.update(status='cleaned', stage=None, retained_package=layout.zip.exists())
-        if not layout.zip.exists():
+        state.update(status='cleaned', stage=None, retained_package=any(p.exists() for p in layout.deliveries))
+        if not state['retained_package']:
             state.pop('package', None)
         layout.save(state)
     return plan
-
-
-def clean(args):
-    layout = Layout(args.workspace, args.version)
-    with version_lock(layout, create=args.execute):
-        clean_locked(layout, args.include_package, args.execute)

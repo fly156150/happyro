@@ -1,85 +1,99 @@
 # 发布工具
 
-构建机上的发布实现，统一入口为 `release.py`。不带参数只显示帮助；版本只读 `deploy/docker/VERSION`。运行前执行[发布流程](../../docs/operations/docker-release.md)中的源码、资源与构建能力预检。
+统一入口为 `python3 tools/release/release.py`，不带参数只显示帮助。命令按产物对象分组，不保留旧入口或参数别名。公开教程见 [happyro-doc 构建离线包](../../repos/happyro-doc/docs/development/offline-package.md)，完整发布规则见 [Docker 发布手册](../../docs/operations/docker-release.md)。
 
-## 一键流程
+## 常用命令
 
-公开用法见 [happyro-doc 构建离线包](../../repos/happyro-doc/docs/development/offline-package.md)。已完成真实双架构构建、打包和独立拆分测试；本机基础运行验收覆盖 Linux arm64，不表示 Docker Hub 已发布或另一架构运行已通过。
-
-```bash
-# 读取 deploy/docker/VERSION，准备、构建并组装离线 ZIP
-python3 tools/release/release.py run
-# 预检通过后删除该版本旧 ZIP 和中间产物，完整重建
-python3 tools/release/release.py rebuild --version "$(cat deploy/docker/VERSION)"
-# 默认只预览；加 --execute 清理中间产物，加 --include-package 同时清理 ZIP
-python3 tools/release/release.py clean --version "$(cat deploy/docker/VERSION)"
-```
-
-`run` 遇到已有版本目录会拒绝执行。`run/rebuild` 的目标版本必须匹配 VERSION，不自动切换源码；`clean` 可指定其它已登记版本。输出位于 `artifacts/releases/<版本>/`，日志及状态位于 `work/releases/<版本>/`。清理保留日志和审计状态，不处理未登记输出、Docker 缓存或部署数据。重建会删除旧 ZIP，失败不恢复；运行中的同版本任务持锁时拒绝清理。中断后使用 `rebuild` 全量重建，不支持断点续跑。
-
-## 拆分交付
+VERSION 默认版本：全量无缓存构建并生成完整包和拆分包
 
 ```bash
-python3 tools/release/release.py run --split
-python3 tools/release/release.py rebuild --version "$(cat deploy/docker/VERSION)" --split
-# 对已登记且未改变的完整 ZIP 拆分，不重建镜像：
-python3 tools/release/release.py split --version "$(cat deploy/docker/VERSION)"
+python3 tools/release/release.py offline create --split
 ```
 
-生成同目录的 `happyro-<版本>-runtimes.zip`、`happyro-<版本>-images.zip` 和 `happyro-<版本>-split.json`，保留完整 ZIP。两包均带外层 `happyro-<版本>-SPLIT-README.md` 合并安装说明；镜像包还包含原完整部署 README。逐项核对拆分后的合并内容与完整包一致，报告记录来源批次及 ZIP 摘要。输入必须是 run/rebuild 登记的完整 ZIP，已有拆分输出拒绝覆盖。
-
-`clean` 默认保留完整包、拆分包及报告，`--include-package --execute` 一并删除；`rebuild` 自动删除全部旧交付产物，只有加 `--split` 才重新生成拆分包。暂存目录由版本锁保护，中断遗留可随 clean/rebuild 清理。
-
-## 显式推送（默认关闭）
-
-`run/rebuild` 默认不推送，`--split` 也不隐含推送。登录 Docker Hub 后，仅显式加 `--push` 才在完整包及可选拆分校验成功后发布版本标签、更新 latest 并核验远程摘要：
+预检通过后清理旧产物并重新构建
 
 ```bash
-python3 tools/release/release.py run --split --push
-python3 tools/release/release.py rebuild --version "$(cat deploy/docker/VERSION)" --push
+python3 tools/release/release.py offline create --rebuild --split
 ```
 
-先验收后推送可使用独立命令，不重复构建：
+独立拆包或推送已登记的版本，推送会更新 latest
 
 ```bash
-release_version=$(cat deploy/docker/VERSION)
-python3 tools/release/release.py push \
-  --images "artifacts/releases/${release_version}/images" \
-  --bundle "artifacts/releases/${release_version}/bundle"
+python3 tools/release/release.py offline split --version "$(cat deploy/docker/VERSION)"
 ```
-
-推送要求保留 OCI 和 bundle。自动推送的核验记录位于当前日志批次的 `dockerhub/`，独立推送默认写入 `work/dockerhub/<UTC 批次>/`。推送失败保留本地包，不回滚已经推送的远程标签；可修复原因后用独立 push 重试。所有推送都不替代运行验收。
-
-## 分阶段流程
-
-以下命令使用独立输出目录，不纳入上述自动清理：
 
 ```bash
-python3 tools/release/release.py prepare
-python3 tools/deployment/manage.py verify --directory artifacts/deployment/release --prepared
-python3 tools/release/release.py build
-python3 tools/release/release.py package
-# 对最终包完成本机验收后，显式执行：
-python3 tools/release/release.py push
+python3 tools/release/release.py offline push --version "$(cat deploy/docker/VERSION)"
 ```
 
-每个分阶段子命令只运行对应阶段，不会隐式启动下一阶段。`prepare/build --output` 接受尚不存在的目录；`package/push --images --bundle` 接受同一批产物目录；`push --evidence` 可指定新的核验记录目录，默认使用 UTC 时间批次。支持 `--workspace` 和 `--no-color`。
+快速查询登记/文件存在性，--verify 才读取文件并验证完整性
 
-| 模块 | 职责 |
-| --- | --- |
-| `release.py` | 参数与命令派发 |
-| `split.py` | 流式拆分、双包安装说明及合并内容一致性校验 |
-| `workflow.py` | 一键编排、前置检查、阶段日志和最终校验 |
-| `lifecycle.py` | 版本目录登记、进程锁与受控清理 |
-| `sources.py` | 版本及六个仓库 HEAD、dirty 状态与工作区源码指纹 |
-| `package.py` | 准备资源、复制离线工具、生成 ZIP |
-| `images.py` | 全量无缓存构建五类双架构 OCI、转换可导入镜像 |
-| `publish.py` | 校验完整本地产物、推送版本及 latest、保存远程摘要 |
+```bash
+python3 tools/release/release.py offline status --version "$(cat deploy/docker/VERSION)"
+```
 
-发布前完整校验五个 OCI 与离线目录。先推送并核对全部版本标签，再更新全部 latest；最后重新读取两个标签，与本地完整 index 逐字节比较，包含 amd64/arm64 子 manifest。失败立即停止，不生成成功记录，不自动回滚已推送标签。不同运行保留独立证据，不覆盖上一轮记录。
+```bash
+python3 tools/release/release.py offline status --version "$(cat deploy/docker/VERSION)" --verify
+```
 
-离线包只携带 deployment 下的运行文件，不携带 Git/Buildx/Skopeo 发布逻辑。一键流程默认只生成离线包，显式 `--push` 可追加推送，本机验收仍需单独执行；不能把打包成功当作验收通过。发布受管产物时，`push` 必须用 `--images` 和 `--bundle` 指定同版本目录。
+默认只预览；--execute 才清理中间产物；--include-package 同时删除交付包
 
-打包后的隔离运行、罗安基础验收和测试环境清理使用 [独立验收入口](../acceptance/offline/README.md)。产物测试目录位于 work/releases/<版本>/acceptance/<批次>/，不被 release clean/rebuild 删除。
+```bash
+python3 tools/release/release.py offline clean --version "$(cat deploy/docker/VERSION)" --include-package
+```
 
-允许直接打包未提交代码。来源记录使用 `sources` 字段，包含 HEAD、dirty、源码内容指纹与文件数；任何构建阶段发现来源变化均拒绝混批。不自动提交、暂存或复制源码仓库。
+输出统一位于 `artifacts/releases/<版本>/`，登记和日志位于 `work/releases/<版本>/`。`offline create` 默认不推送，只有显式 `--push` 或 `offline push` 才发布 Docker Hub。独立推送按版本定位原始 OCI 和 bundle，不再接受 --images/--bundle 路径。推送前必须保留这些中间产物，只有 ZIP 不能直接推送。
+
+## 资源传输
+
+```bash
+python3 tools/release/release.py resources create
+```
+
+```bash
+python3 tools/release/release.py resources create --rebuild
+```
+
+```bash
+python3 tools/release/release.py resources status --version "$(cat deploy/docker/VERSION)" --verify
+```
+
+```bash
+python3 tools/release/release.py resources clean --version "$(cat deploy/docker/VERSION)" --execute
+```
+
+归档完整收录 `inputs/runtime/kro-20211105/`、物品与魔物图片，保留工作区路径和空目录。输出位于 `artifacts/resources/<版本>/`，包括 `happyro-<版本>-resources-transfer.tar.gz`、同名 `.sha256` 和 `resources-manifest.json`；登记在 `work/resource-transfers/<版本>/`。资源 clean 默认预览，加 --execute 直接删除该版本的归档、摘要、清单与临时文件，不需要 --include-package。
+
+工具使用 Python 3.11+ 标准库，过滤 `.DS_Store` 和 `._*`，拒绝符号链接及特殊文件；逐文件验证归档并核对输入是否变化。它是跨机器构建输入，不是可部署的 runtimes 拆分包；API 的 NPC、地图和地形资料仍由 Git 提供。目标电脑先验证 `.sha256`，再在源码工作区根目录解压。创建默认读取 VERSION，显式版本必须匹配；预检失败保留旧包，清理后的重建失败不会恢复旧包。
+
+## 分阶段构建
+
+```bash
+python3 tools/release/release.py stage prepare --version "$(cat deploy/docker/VERSION)"
+```
+
+```bash
+python3 tools/release/release.py stage build --version "$(cat deploy/docker/VERSION)"
+```
+
+```bash
+python3 tools/release/release.py stage package --version "$(cat deploy/docker/VERSION)"
+```
+
+三个阶段与 offline create 共用路径、锁、来源记录和状态转换。prepare 预检并创建登记，build 只接受 prepared，package 只接受 built；任一步失败停止后续操作，不自动重试或断点续跑。失败后可用 offline clean 清理，再从 prepare 开始，或用 offline create --rebuild 全量重建。每阶段前后校验源码指纹。中途源码改变时不能拼接不同批次。
+
+分阶段命令不接受任意输出路径，不生成无法统一清理的匿名目录。工作区路径与来源受登记约束，资源传输到另一台机器后应从 stage prepare 开始，不直接搬移已有登记。
+
+## 执行反馈与架构
+
+默认彩色帮助和执行进度，耗时阶段每 10 秒提示一次，--no-color 可在任意命令层级使用。全部创建、清理和发布由版本锁保护；子阶段和 OCI 写入进程继承锁，父进程被杀死也不会立即允许清理仍在写入的目录。日志保持纯文本，不记录凭据。
+
+- `release.py`：命令树、参数和路由；帮助与参数来自同一份定义。
+- `operations.py`：版本目标的拆分、推送与清理。
+- `lifecycle.py`：共用版本登记、路径和锁，Offline 与 Resource 布局分别定义交付文件与中间产物。
+- `workflow.py` / `stages.py`：完整流程与独立阶段，共用阶段执行和完成校验。
+- `status.py`：只读状态和显式内容核验，历史成功状态不等于当前文件已校验。
+- `sources.py`、`package.py`、`images.py`、`split.py`、`publish.py`、`resources.py`：各自承担单一处理职责。
+- `tools/cli.py`：源码侧命令共用帮助样式；包内部署工具仅依赖随包携带的标准库模块。
+
+产物构建与完整性验证不替代游戏运行验收；运行与验收使用 `tools/acceptance/offline/manage.py`，不会由打包隐式启动。发布清理不删除验收目录、原始资源或共享 Docker 镜像。所有状态查询默认不重新验证游戏功能或远程发布状态。

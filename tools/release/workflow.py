@@ -1,7 +1,6 @@
 """Build a new owned offline package; rebuilding explicitly replaces local outputs."""
 from tools.deployment import progress
 import argparse
-import json
 import os
 from pathlib import Path
 import re
@@ -11,7 +10,7 @@ import zipfile
 
 from tools.deployment.bundle import verify
 from tools.deployment.offline import digest
-from tools.release import package, sources, split, publish
+from tools.release import package, sources, split, operations
 from tools.release.lifecycle import Layout, LOCK_ENV, clean_locked, version_lock
 
 
@@ -56,11 +55,8 @@ def preflight(workspace, requested_version):
 @progress.operation('运行发布子阶段')
 def run_phase(layout, phase, descriptor, log_path):
     script = Path(__file__).with_name('release.py')
-    command = [sys.executable, str(script), phase, '--workspace', str(layout.root), '--no-color']
-    if phase in ('prepare', 'build'):
-        command += ['--output', str(layout.bundle if phase == 'prepare' else layout.images)]
-    else:
-        command += ['--images', str(layout.images), '--bundle', str(layout.bundle)]
+    command = [sys.executable, str(script), 'stage', phase, '--workspace', str(layout.root),
+               '--version', layout.version, '--no-color']
     environment = {**os.environ, LOCK_ENV: str(descriptor)}
     # The worker and its OCI writers inherit the lock. Killing just this parent
     # does not make a still-running child look safe to clean.
@@ -99,7 +95,7 @@ def execute(args, rebuild=False):
     layout = Layout(workspace, requested)
     with version_lock(layout) as descriptor:
         if not rebuild and layout.artifacts.exists():
-            raise ValueError(f'{layout.artifacts} already exists; use rebuild to clean and replace this version')
+            raise ValueError(f'{layout.artifacts} already exists; use offline create --rebuild to clean and replace this version')
         # Complete non-destructive checks before replacing a previous good ZIP.
         source_state = preflight(workspace, requested)
         if rebuild:
@@ -107,28 +103,7 @@ def execute(args, rebuild=False):
         state, log_dir = layout.create(source_state)
         try:
             for phase in ('prepare', 'build', 'package'):
-                if sources.version(workspace) != requested or sources.snapshot(workspace) != source_state:
-                    raise ValueError('Source state changed between phases; refuse to mix release batches')
-                state.update(status='running', stage=phase)
-                layout.save(state)
-                progress.message(f'[{requested}] {phase}; log: {log_dir / (phase + ".log")}')
-                run_phase(layout, phase, descriptor, log_dir / f'{phase}.log')
-                if phase == 'prepare':
-                    verify(argparse.Namespace(directory=layout.bundle, prepared=True))
-            # Package success is still not local game acceptance or publication.
-            state.update(status='running', stage='verify')
-            layout.save(state)
-            verify(argparse.Namespace(directory=layout.bundle, prepared=False))
-            with zipfile.ZipFile(layout.zip) as archive:
-                broken = archive.testzip()
-                if broken:
-                    raise ValueError(f'Final ZIP failed CRC verification: {broken}')
-            if sources.version(workspace) != requested or sources.snapshot(workspace) != source_state:
-                raise ValueError('Source state changed while packaging')
-            state.update(status='packaged', stage=None,
-                         package={'path': layout.zip.relative_to(workspace).as_posix(),
-                                  'size': layout.zip.stat().st_size, 'sha256': digest(layout.zip)})
-            layout.save(state)
+                complete_phase(layout, state, phase, descriptor, log_dir)
             if getattr(args, 'split', False):
                 state.update(status='running', stage='split')
                 layout.save(state)
@@ -138,17 +113,9 @@ def execute(args, rebuild=False):
             progress.message(f'Offline ZIP ready: {layout.zip}\nSHA-256: {state["package"]["sha256"]}')
             if getattr(args, 'push', False):
                 evidence = log_dir / 'dockerhub'
-                state.update(status='running', stage='push',
-                             publication={'evidence': evidence.relative_to(workspace).as_posix()})
-                layout.save(state)
-                publish.publish(argparse.Namespace(workspace=workspace, images=layout.images,
-                                                   bundle=layout.bundle, evidence=evidence,
-                                                   lock_fd=descriptor))
-                state.update(status='published', stage=None)
-                layout.save(state)
-                progress.message(f'Docker Hub publication verified: {evidence}')
+                operations.publish_locked(layout, state, descriptor, evidence)
             else:
-                progress.message('Docker Hub push skipped (default); use --push or the push command explicitly.')
+                progress.message('Docker Hub push skipped (default); use --push or offline push explicitly.')
             progress.message('Packaging and publication do not replace local runtime acceptance.')
         except BaseException as error:
             state['status'] = 'interrupted' if isinstance(error, (KeyboardInterrupt, SystemExit)) else 'failed'
@@ -157,3 +124,36 @@ def execute(args, rebuild=False):
             layout.save(state)
             raise
         return layout.zip
+
+
+def create(args):
+    return execute(args, rebuild=args.rebuild)
+
+
+def check_sources(layout, state):
+    if sources.version(layout.root) != layout.version or sources.snapshot(layout.root) != state['sources']:
+        raise ValueError('Source state changed between phases; refuse to mix release batches')
+
+
+def complete_phase(layout, state, phase, descriptor, log_dir):
+    """One transition used by both full orchestration and explicit stage commands."""
+    check_sources(layout, state)
+    state.update(status='running', stage=phase)
+    layout.save(state)
+    progress.message(f'[{layout.version}] {phase}; log: {log_dir / (phase + ".log")}')
+    run_phase(layout, phase, descriptor, log_dir / f'{phase}.log')
+    if phase == 'prepare':
+        verify(argparse.Namespace(directory=layout.bundle, prepared=True))
+    if phase == 'package':
+        state['stage'] = 'verify'
+        layout.save(state)
+        verify(argparse.Namespace(directory=layout.bundle, prepared=False))
+        with zipfile.ZipFile(layout.zip) as archive:
+            broken = archive.testzip()
+            if broken:
+                raise ValueError(f'Final ZIP failed CRC verification: {broken}')
+        state['package'] = {'path': layout.zip.relative_to(layout.root).as_posix(),
+                            'size': layout.zip.stat().st_size, 'sha256': digest(layout.zip)}
+    check_sources(layout, state)
+    state.update(status={'prepare': 'prepared', 'build': 'built', 'package': 'packaged'}[phase], stage=None)
+    layout.save(state)

@@ -8,7 +8,6 @@ import subprocess
 
 from tools.deployment.bundle import verify
 from tools.deployment.offline import ARCHES, NAMES, digest, reference
-from tools.release.sources import version
 
 
 def raw_index(reference_name):
@@ -34,11 +33,11 @@ def copy(source, target, lock_fd=None):
 @progress.operation('推送 Docker Hub 并核对远程摘要')
 def publish(args):
     workspace, images, bundle = args.workspace.resolve(), args.images.resolve(), args.bundle.resolve()
-    release_version = version(workspace)
+    release_version = args.version
     state = json.loads((images / 'built.json').read_text())
     release = verify(argparse.Namespace(directory=bundle, prepared=False))
     if state['version'] != release['version'] or state['version'] != release_version:
-        raise ValueError('Build, bundle and VERSION must match')
+        raise ValueError('Build, bundle and requested version must match')
     if state['sources'] != release['sources']:
         raise ValueError('Build and bundle source states differ')
     if set(state['images']) != set(NAMES):

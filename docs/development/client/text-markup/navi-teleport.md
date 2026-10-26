@@ -57,7 +57,7 @@ NPC 对话中的 NAVI 使用结束对话后的独立入口；任务、物品中�
 门禁分工：
 
 - 根仓库 `check` 重新生成完整决策并比较，检查输入哈希和新增／删除源文件，不仅检查 JSON 的自有摘要。
-- `scripts/client/refresh-client.sh build`、`tools/release/release.py build` 在实际构建前执行完整检查，失败时不继续构建。
+- `scripts/client/refresh-client.sh build`、`tools/release/release.py stage build` 在实际构建前执行完整检查，失败时不继续构建。
 - Gateway Dockerfile 增加独立审查 stage，复制服务端、翻译源与清单进行完整核对；客户端 builder 必须消费此 stage 的清单，不能绕过它直接构建。
 - 独立客户端 checkout 的 `scripts/verify-navi-review.mjs` 核对清单完整性、策略与客户端拥有的源文件。它不声称能读取 checkout 外的服务端资料；发布构建由前述根门禁／Docker stage 完成跨仓库核对。
 - 构建过程不会自动生成并发布新白名单。

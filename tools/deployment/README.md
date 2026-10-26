@@ -15,7 +15,7 @@
 
 构建端执行入口见[镜像构建与交付](../../docs/operations/docker-release.md)；包内安装步骤见 [Docker 部署手册](../../docs/operations/docker-deployment.md)。Docker 定义位于 [deploy/docker](../../deploy/docker)。
 
-上传 Docker Hub：先执行 `docker login`，再执行 `python3 tools/release/release.py push`。需要 Python 3.11+ 和 Skopeo；入口自动定位仓库根目录，从 `deploy/docker/VERSION` 读取版本，使用 `artifacts/images/release/` 的原始 OCI 归档及 `artifacts/deployment/release/release-manifest.json`，核验记录写入独立的 `work/dockerhub/UTC批次/`。
+上传 Docker Hub：先执行 `docker login`，再执行 `python3 tools/release/release.py offline push --version "$(cat deploy/docker/VERSION)"`。需要 Python 3.11+ 和 Skopeo；按版本定位 `artifacts/releases/<版本>/images/` 与 `bundle/`，核验记录默认写入该版本日志批次的 dockerhub 时间目录。
 
 `deploy` 校验包及已导入镜像后，先启动并等待 database 健康，再执行新版 Database 镜像内的 `/opt/rathena/sql/upgrades/upgrade_20261012_sessions.sql`，成功后才启动整栈；SQL 失败停止后续命令，不批量执行历史升级脚本。保留旧库升级同样执行，须先停止旧服务并导入全部本版镜像。
 

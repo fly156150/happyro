@@ -21,7 +21,7 @@ class PublishTests(unittest.TestCase):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         self.root = Path(temp.name)
-        self.args = argparse.Namespace(workspace=self.root, images=self.root / 'images',
+        self.args = argparse.Namespace(workspace=self.root, version='v9.0.0', images=self.root / 'images',
                                        bundle=self.root / 'bundle', evidence=self.root / 'evidence')
         self.args.images.mkdir()
         (self.root / 'deploy/docker').mkdir(parents=True)
@@ -35,6 +35,12 @@ class PublishTests(unittest.TestCase):
         patcher = patch.object(publish, 'verify', return_value=self.state)
         patcher.start()
         self.addCleanup(patcher.stop)
+
+    def test_explicit_version_does_not_silently_follow_changed_source_version(self):
+        (self.root / 'deploy/docker/VERSION').write_text('v10.0.0')
+        with patch.object(publish, 'raw_index', return_value=index()), patch.object(publish, 'copy') as copy:
+            publish.publish(self.args)
+        self.assertTrue(all(call.args[1].endswith(':v9.0.0') for call in copy.call_args_list[:5]))
 
     def test_all_versions_precede_latest_and_final_remote_reads_match_local(self):
         with patch.object(publish, 'raw_index', return_value=index()) as inspect, patch.object(publish, 'copy') as copy:

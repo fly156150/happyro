@@ -151,11 +151,11 @@ class SplitTests(unittest.TestCase):
 
     def test_cli_routes_split_and_optional_workflow_flag(self):
         with patch.object(split, 'split') as invoke:
-            release.main(['split', '--version', 'v9.1.0', '--workspace', str(self.root)])
+            release.main(['offline', 'split', '--version', 'v9.1.0', '--workspace', str(self.root)])
             self.assertEqual(invoke.call_args.args[0].version, 'v9.1.0')
         for command in ('run', 'rebuild'):
             with patch.object(workflow, 'execute') as invoke:
-                release.main([command, '--version', 'v9.1.0', '--split'])
+                release.main(['offline', 'create', *(['--rebuild'] if command == 'rebuild' else []), '--version', 'v9.1.0', '--split'])
                 self.assertTrue(invoke.call_args.args[0].split)
                 self.assertEqual(invoke.call_args.kwargs['rebuild'], command == 'rebuild')
 

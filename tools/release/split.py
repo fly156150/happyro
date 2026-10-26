@@ -98,10 +98,10 @@ def split_locked(layout):
             or not layout.zip.is_file() or layout.zip.is_symlink()
             or recorded.get('size') != layout.zip.stat().st_size
             or recorded.get('sha256') != digest(layout.zip)):
-        raise ValueError('Split requires the unchanged complete ZIP recorded by run/rebuild')
+        raise ValueError('Split requires the unchanged complete ZIP recorded by offline create or stage package')
     targets = layout.split_paths
     if any(path.exists() or path.is_symlink() for path in targets):
-        raise ValueError('Split outputs already exist; use rebuild --split to replace this version')
+        raise ValueError('Split outputs already exist; use offline create --rebuild --split to replace this version')
     prefix = f'happyro-{layout.version}/'
     note_name = f'happyro-{layout.version}-SPLIT-README.md'
     note = readme(layout, recorded['sha256'], state['run_id'])

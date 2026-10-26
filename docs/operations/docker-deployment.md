@@ -53,7 +53,13 @@ Gateway 日志权限：v0.5.0 镜像会以 root 初始化 `data/gateway-logs` �
 
 ```bash
 python3 tools/deployment/manage.py verify --directory .
+```
+
+```bash
 python3 tools/deployment/manage.py import-images --directory .
+```
+
+```bash
 python3 tools/deployment/manage.py initialize --directory .
 ```
 
@@ -78,6 +84,9 @@ verify 要求 offline-ready 状态，检查配置、资源和两种架构的镜�
 
 ```bash
 python3 tools/deployment/manage.py deploy --directory .
+```
+
+```bash
 docker compose ps -a
 ```
 
@@ -111,6 +120,9 @@ Admin 容器以非 root Nginx 提供后台页面及同源 `/api` 代理，根文
 
 ```bash
 docker compose stop api
+```
+
+```bash
 docker compose up -d --pull never api
 ```
 
@@ -136,9 +148,21 @@ Docker 为 Admin 与 API 建立专用 `admin-proxy` 网络；`ADMIN_PROXY_SUBNET
 
 ```bash
 python3 tools/deployment/manage.py initialize-custom --directory .
+```
+
+```bash
 python3 tools/deployment/manage.py import-images --directory .
+```
+
+```bash
 docker compose up -d --wait --pull never --no-build database
+```
+
+```bash
 docker compose run --rm --no-deps --pull never api-init
+```
+
+```bash
 python3 tools/deployment/manage.py deploy --directory .
 ```
 
@@ -156,6 +180,9 @@ python3 tools/deployment/manage.py deploy --directory .
 
 ```bash
 docker compose stop gateway admin api web-api map char login
+```
+
+```bash
 python3 tools/deployment/manage.py backup --directory . --output ../backups/before-upgrade
 ```
 
@@ -167,18 +194,31 @@ python3 tools/deployment/manage.py backup --directory . --output ../backups/befo
 
 ```bash
 restore_data_dir=/srv/happyro/restore-data
-mkdir -p "${restore_data_dir}/database" "${restore_data_dir}/control-socket" \
-  "${restore_data_dir}/server-settings" "${restore_data_dir}/server-logs" \
-  "${restore_data_dir}/gateway-logs"
+```
+
+```bash
+mkdir -p "${restore_data_dir}/database" "${restore_data_dir}/control-socket"  "${restore_data_dir}/server-settings" "${restore_data_dir}/server-logs"  "${restore_data_dir}/gateway-logs"
 ```
 
 目录准备完成后，初始化自定义目录、导入镜像并恢复：
 
 ```bash
 python3 tools/deployment/manage.py initialize-custom --directory .
+```
+
+```bash
 python3 tools/deployment/manage.py import-images --directory .
+```
+
+```bash
 docker compose up -d --wait --pull never --no-build database
+```
+
+```bash
 python3 tools/deployment/manage.py restore --directory . --backup ../backups/before-upgrade --confirm-replace
+```
+
+```bash
 python3 tools/deployment/manage.py deploy --directory .
 ```
 

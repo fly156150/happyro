@@ -1,14 +1,14 @@
 # 最终包验收清单
 
-本清单用于当前代码的完整构建、离线部署、自定义功能、保持登录与断线恢复验收。2026-10-26 已完成本机最终包验收及镜像推送，结果见第 10 节。清单包含超出本轮的真机和完整回归要求，未完成项仍保留待验收；源码测试不能替代容器与游戏验收。
+本清单用于当前代码的完整构建、离线部署、自定义功能、保持登录与断线恢复验收。第 10 节分别记录历史交付与最近工具实测；历史镜像推送不代表当前重打包已发布。清单包含超出本轮的真机和完整回归要求，未完成项仍保留待验收；源码测试不能替代容器与游戏验收。
 
 操作依据：[镜像构建与交付](docker-release.md)、[部署与升级](docker-deployment.md)。构建命令在源码根目录执行，部署命令在独立解压后的包根目录执行；命令逐条执行，失败停止后续步骤。
 
 ## 1. 搬迁和构建前准备
 
-- [ ] 确认本次实现及本清单已提交；跨机器构建时同步最终提交。
-- [ ] 核对根仓库、Client、Gateway、Server、Admin、API 六个构建仓库的分支、提交和工作区；六个构建仓库必须干净，且与准备机器的提交一致。不要丢弃未提交文件；文档仓库不参与构建，若一并检出则记录其提交。
-- [ ] 核对 `configs/Config.happyro.js` 与 Client 的配置副本一致（忽略换行格式），避免配置安装覆盖已启用功能；差异须先审查、同步并提交。
+- [ ] 确认本次实现及本清单已保存；允许包含未提交改动，跨机器构建时须同步相同源码内容并核对指纹。
+- [ ] 核对根仓库、Client、Gateway、Server、Admin、API 六个构建仓库的分支、提交和工作区；允许未提交改动，记录各仓库 HEAD、dirty 状态和源码内容指纹，准备与构建必须使用相同源码。不要丢弃未提交文件；文档仓库不参与构建，若一并检出则记录其提交。
+- [ ] 核对 `configs/Config.happyro.js` 与 Client 的配置副本一致（忽略换行格式），避免配置安装覆盖已启用功能；差异须先审查并同步，构建期间不修改源码。
 - [ ] 核对 `deploy/docker/VERSION` 与本次目标一致；只有更换目标版本时才修改并提交。不覆盖历史版本产物。
 - [ ] 安装 Python 3.11+、Docker、Compose v2、Buildx、Skopeo，确认能够构建 `linux/amd64` 和 `linux/arm64`。
 - [ ] 检查 Buildx 当前 builder 的平台与 OCI 导出能力；未配置好双架构 builder 时不开始构建。
@@ -21,14 +21,26 @@
 
 ## 2. 完整构建和离线包
 
-以下输出目录必须尚不存在；如有旧结果，改用新的输出路径，不覆盖旧产物。准备目录和镜像目录需在后续命令中保持一致。
+分阶段命令统一使用 `artifacts/releases/<版本>/`，prepare 要求该目录不存在，不接受自定义输出路径。已有同版本结果时，先确认需要替换旧交付物，再用 `offline create --rebuild --split` 全量重建；若要逐阶段执行，用 `offline clean --version <版本> --include-package --execute` 清理后从 prepare 开始。需保留的历史交付物应先另行保存。
 
 ```bash
-python3 tools/release/release.py prepare --workspace . --output artifacts/deployment/release
-python3 tools/deployment/manage.py verify --directory artifacts/deployment/release --prepared
-python3 tools/release/release.py build --workspace . --output artifacts/images/release
-python3 tools/release/release.py package --images artifacts/images/release --bundle artifacts/deployment/release
-python3 tools/deployment/manage.py verify --directory artifacts/deployment/release
+python3 tools/release/release.py stage prepare --version "$(cat deploy/docker/VERSION)"
+```
+
+```bash
+python3 tools/deployment/manage.py verify --directory "artifacts/releases/$(cat deploy/docker/VERSION)/bundle" --prepared
+```
+
+```bash
+python3 tools/release/release.py stage build --version "$(cat deploy/docker/VERSION)"
+```
+
+```bash
+python3 tools/release/release.py stage package --version "$(cat deploy/docker/VERSION)"
+```
+
+```bash
+python3 tools/deployment/manage.py verify --directory "artifacts/releases/$(cat deploy/docker/VERSION)/bundle"
 ```
 
 - [ ] 六个构建组件全部无缓存重建：完整 `--all` PWA、Gateway、Server、API、Admin、Database；五类镜像均包含两种架构。
@@ -44,7 +56,13 @@ python3 tools/deployment/manage.py verify --directory artifacts/deployment/relea
 
 ```bash
 python3 tools/deployment/manage.py verify --directory .
+```
+
+```bash
 python3 tools/deployment/manage.py import-images --directory .
+```
+
+```bash
 python3 tools/deployment/manage.py initialize --directory .
 ```
 
@@ -53,9 +71,21 @@ python3 tools/deployment/manage.py initialize --directory .
 
 ```bash
 python3 tools/deployment/manage.py initialize-custom --directory .
+```
+
+```bash
 python3 tools/deployment/manage.py deploy --directory .
+```
+
+```bash
 docker compose ps -a
+```
+
+```bash
 docker compose logs api-init
+```
+
+```bash
 docker compose logs map gateway
 ```
 
@@ -180,9 +210,21 @@ python3 tools/deployment/manage.py refresh-custom-catalogs --directory .
 
 ```bash
 python3 tools/deployment/manage.py initialize-custom --directory .
+```
+
+```bash
 python3 tools/deployment/manage.py import-images --directory .
+```
+
+```bash
 docker compose up -d --wait --pull never --no-build database
+```
+
+```bash
 docker compose run --rm --no-deps --pull never api-init
+```
+
+```bash
 python3 tools/deployment/manage.py deploy --directory .
 ```
 
@@ -198,6 +240,9 @@ python3 tools/deployment/manage.py deploy --directory .
 
 ```bash
 docker compose stop gateway admin api web-api map char login
+```
+
+```bash
 python3 tools/deployment/manage.py backup --directory . --output ../backups/custom-review
 ```
 
@@ -207,9 +252,21 @@ python3 tools/deployment/manage.py backup --directory . --output ../backups/cust
 
 ```bash
 python3 tools/deployment/manage.py initialize-custom --directory .
+```
+
+```bash
 python3 tools/deployment/manage.py import-images --directory .
+```
+
+```bash
 docker compose up -d --wait --pull never --no-build database
+```
+
+```bash
 python3 tools/deployment/manage.py restore --directory . --backup ../backups/custom-review --confirm-replace
+```
+
+```bash
 python3 tools/deployment/manage.py deploy --directory .
 ```
 
@@ -224,14 +281,18 @@ python3 tools/deployment/manage.py deploy --directory .
 
 2026-10-25 源码文档预检：七仓库维护入口与本地文档引用已核对，清理重复阶段说明，更新自动战斗、恢复、地图和动作指南；根仓库与文档站 65 页 changelog 同步通过。文档站构建后 134 个 HTML 页、18,894 处站内引用检查通过；70 张登记图片哈希、五组主页图片镜像及 37 个攻略定位坐标来源核对通过。桌面、平板和手机浏览器视口的侧栏、分页点、横向切图、纵向滚动及页面跳转检查通过，无脚本／样式请求错误。证据位于 `work/docs-preflight-20261025/`。
 
-该预检不勾选下方最终包验收项。本次构建目标已收口为 `v0.6.0`，版本只读取 `deploy/docker/VERSION`；正式构建前须提交全部改动，v0.5.0 的历史交付记录保持独立。配置副本一致、所列运行资源路径存在，但本轮未运行 prepare、资源语义全量验证、双架构镜像构建或容器／真机验收，不以旧包结果代替本次验证。
+该预检不勾选下方最终包验收项。本次构建目标已收口为 `v0.6.0`，版本只读取 `deploy/docker/VERSION`；当时采用提交后构建流程；当前允许带未提交改动打包，按源码指纹核对。v0.5.0 的历史交付记录保持独立。配置副本一致、所列运行资源路径存在，但本轮未运行 prepare、资源语义全量验证、双架构镜像构建或容器／真机验收，不以旧包结果代替本次验证。
 
 
 - [ ] 根仓库与文档站的本次目标版本摘要、日期日志同步通过，范围覆盖最终提交；文档构建及站内链接检查通过。
 - [ ] 文档站截图对应当前 UI，来源、视口与哈希已记录；截图操作不充当最终发行包的功能验收。
 - [ ] 版本摘要按当前生产功能维护，不添加工作流状态标签；只在交付和验收完成后填写发布日期、下载地址与 SHA-256，并同步资源下载页、快速开始、根 README 及 AGENTS 的已发布版本记录；Docker Hub 仅在实际推送并核对远端摘要后记录成功。
 
-| 项目 | 本轮记录 |
+### 历史交付记录（2026-10-26 较早批次）
+
+以下路径与摘要仅代表当时批次，部分本机产物已清理，不适用于当前重打包。
+
+| 项目 | 历史记录 |
 | --- | --- |
 | 验收日期、人员、宿主机与 Docker 架构 | 2026-10-26，Codex；macOS / OrbStack，arm64 宿主机 |
 | 六个构建仓库与文档仓库提交 | 构建前已同步 origin/main 并保持干净，见 work/release-v060-20261026/sources.json；构建提交同时列入 v0.6.0 摘要 |
@@ -242,6 +303,12 @@ python3 tools/deployment/manage.py deploy --directory .
 | 日志、截图、失败复测及未完成边界 | work/release-v060-20261026/verification.md；原始日志和两架构截图位于同目录 |
 
 2026-10-26 Docker Hub 发布：四组 happyro-gateway/server/api/database 的 v0.6.0 和 latest 与本批本地 OCI 完整 index 一致，amd64／arm64 子摘要全部一致。原始响应位于 work/dockerhub/v0.6.0/。本轮未上传公开 ZIP，不更改历史 v0.5.0 网盘链接。
+
+### 最近工具实测（2026-10-26 至 2026-10-27）
+
+已完成一键创建、同版本自动重建和独立 prepare/build/package 三轮全量无缓存双架构构建，每轮完整包均通过本机 Linux arm64 容器健康、HTTP 和罗安登录进图及移动验收。资源包生成、重建、核验、清理、写入中断后清理，以及拆分一致性、同批次名复用、同 tag 镜像更新均通过。额外容器测试覆盖 Gateway 权限、后台浏览器登录、备份恢复、代理网络与隔离数据库角色清理。
+
+记录位于 `work/release-cli-live/REPORT.md`。本次未推送 Docker Hub，推送仅验证缺失中间产物和未完成包的拒绝路径；未覆盖 amd64 实际运行、手机真机、完整战斗/断线恢复和跨版本升级。本段是工具试打包结果，不勾选完整发布验收，也不替代随后正式新包的验收。正式打包完成后记录该批次来源、ZIP 摘要及实际验收结果，公开发布后才更新下载和发布记录。
 
 - [ ] 截图和脱敏日志放在 work/ 或 artifacts/，不记录密码、令牌和完整 .env。
 - [ ] 失败项记录复现步骤、期望、实际结果，修复后用最终包复测。
