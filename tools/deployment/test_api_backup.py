@@ -123,7 +123,9 @@ with client.open(base+'/api/game-data/items?perPage=1') as r: assert len(json.lo
                 if browser_probe:
                     compose('up', '-d', 'admin')
                     subprocess.run(['node', browser_probe, browser_url], check=True, timeout=120)
-                # Stop the API before intentionally replacing backed-up rows.
+                # The backup tool requires only the database to remain running.
+                if browser_probe:
+                    compose('stop', 'admin')
                 compose('stop', 'api')
                 sql("UPDATE happyro.login SET email='snapshot@example.com' WHERE userid='happyro'")
                 backup = root / 'backup'
