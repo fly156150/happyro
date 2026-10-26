@@ -11,8 +11,8 @@ import time
 import unittest
 import uuid
 
-import manage
-from deployment_test_support import add_proxy_topology, release_compose
+from tools.deployment import manage
+from tools.deployment.deployment_test_support import add_proxy_topology, release_compose
 
 
 @unittest.skipUnless(all(os.environ.get(name) for name in (

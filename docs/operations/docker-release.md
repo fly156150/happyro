@@ -12,11 +12,27 @@
 - 应用、资源、配置和镜像使用同一个版本，默认组成一个完整目录交付。用户明确要求拆分时，可从同一个已校验 ZIP 生成互补的资源包与镜像／部署文件包，提供合并说明，并验证合并后的全部文件与完整包一致；拆分包不能单独部署。
 - 资源复制、资源与模板校验清单、最终 ZIP 均排除任意层级的 `._*` 和 `.DS_Store`（包括同名目录及其内容），保留 `.env.example` 等业务文件。跨机器资源归档同样过滤这些文件，并禁用 macOS tar 自动生成 AppleDouble；不修改原始资源。旧发布包及其清单不会自动回写，后续重新准备的交付包使用此规则。
 - 拆分包统一命名为 `happyro-<VERSION>-runtimes.zip`（resources/ 运行资源）与 `happyro-<VERSION>-images.zip`（双架构镜像及其余部署文件）。两者保留完整包的同名根目录，解压到同一目录后合并使用；版本从 `deploy/docker/VERSION` 读取。
-- 六个构建仓库（根仓库、Client、Gateway、Server、Admin、API）须处于最终、干净的提交；仅在跨机器准备和构建时，要求两台机器的六个构建仓库提交完全一致。正式构建前同步最新 origin/main，禁止丢弃本地工作。
+- 允许六个构建仓库（根仓库、Client、Gateway、Server、Admin、API）带未提交改动直接打包，不自动提交、暂存或丢弃本地工作。记录每个仓库 HEAD、dirty 状态、Git 已跟踪及未被忽略的新文件的工作区内容指纹。跨机器准备和构建要求源码记录完全一致，仅 HEAD 相同不足以证明来源相同。正式构建前同步最新 origin/main。
 - 五类镜像 Gateway（含完整 --all PWA）、Server、API、Admin、Database 全量无缓存构建，包含 linux/amd64 和 linux/arm64。不能复用旧 dist、vendor 或旧镜像。
 - 全部构建成功后才允许组装离线包；全部归档校验成功才标记 offline-ready。没有镜像的准备包不可部署。
-- 镜像发布目标为 docker.io/kugarocks/happyro-{gateway,server,api,admin,database}。用户要求推送时，全部构建及 OCI 校验成功后才从同一批归档推送双架构镜像，再组装离线包；Docker Hub 的 latest 指向同一版本，离线部署不使用 latest。Compose 使用本地版本标签且 pull_policy=never；归档 SHA-256、镜像 ID 和架构均记录到发布清单。
+- 镜像发布目标为 docker.io/kugarocks/happyro-{gateway,server,api,admin,database}。用户要求推送时，全部构建、离线包及 OCI 校验成功后才从同一批归档推送双架构镜像；Docker Hub 的 latest 指向同一版本，离线部署不使用 latest。Compose 使用本地版本标签且 pull_policy=never；归档 SHA-256、镜像 ID 和架构均记录到发布清单。
 - 发布成功后更新已发布版本记录；下一次发版只修改 VERSION，环境模板、工具不再硬编码应用版本。
+
+## 一键与拆分入口
+
+完成本文要求的源码、资源及构建能力准备后，可使用 `python3 tools/release/release.py run` 自动编排准备、五类双架构全量无缓存构建和完整 ZIP 校验。加 `--split` 同时从该完整包生成资源包与镜像／部署文件包，不跳过任何构建阶段。
+
+```bash
+python3 tools/release/release.py run --split
+# 已登记的完整 ZIP 拆分，不重复构建：
+python3 tools/release/release.py split --version "$(cat deploy/docker/VERSION)"
+# 自动清理该版本的全部旧交付产物并全量重建、拆分：
+python3 tools/release/release.py rebuild --version "$(cat deploy/docker/VERSION)" --split
+```
+
+一键输出位于 `artifacts/releases/<版本>/`，与下文手动分阶段输出目录不同。两份拆分 ZIP 都附带外层合并安装 README，镜像包保留完整部署 README；`happyro-<版本>-split.json` 记录批次、来源完整包及拆分 ZIP 摘要。分发两份 ZIP 及摘要报告；工具核对合并内容与完整包逐项一致。已有拆分输出拒绝覆盖，清理默认保留全部交付包及报告，`clean --version <版本> --include-package --execute` 才删除交付产物。
+
+上述功能不自动部署或验收，默认不推送；只有 `run/rebuild --push` 或独立 `push` 才发布 Docker Hub。真实发布仍须完成本文全部验收要求。详细参数、失败处理及当前验证范围见 [happyro-doc 使用说明](../../repos/happyro-doc/docs/development/offline-package.md)。
 
 ## 镜像体积维护
 
@@ -60,7 +76,7 @@ bash scripts/resources/package-offline-resources.sh create --output artifacts/ha
 
 跨机器准备有两条路径，选择其一：传输原始资源归档后在构建机运行 prepare，或传输已通过 verify --prepared 的准备目录。不要把前者当成准备包，也不要向已存在的准备目录再次执行 prepare。
 
-构建前核对 `configs/Config.happyro.js` 与 Client 的 `applications/pwa/Config.happyro.js` 内容一致（可忽略 CRLF/LF）。Gateway Dockerfile 使用 Client 中的配置副本；若不同，先审查并同步配置源，提交后重新核对六个构建仓库。prepare/build 会拒绝脏仓库，但不会替你同步 origin/main 或判断配置语义一致。
+构建前核对 `configs/Config.happyro.js` 与 Client 的 `applications/pwa/Config.happyro.js` 内容一致（可忽略 CRLF/LF）。Gateway Dockerfile 使用 Client 中的配置副本；若不同，先审查并同步配置源，重新核对六个构建仓库。prepare/build 允许未提交改动，前后核对源码指纹，但不会替你同步 origin/main 或判断配置语义一致。
 
 预检 Admin NPC 快照时，同时核对条目内容和来源指纹。条目内容未变不代表快照来源仍与当前 Server 一致；来源校验失败时，按 Admin 的目录生成流程重新生成并审查差异，提交实际变更后再 prepare/build，不手改指纹绕过校验。
 
@@ -78,11 +94,11 @@ TMPDIR="$(pwd -P)/work/deployment-test-tmp" python3 -m unittest discover -s tool
 在源码根目录执行：
 
 ```bash
-python3 tools/deployment/manage.py prepare --workspace . --output artifacts/deployment/release
+python3 tools/release/release.py prepare --workspace . --output artifacts/deployment/release
 python3 tools/deployment/manage.py verify --directory artifacts/deployment/release --prepared
 ```
 
-输出目录必须不存在。prepare 从 VERSION 生成包内版本、环境模板和资源清单，记录六个构建仓库提交，并预留空 images/。资源与配置都计算 SHA-256。任何未跟踪文件也会触发脏仓库检查；截图等应放在已忽略的 work/ 或 artifacts/，不要提交无关文件。
+输出目录必须不存在。prepare 从 VERSION 生成包内版本、环境模板和资源清单，记录六个构建仓库的源码状态，并预留空 images/。资源与配置都计算 SHA-256。未被 Git 忽略的新文件也纳入源码指纹；截图、日志和生成物应放在已忽略的 work/ 或 artifacts/。
 
 ## 2. 在本机构建镜像
 
@@ -95,7 +111,7 @@ API 使用 Go 构建镜像和 Debian slim 运行镜像；Admin 使用 Node 构�
 本机已完成第 1 步时，直接构建，无需复制准备目录：
 
 ```bash
-python3 tools/deployment/images.py build --workspace . --output artifacts/images/release
+python3 tools/release/release.py build --workspace . --output artifacts/images/release
 ```
 
 仅当第 1 步因本地输入缺失而选择在资源机准备时，才将准备目录复制到构建机的 artifacts/deployment/release，保留空目录和完整结构。先确认两台机器的六个构建仓库提交一致，再在构建机上执行（替换 SSH 用户与路径）：
@@ -104,7 +120,7 @@ python3 tools/deployment/images.py build --workspace . --output artifacts/images
 mkdir -p artifacts/deployment
 rsync -a SSH_USER@10.24.1.1:/vol2/1000/kugarocks/happyro/artifacts/deployment/release/ artifacts/deployment/release/
 python3 tools/deployment/manage.py verify --directory artifacts/deployment/release --prepared
-python3 tools/deployment/images.py build --workspace . --output artifacts/images/release
+python3 tools/release/release.py build --workspace . --output artifacts/images/release
 ```
 
 构建输出固定为 gateway.tar、server.tar、api.tar、admin.tar、database.tar 五个双架构 OCI 归档，全部完成才写 built.json。输出目录必须不存在。构建期间不修改源码。Admin 使用已跟踪的 npm 锁文件，API 使用 go.mod/go.sum；Client/Gateway 没有跟踪 npm 锁文件，同一提交重建可能解析到更新依赖，回退须使用已保存的原始归档。
@@ -112,7 +128,7 @@ python3 tools/deployment/images.py build --workspace . --output artifacts/images
 ## 3. 将镜像放入统一离线包
 
 ```bash
-python3 tools/deployment/images.py package --output artifacts/images/release --bundle artifacts/deployment/release
+python3 tools/release/release.py package --images artifacts/images/release --bundle artifacts/deployment/release
 ```
 
 package 校验 built.json、五个 OCI 哈希、双架构以及与准备包的版本和提交一致性。随后使用 Skopeo 把同一批 OCI 产物转为 Docker 可加载归档，不重新构建、不访问镜像仓库：
@@ -133,7 +149,7 @@ images/
     └── database.tar
 ```
 
-这些是最终指定位置，不能直接把双架构 OCI tar 放进去冒充 Docker-save 归档。组装失败会保留部分产物供检查。若 release-manifest.json 仍为 prepared-not-built，重试前将整个部分 images/ 内容移到包外，保留空 images/，再执行 package。若清单已写为 offline-ready 但 ZIP 创建失败，不能直接重跑 package，也不能手改状态或哈希；保留失败目录，在新的准备目录重新 prepare/verify，再用同一批已核验且版本、提交一致的 OCI 组包。输出目录与对应 ZIP 路径都必须不存在。任何源码或配置变更都需要提交后重新 prepare，并全量无缓存构建五类镜像。
+这些是最终指定位置，不能直接把双架构 OCI tar 放进去冒充 Docker-save 归档。组装失败会保留部分产物供检查。若 release-manifest.json 仍为 prepared-not-built，重试前将整个部分 images/ 内容移到包外，保留空 images/，再执行 package。若清单已写为 offline-ready 但 ZIP 创建失败，不能直接重跑 package，也不能手改状态或哈希；保留失败目录，在新的准备目录重新 prepare/verify，再用同一批已核验且版本、提交一致的 OCI 组包。输出目录与对应 ZIP 路径都必须不存在。任何源码或配置变更都需要重新 prepare，并全量无缓存构建五类镜像。
 
 offline-ready 表示目录的资源和镜像已通过校验，不代表 ZIP 已生成，更不代表运行验收通过；必须等待 package 成功退出，并按下方清单验收最终 ZIP。
 
@@ -144,7 +160,7 @@ offline-ready 表示目录的资源和镜像已通过校验，不代表 ZIP 已�
 ### 包含自定义功能的版本
 
 1. 确认 API 镜像带 Server npc/conf 基线及 import-tmpl 初始化出的 import 快照；否则空库迁移成功后目录刷新仍可能失败。
-2. prepare/build 前保持六个构建仓库干净，使用不存在的输出路径。失败即停止后续 package/deploy，保留日志；修复源码并提交后重新准备，五类镜像再次全量无缓存构建，不只重建失败组件。
+2. prepare/build 使用不存在的输出路径，记录六个仓库当前源码状态。失败即停止后续 package/deploy，保留日志；修复源码后重新准备，五类镜像再次全量无缓存构建，不只重建失败组件。
 3. 核对 ZIP 的 examples/custom/npc/scripts.conf、Server 当前 db 模板和包内 custom.py。catalogs.py 在 API 镜像内，部署端不需要安装 PyYAML。
 4. ZIP 不含用户 custom、密钥和存档。独立解压后才 initialize；定制测试文件不混入发行模板。
 5. 空库验收检查八服务健康、api-init 退出 0、三类导入；再检查 NPC、数据库目录、资源更新/删除、重复初始化及精确备份恢复。
@@ -160,6 +176,8 @@ offline-ready 表示目录的资源和镜像已通过校验，不代表 ZIP 已�
 
 ### 运行验收
 
+最终完整 ZIP 的隔离启动与基础检查可使用 [offline 验收工具](../../tools/acceptance/offline/README.md)，操作步骤见 [公开文档](../../repos/happyro-doc/docs/development/offline-acceptance.md)。它只验证包完整性、服务健康、HTTP 入口及罗安登录进图和移动，不替代下列完整发布验收。
+
 试打包也执行完整构建与包校验，但使用独立输出、解压、数据及自定义目录，测试 NPC 不加入发行模板。记录源码提交、ZIP SHA-256、实际运行架构、已验证操作及未验证边界，证据放在 `work/` 或 `artifacts/`。双架构构建成功不等于双架构运行通过，桌面测试不等于手机／平板真机通过；试打包成功不更新已发布版本、公开下载或 Docker Hub 标签，也不直接勾选正式发布清单。
 
 包内 README 来自 docker-deployment.md，部署者无需引用源码文档。部署工具根据 Docker daemon 架构选择镜像，而非根据运行 Python 的架构判断。使用 Rosetta 也不能改变目标 Docker 架构。
@@ -170,14 +188,27 @@ offline-ready 表示目录的资源和镜像已通过校验，不代表 ZIP 已�
 
 用户已登录 Docker Hub 且明确要求推送时才执行本节。使用 Docker 的凭据助手，不将凭据写入日志。以下命令均在根仓库运行，版本只读取 `deploy/docker/VERSION`；需要 Skopeo 和 Python 3。离线包使用完整版本标签，部署仍使用 `--pull never`。
 
-已完成本轮离线包后，可使用仓库内的 [push-dockerhub.sh](../../tools/deployment/push-dockerhub.sh) 执行下述全部发布步骤：
+普通打包及拆分默认不推送。显式使用 `run --push`、`run --split --push` 或 `rebuild --version <版本> --push` 才在所有本地打包步骤成功后追加推送；该开关不执行游戏验收，也不表示满足全部正式交付要求。自动推送的核验记录位于 `work/releases/<版本>/logs/<批次>/dockerhub/`。
+
+一键流程生成的产物可单独推送，无需重建：
+
+```bash
+release_version=$(cat deploy/docker/VERSION)
+python3 tools/release/release.py push \
+  --images "artifacts/releases/${release_version}/images" \
+  --bundle "artifacts/releases/${release_version}/bundle"
+```
+
+推送失败保留本地包和核验记录，不自动回滚远程标签；修复问题后使用独立 push 重试整批镜像。推送要求原始 OCI 与完整 bundle 均保留，不能先 clean 删除中间产物再仅凭 ZIP 推送。
+
+已完成本轮分阶段离线包后，可使用仓库内的 [release.py push](../../tools/release/release.py) 执行下述全部发布步骤：
 
 ```bash
 docker login
-bash tools/deployment/push-dockerhub.sh --push
+python3 tools/release/release.py push
 ```
 
-脚本需要 Bash、Python 3.11+ 和 Skopeo，先校验 `artifacts/images/release/` 中五个 OCI 归档的哈希、双架构、版本与离线包来源提交，再依次推送版本标签、更新 latest、核对远程摘要；任一步失败立即停止。不带参数仅显示帮助，支持 `--no-color`，版本始终读取 VERSION。
+发布入口需要 Python 3.11+ 和 Skopeo，先校验 `artifacts/images/release/` 中五个 OCI 归档的哈希、双架构、版本与离线包来源提交，再依次推送版本标签、更新 latest、核对远程摘要；任一步失败立即停止。不带参数仅显示帮助，支持 `--no-color`，版本始终读取 VERSION。
 
 ### zsh 的 `atest` 仓库名问题
 

@@ -1,7 +1,7 @@
 FROM python:3.12-slim-bookworm AS navi-review
 
 WORKDIR /workspace
-COPY tools/navi-review/ ./tools/navi-review/
+COPY tools/resources/navigation/ ./tools/resources/navigation/
 COPY localization/sources/kro-20211105/merged/files/lub/ ./localization/sources/kro-20211105/merged/files/lub/
 COPY repos/happyro-server/npc/ ./repos/happyro-server/npc/
 COPY repos/happyro-server/conf/ ./repos/happyro-server/conf/
@@ -10,7 +10,7 @@ COPY repos/happyro-server/src/map/ ./repos/happyro-server/src/map/
 COPY repos/happyro-server/src/common/mmo.hpp ./repos/happyro-server/src/common/mmo.hpp
 COPY repos/happyro-client/src/DB/Map/SupportedMapTable.js ./repos/happyro-client/src/DB/Map/SupportedMapTable.js
 COPY repos/happyro-client/src/DB/Navigation/NaviTargets.json ./repos/happyro-client/src/DB/Navigation/NaviTargets.json
-RUN python3 tools/navi-review/review.py check --root /workspace --no-color
+RUN python3 tools/resources/navigation/review.py check --root /workspace --no-color
 
 FROM node:22-bookworm AS client-builder
 

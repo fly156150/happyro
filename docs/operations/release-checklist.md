@@ -24,10 +24,10 @@
 以下输出目录必须尚不存在；如有旧结果，改用新的输出路径，不覆盖旧产物。准备目录和镜像目录需在后续命令中保持一致。
 
 ```bash
-python3 tools/deployment/manage.py prepare --workspace . --output artifacts/deployment/release
+python3 tools/release/release.py prepare --workspace . --output artifacts/deployment/release
 python3 tools/deployment/manage.py verify --directory artifacts/deployment/release --prepared
-python3 tools/deployment/images.py build --workspace . --output artifacts/images/release
-python3 tools/deployment/images.py package --output artifacts/images/release --bundle artifacts/deployment/release
+python3 tools/release/release.py build --workspace . --output artifacts/images/release
+python3 tools/release/release.py package --images artifacts/images/release --bundle artifacts/deployment/release
 python3 tools/deployment/manage.py verify --directory artifacts/deployment/release
 ```
 

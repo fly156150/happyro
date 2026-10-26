@@ -8,7 +8,7 @@ import tempfile
 import unittest
 import uuid
 
-from deployment_test_support import add_proxy_topology, release_compose
+from tools.deployment.deployment_test_support import add_proxy_topology, release_compose
 
 
 @unittest.skipUnless(os.environ.get('HAPPYRO_NETWORK_TEST_IMAGE'),
