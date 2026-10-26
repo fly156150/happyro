@@ -1,4 +1,5 @@
 """Publish a verified OCI batch, then compare all remote manifests with that batch."""
+from tools.deployment import progress
 import argparse
 import hashlib
 import json
@@ -22,13 +23,15 @@ def raw_index(reference_name):
     return raw
 
 
+@progress.operation('传输双架构镜像')
 def copy(source, target, lock_fd=None):
-    print(f'{source} -> {target}', flush=True)
+    progress.message(f'{source} -> {target}')
     subprocess.run(['skopeo', 'copy', '--all', '--preserve-digests',
                     '--retry-times', '5', '--retry-delay', '5s', source, target], check=True,
                    **({'pass_fds': (lock_fd,)} if lock_fd is not None else {}))
 
 
+@progress.operation('推送 Docker Hub 并核对远程摘要')
 def publish(args):
     workspace, images, bundle = args.workspace.resolve(), args.images.resolve(), args.bundle.resolve()
     release_version = version(workspace)
@@ -71,6 +74,6 @@ def publish(args):
                 raise ValueError(f'Remote {name}:{tag} differs from the local full index')
         results[name] = {'index': 'sha256:' + hashlib.sha256(local[name]).hexdigest(),
                          'manifests': json.loads(local[name])['manifests']}
-        print(f'OK happyro-{name}: {release_version} == latest == local OCI')
+        progress.message(f'OK happyro-{name}: {release_version} == latest == local OCI')
     (output / 'verified.json').write_text(json.dumps(
         {'version': release_version, 'sources': state['sources'], 'images': results}, indent=2) + '\n')

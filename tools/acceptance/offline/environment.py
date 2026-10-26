@@ -1,4 +1,5 @@
 """Owned, isolated installations of final ZIPs; never mutate release artifacts."""
+from tools.deployment import progress
 from contextlib import contextmanager
 from contextvars import ContextVar
 from datetime import datetime, timezone
@@ -48,8 +49,20 @@ class Batch:
         self.override = self.root / 'compose.acceptance.json'
         self.state_path = self.root / 'state.json'
         self.lock_path = self.root.parent / '.locks' / f'{batch}.lock'
-        self.project = 'hra-' + hashlib.sha256(str(self.root).encode()).hexdigest()[:16]
+        slug = re.sub(r'[^a-z0-9-]', '-', batch.lower())
+        self.project = 'happyro-test-' + slug + '-' + hashlib.sha256(str(self.root).encode()).hexdigest()[:16]
         self.validate()
+        # A registered deployment's project is immutable, even if the naming
+        # policy changes. Validate ownership before adopting its stored name.
+        if self.state_path.exists():
+            state = json.loads(self.state_path.read_text())
+            expected = self.identity()
+            if any(state.get(key) != value for key, value in expected.items() if key != 'project'):
+                raise ValueError('Acceptance batch does not belong to this workspace/version')
+            project = state.get('project', '')
+            if not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,127}', project):
+                raise ValueError('Invalid registered Compose project')
+            self.project = project
 
     def validate(self):
         for path in (self.root, self.install, self.bundle, self.override, self.state_path, self.lock_path,
@@ -124,7 +137,8 @@ class Batch:
         log = self.root / 'logs' / f'{now()}-{action}.log'
         command = [sys.executable, str(self.bundle / 'tools/deployment/manage.py'), action,
                    '--directory', str(self.bundle), '--compose-override', str(self.override), '--no-color']
-        with log.open('x') as output:
+        progress.message(f'日志：{log}')
+        with progress.step(f'部署阶段：{action}'), log.open('x') as output:
             subprocess.run(command, env=self.env(), cwd=self.bundle, stdout=output,
                            stderr=subprocess.STDOUT, check=True, **child_options())
         return log
@@ -149,6 +163,7 @@ def locked(batch):
         os.close(descriptor)
 
 
+@progress.operation('解压离线包并校验文件')
 def extract(archive_path, batch):
     prefix = f'happyro-{batch.version}/'
     seen = set()
@@ -200,6 +215,7 @@ def available_networks():
     raise ValueError('No free pair of Docker test networks within 172.31.0.0/16')
 
 
+@progress.operation('初始化独立配置、端口和网络')
 def configure(batch, state, gateway_port=None, admin_port=None):
     ports = [gateway_port or free_port(), admin_port or free_port()]
     if len(set(ports)) != 2 or any(not 1024 <= port <= 65535 for port in ports):
@@ -251,6 +267,7 @@ def configure(batch, state, gateway_port=None, admin_port=None):
                 raise ValueError('Acceptance ports must bind to loopback')
 
 
+@progress.operation('启动离线验收环境')
 def start(batch, archive, gateway_port=None, admin_port=None):
     archive = archive.resolve(strict=True)
     with locked(batch):
@@ -258,9 +275,11 @@ def start(batch, archive, gateway_port=None, admin_port=None):
             raise ValueError('Batch already exists; choose a new batch name')
         if batch.owned_containers():
             raise ValueError('Project already has containers')
-        state = batch.create(archive)
+        with progress.step('计算输入 ZIP 的 SHA-256'):
+            state = batch.create(archive)
         try:
             extract(archive, batch)
+            progress.message('复核输入 ZIP，确认解压期间文件未变化')
             if digest(archive) != state['sha256']:
                 raise ValueError('Archive changed during extraction')
             configure(batch, state, gateway_port, admin_port)
@@ -272,7 +291,7 @@ def start(batch, archive, gateway_port=None, admin_port=None):
             state.update(status='start-failed', error_type=type(error).__name__)
             batch.save(state)
             raise
-    print(f'Batch: {batch.name}\nGame: {state["gateway_url"]}/applications/pwa/index.html\nAdmin: {state["admin_url"]}')
+    progress.message(f'Batch: {batch.name}\nGame: {state["gateway_url"]}/applications/pwa/index.html\nAdmin: {state["admin_url"]}')
 
 
 def stop_locked(batch, state):
@@ -280,7 +299,8 @@ def stop_locked(batch, state):
     if state.get('env_sha256'):
         batch.check_config(state)
         log = batch.root / 'logs' / f'{now()}-stop.log'
-        with log.open('x') as output:
+        progress.message(f'日志：{log}')
+        with progress.step('停止容器并移除批次网络'), log.open('x') as output:
             subprocess.run(batch.command('down', '--remove-orphans', '--timeout', '30'), env=batch.env(),
                            check=True, stdout=output, stderr=subprocess.STDOUT, **child_options())
     elif containers:
@@ -291,6 +311,7 @@ def stop_locked(batch, state):
     batch.save(state)
 
 
+@progress.operation('停止验收环境')
 def stop(batch):
     with locked(batch):
         state = batch.load()
@@ -299,19 +320,21 @@ def stop(batch):
         stop_locked(batch, state)
 
 
+@progress.operation('清理验收安装')
 def clean(batch, execute=False):
     with locked(batch):
         state = batch.load()
         if state['status'] == 'cleaned':
-            print('Batch installation is already cleaned; evidence remains.')
+            progress.message('Batch installation is already cleaned; evidence remains.')
             return
-        print(f'{"Remove" if execute else "Would remove"}: {batch.install}; keep evidence, logs and report')
+        progress.message(f'{"Remove" if execute else "Would remove"}: {batch.install}; keep evidence, logs and report')
         if not execute:
             return
         stop_locked(batch, state)
         # Never follow runtime-created links outside the isolated installation.
         batch.validate()
         if batch.install.exists():
-            shutil.rmtree(batch.install)
+            with progress.step('删除测试数据库和安装文件'):
+                shutil.rmtree(batch.install)
         state['status'] = 'cleaned'
         batch.save(state)

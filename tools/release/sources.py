@@ -1,4 +1,5 @@
 """Track the exact Git-visible working sources, including uncommitted changes."""
+from tools.deployment import progress
 import hashlib
 import json
 import os
@@ -65,6 +66,7 @@ def repository(root):
             'files': len(names), 'fingerprint': 'git-visible-working-tree-v1'}
 
 
+@progress.operation('计算六个仓库的源码指纹')
 def snapshot(root):
     root = Path(root).resolve()
     return {repo: repository(root / repo) for repo in REPOS}

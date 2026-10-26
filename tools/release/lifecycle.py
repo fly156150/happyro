@@ -3,6 +3,7 @@
 Paths are derived from the workspace and validated version, never taken from a
 state file as deletion instructions. Logs and lock files are never deleted.
 """
+from tools.deployment import progress
 from contextlib import contextmanager
 from datetime import datetime, timezone
 import fcntl
@@ -214,16 +215,17 @@ def cleanup_plan(layout, include_package=False):
     return state_temps + [p for p in children if p.name != OWNER and (include_package or p not in deliveries)]
 
 
+@progress.operation('检查并清理版本产物')
 def clean_locked(layout, include_package=False, execute=False):
     plan = cleanup_plan(layout, include_package)
     for path in plan:
-        print(('Remove: ' if execute else 'Would remove: ') + str(path), flush=True)
+        progress.message(('Remove: ' if execute else 'Would remove: ') + str(path))
     if not plan:
-        print('No disposable artifacts found.', flush=True)
+        progress.message('No disposable artifacts found.')
     retained = [p for p in (layout.zip, *layout.split_paths) if p.exists()]
     if not include_package:
         for path in retained:
-            print(f'Keep delivery: {path}', flush=True)
+            progress.message(f'Keep delivery: {path}')
     if not execute:
         return plan
     state = layout.read_state()

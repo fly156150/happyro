@@ -14,7 +14,7 @@ function option(name) { const index=args.indexOf(name); return index<0?undefined
 const batch=await fs.realpath(option('--batch'));
 const state=JSON.parse(await fs.readFile(path.join(batch,'state.json'),'utf8'));
 assert.equal(batch,path.join(await fs.realpath(state.workspace),'work/releases',state.version,'acceptance',state.batch));
-assert.match(state.project,/^hra-[a-f0-9]{16}$/);
+assert.match(state.project,/^[a-z0-9][a-z0-9_-]{0,127}$/);
 const output=await fs.realpath(option('--output'));
 assert(output.startsWith(path.join(batch,'evidence')+path.sep));
 const base=new URL(state.gateway_url);

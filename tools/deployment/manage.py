@@ -14,6 +14,7 @@ import sys
 if __package__ in (None, ''):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from tools.deployment import custom
+from tools.deployment import progress
 
 from tools.deployment.bundle import verify, write_json
 from tools.deployment.offline import (NAMES, digest,
@@ -32,6 +33,7 @@ def inherited_lock():
     return {'pass_fds': (descriptor,)}
 
 
+@progress.operation('初始化部署配置')
 def initialize(args):
     verify(args)
     target = args.directory.resolve() / '.env'
@@ -45,19 +47,23 @@ def initialize(args):
     with os.fdopen(fd, 'w') as stream:
         stream.write(template)
     initialize_custom_directory(args.directory.resolve())
-    print('Created .env with unique secrets. Set public URLs before starting Compose.')
+    progress.message('Created .env with unique secrets. Set public URLs before starting Compose.')
 
 
+@progress.operation('导入本机架构镜像')
 def import_images(args):
     release = verify(args)
     arch = daemon_architecture()
-    for name in NAMES:
-        subprocess.run(['docker', 'load', '--input',
-                        str(args.directory.resolve() / 'images' / arch / f'{name}.tar')], check=True, **inherited_lock())
+    for index, name in enumerate(NAMES, 1):
+        progress.message(f'[{index}/{len(NAMES)}] 导入 {name} linux/{arch}', 'stage')
+        with progress.step(f'导入 {name} linux/{arch}'):
+            subprocess.run(['docker', 'load', '--input',
+                            str(args.directory.resolve() / 'images' / arch / f'{name}.tar')], check=True, **inherited_lock())
     verify_loaded(release, arch)
-    print(f'Loaded and verified {release["version"]} linux/{arch} images')
+    progress.message(f'Loaded and verified {release["version"]} linux/{arch} images')
 
 
+@progress.operation('启动部署服务')
 def deploy(args):
     root = args.directory.resolve()
     if not (root / '.env').is_file():
@@ -100,7 +106,7 @@ def custom_config(root):
 def initialize_custom_directory(root):
     destination = custom.custom_root(custom_config(root))
     custom.initialize(destination, root / 'examples/custom')
-    print(f'Initialized custom directories at {destination}; existing files preserved')
+    progress.message(f'Initialized custom directories at {destination}; existing files preserved')
 
 
 def initialize_custom(args):
@@ -108,6 +114,7 @@ def initialize_custom(args):
     initialize_custom_directory(args.directory.resolve())
 
 
+@progress.operation('刷新自定义资料目录')
 def refresh_custom_catalogs(args):
     root = args.directory.resolve()
     verify(args)
@@ -115,6 +122,7 @@ def refresh_custom_catalogs(args):
     compose(root, 'run', '--rm', '--no-deps', '-T', 'api', 'refresh-custom-catalogs')
 
 
+@progress.operation('备份部署数据')
 def backup(args):
     root, output = args.directory.resolve(), args.output.resolve()
     if output.exists():
@@ -136,9 +144,10 @@ def backup(args):
     for name in ['.env', 'compose.yaml', 'release-manifest.json']:
         shutil.copyfile(root / name, output / name)
     write_json(output / 'checksums.json', {p.name: digest(p) for p in output.iterdir() if p.is_file()})
-    print(f'Backup saved to {output}; contains secrets, keep private')
+    progress.message(f'Backup saved to {output}; contains secrets, keep private')
 
 
+@progress.operation('恢复部署数据')
 def restore(args):
     if not args.confirm_replace:
         raise ValueError('Restore replaces existing data; use --confirm-replace after stopping all writers')
@@ -162,7 +171,7 @@ def restore(args):
     with (source / 'server-settings.tar').open('rb') as stream:
         compose(root, 'run', '--rm', '--no-deps', '-T', '--entrypoint', 'tar', 'api', '-xf', '-', '-C', '/', stdin=stream)
     custom.restore(source / 'custom-files.tar', custom_directory)
-    print('Restored databases, custom content and server settings. Use the backed-up environment and matching image release before starting.')
+    progress.message('Restored databases, custom content and server settings. Use the backed-up environment and matching image release before starting.')
 
 
 def help_text(no_color):
@@ -197,12 +206,14 @@ def main():
             command.add_argument('--confirm-replace', action='store_true')
         if name == 'verify':
             command.add_argument('--prepared', action='store_true', help='Check a preparation bundle before images are packaged')
+    progress.configure(no_color=no_color)
     args = parser.parse_args(argv)
     if args.compose_override is not None:
         args.compose_override = args.compose_override.resolve(strict=True)
     token = COMPOSE_OVERRIDE.set(args.compose_override)
     try:
-        dispatch(args)
+        with progress.step(f'部署命令：{args.command}'):
+            dispatch(args)
     finally:
         COMPOSE_OVERRIDE.reset(token)
 
@@ -216,4 +227,5 @@ if __name__ == '__main__':
     try:
         main()
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
-        sys.exit(str(error))
+        progress.message(str(error), 'failed')
+        sys.exit(1)

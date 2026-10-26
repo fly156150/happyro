@@ -13,6 +13,8 @@ from tools.release import images, package, publish, workflow, split
 from tools.release.lifecycle import Layout, clean, require_managed_lock, version_lock
 import os
 
+from tools.deployment import progress
+
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -101,6 +103,7 @@ def main(argv=None):
             command.add_argument('--bundle', type=Path)
         if name == 'push':
             command.add_argument('--evidence', type=Path)
+    progress.configure(no_color=plain)
     args = parser.parse_args(argv)
     args.workspace = args.workspace.resolve()
     if args.command == 'split':
@@ -145,4 +148,5 @@ if __name__ == '__main__':
     try:
         main()
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
-        sys.exit(str(error))
+        progress.message(str(error), 'failed')
+        sys.exit(1)

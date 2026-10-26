@@ -1,4 +1,5 @@
 """Split a verified managed ZIP without changing any deployment payload bytes."""
+from tools.deployment import progress
 import copy
 import hashlib
 import json
@@ -88,6 +89,7 @@ def inventory(archive, prefix):
     return result
 
 
+@progress.operation('生成拆分包并校验一致性')
 def split_locked(layout):
     """Caller holds the version lock; only an already verified full ZIP is accepted."""
     state = layout.read_state()
@@ -149,7 +151,7 @@ def split_locked(layout):
                 path.unlink(missing_ok=True)
             raise
     for path in targets:
-        print(f'Split delivery: {path}', flush=True)
+        progress.message(f'Split delivery: {path}')
     return targets
 
 

@@ -28,6 +28,27 @@ class EnvironmentTests(unittest.TestCase):
             archive.writestr('happyro-v9.0.0/VERSION', 'v9.0.0')
         self.state = self.batch.create(self.archive)
 
+    def test_names_distinguish_versions_batches_and_workspaces(self):
+        other = self.root / 'other'
+        other.mkdir()
+        projects = [env.Batch(root, version, batch).project for root, version, batch in [
+            (self.root, 'v9.0.0', 'Manual_1'), (self.root, 'v9.0.0', 'manual-1'),
+            (self.root, 'v9.0.1', 'Manual_1'), (other, 'v9.0.0', 'Manual_1')]]
+        self.assertEqual(len(set(projects)), 4)
+        for project in projects:
+            self.assertRegex(project, r'^happyro-test-manual-1-[a-f0-9]{16}$')
+
+    def test_registered_project_is_immutable_and_identity_is_checked(self):
+        self.state['project'] = 'registered-test-project'
+        self.batch.save(self.state)
+        loaded = env.Batch(self.root, 'v9.0.0', 'smoke')
+        self.assertEqual(loaded.project, 'registered-test-project')
+        self.assertEqual(loaded.load()['project'], loaded.project)
+        self.state['workspace'] = '/different-workspace'
+        self.batch.save(self.state)
+        with self.assertRaises(ValueError):
+            env.Batch(self.root, 'v9.0.0', 'smoke')
+
     def test_safe_extraction_and_archive_path_rejections(self):
         with patch.object(env, 'verify', return_value={'version': 'v9.0.0'}):
             env.extract(self.archive, self.batch)

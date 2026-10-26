@@ -1,4 +1,5 @@
 """Prepare release resources and create distributable ZIPs; never operate a deployment."""
+from tools.deployment import progress
 import json
 from pathlib import Path
 import re
@@ -9,6 +10,7 @@ from tools.deployment.bundle import RUNTIME_FILES, files, is_macos_metadata, wri
 from tools.deployment.offline import digest
 from tools.release.sources import snapshot, version
 
+@progress.operation('复制资源目录')
 def copy_directory(source, target):
     if not source.is_dir():
         raise ValueError(f'Missing resource directory: {source}')
@@ -39,6 +41,7 @@ def resource_inputs(root):
     return kro, sources, grfs
 
 
+@progress.operation('准备离线部署与资源')
 def prepare(args):
     root, output = args.workspace.resolve(), args.output.resolve()
     release_version = version(root)
@@ -86,7 +89,7 @@ def prepare(args):
         'sources': source_state, 'files': {name: digest(output / name) for name in bundle_files},
         'resource_manifest_sha256': digest(resources / 'manifest.json'),
         'images': {}, 'status': 'prepared-not-built'})
-    print(f'Prepared {output}; {len(entries)} resource files. No images were built or pushed.')
+    progress.message(f'Prepared {output}; {len(entries)} resource files. No images were built or pushed.')
 
 
 def validate_zip_target(root, output):
@@ -112,6 +115,7 @@ def validate_zip_target(root, output):
     return paths
 
 
+@progress.operation('生成完整 ZIP')
 def create_zip(root, output, release):
     root, output = root.resolve(), output.resolve()
     paths = validate_zip_target(root, output)
@@ -135,4 +139,4 @@ def create_zip(root, output, release):
         temporary_path.replace(output)
     finally:
         temporary_path.unlink(missing_ok=True)
-    print(f'Offline bundle archive: {output}')
+    progress.message(f'Offline bundle archive: {output}')

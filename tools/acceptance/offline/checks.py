@@ -1,4 +1,5 @@
 """Basic package/container/HTTP checks plus one real browser login, not gameplay coverage."""
+from tools.deployment import progress
 import json
 from pathlib import Path
 import subprocess
@@ -28,6 +29,7 @@ def healthy(services):
         for name, row in services.items()))
 
 
+@progress.operation('检查游戏、后台与健康接口')
 def http_checks(state):
     checks = {}
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
@@ -53,6 +55,7 @@ def http_checks(state):
     return checks
 
 
+@progress.operation('基础验收')
 def check(batch, timeout=300, browser_path=None):
     with locked(batch):
         state = batch.load()
@@ -76,14 +79,21 @@ def check(batch, timeout=300, browser_path=None):
             batch.run_tool('verify')
             report['checks']['bundle'] = 'passed'
             deadline = time.monotonic() + timeout
-            while True:
-                services = service_summary(batch.owned_containers())
-                report['services'] = services
-                if healthy(services):
-                    break
-                if time.monotonic() >= deadline:
-                    raise ValueError('Services did not become healthy or api-init did not exit successfully')
-                time.sleep(2)
+            previous = None
+            with progress.step("等待服务健康及 API 初始化完成"):
+                while True:
+                    services = service_summary(batch.owned_containers())
+                    report['services'] = services
+                    summary = ', '.join(f'{name}: {row["health"] or row["status"]}'
+                                        for name, row in sorted(services.items())) or '尚无容器'
+                    if summary != previous:
+                        progress.message(summary)
+                        previous = summary
+                    if healthy(services):
+                        break
+                    if time.monotonic() >= deadline:
+                        raise ValueError('Services did not become healthy or api-init did not exit successfully')
+                    time.sleep(2)
             report['checks']['services'] = 'passed'
             info = json.loads(subprocess.check_output(['docker', 'info', '--format', '{{json .}}'], text=True))
             report['runtime'] = {'os': info['OSType'], 'architecture': info['Architecture']}
@@ -92,7 +102,9 @@ def check(batch, timeout=300, browser_path=None):
             command = ['node', str(probe), '--run', '--batch', str(batch.root), '--output', str(attempt)]
             if browser_path:
                 command += ['--browser-path', str(browser_path)]
-            with (batch.root / 'logs' / f'{attempt.name}-browser.log').open('x') as log:
+            browser_log = batch.root / 'logs' / f'{attempt.name}-browser.log'
+            progress.message(f'浏览器日志：{browser_log}')
+            with progress.step('浏览器登录、罗安进图和移动（最多 300 秒）'), browser_log.open('x') as log:
                 subprocess.run(command, env=batch.env(), stdout=log, stderr=subprocess.STDOUT,
                                check=True, timeout=300, **child_options())
             result = json.loads((attempt / 'browser.json').read_text())
@@ -110,5 +122,5 @@ def check(batch, timeout=300, browser_path=None):
             report['finished_at'] = now()
             atomic_json(attempt / 'report.json', report)
             atomic_json(batch.root / 'report.json', report)
-            print(f'Basic acceptance {report["status"]}: {batch.root / "report.json"}', flush=True)
+            progress.message(f'Basic acceptance {report["status"]}: {batch.root / "report.json"}')
     return report

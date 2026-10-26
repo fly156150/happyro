@@ -1,9 +1,10 @@
 """Validate the self-contained offline bundle using only the standard library."""
+from tools.deployment import progress
 import json
 from pathlib import Path
 from tools.deployment.offline import checked_path, verify_images, digest
 
-RUNTIME_FILES = ('manage.py', 'offline.py', 'custom.py', 'bundle.py')
+RUNTIME_FILES = ('manage.py', 'offline.py', 'custom.py', 'bundle.py', 'progress.py')
 
 def is_macos_metadata(relative):
     return any(part == '.DS_Store' or part.startswith('._') for part in Path(relative).parts)
@@ -23,6 +24,7 @@ def write_json(path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
 
 
+@progress.operation('校验包内资源与镜像完整性')
 def verify(args):
     root = args.directory.resolve()
     release = json.loads((root / 'release-manifest.json').read_text())
@@ -63,5 +65,5 @@ def verify(args):
         raise ValueError('Unlisted or missing resource files')
     if not getattr(args, 'prepared', False):
         verify_images(root, release)
-    print(f'Verified {len(expected)} resource files for {release["version"]}')
+    progress.message(f'Verified {len(expected)} resource files for {release["version"]}')
     return release

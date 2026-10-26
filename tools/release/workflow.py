@@ -1,4 +1,5 @@
 """Build a new owned offline package; rebuilding explicitly replaces local outputs."""
+from tools.deployment import progress
 import argparse
 import json
 import os
@@ -14,6 +15,7 @@ from tools.release import package, sources, split, publish
 from tools.release.lifecycle import Layout, LOCK_ENV, clean_locked, version_lock
 
 
+@progress.operation('发布预检与同步远程引用')
 def preflight(workspace, requested_version):
     actual = sources.version(workspace)
     if requested_version != actual:
@@ -51,6 +53,7 @@ def preflight(workspace, requested_version):
     return source_state
 
 
+@progress.operation('运行发布子阶段')
 def run_phase(layout, phase, descriptor, log_path):
     script = Path(__file__).with_name('release.py')
     command = [sys.executable, str(script), phase, '--workspace', str(layout.root), '--no-color']
@@ -85,6 +88,7 @@ def run_phase(layout, phase, descriptor, log_path):
             process.stdout.close()
 
 
+@progress.operation('执行完整发布流程')
 def execute(args, rebuild=False):
     workspace = args.workspace.resolve()
     # Validate the requested version before acquiring/creating any state.
@@ -107,7 +111,7 @@ def execute(args, rebuild=False):
                     raise ValueError('Source state changed between phases; refuse to mix release batches')
                 state.update(status='running', stage=phase)
                 layout.save(state)
-                print(f'[{requested}] {phase}; log: {log_dir / (phase + ".log")}', flush=True)
+                progress.message(f'[{requested}] {phase}; log: {log_dir / (phase + ".log")}')
                 run_phase(layout, phase, descriptor, log_dir / f'{phase}.log')
                 if phase == 'prepare':
                     verify(argparse.Namespace(directory=layout.bundle, prepared=True))
@@ -131,7 +135,7 @@ def execute(args, rebuild=False):
                 split.split_locked(layout)
                 state.update(status='packaged', stage=None)
                 layout.save(state)
-            print(f'Offline ZIP ready: {layout.zip}\nSHA-256: {state["package"]["sha256"]}', flush=True)
+            progress.message(f'Offline ZIP ready: {layout.zip}\nSHA-256: {state["package"]["sha256"]}')
             if getattr(args, 'push', False):
                 evidence = log_dir / 'dockerhub'
                 state.update(status='running', stage='push',
@@ -142,10 +146,10 @@ def execute(args, rebuild=False):
                                                    lock_fd=descriptor))
                 state.update(status='published', stage=None)
                 layout.save(state)
-                print(f'Docker Hub publication verified: {evidence}', flush=True)
+                progress.message(f'Docker Hub publication verified: {evidence}')
             else:
-                print('Docker Hub push skipped (default); use --push or the push command explicitly.', flush=True)
-            print('Packaging and publication do not replace local runtime acceptance.', flush=True)
+                progress.message('Docker Hub push skipped (default); use --push or the push command explicitly.')
+            progress.message('Packaging and publication do not replace local runtime acceptance.')
         except BaseException as error:
             state['status'] = 'interrupted' if isinstance(error, (KeyboardInterrupt, SystemExit)) else 'failed'
             # Do not persist exception text: commands may contain environment-specific data.

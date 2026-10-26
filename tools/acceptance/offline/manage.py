@@ -10,6 +10,8 @@ if __package__ in (None, ''):
 
 from tools.acceptance.offline import checks, environment
 
+from tools.deployment import progress
+
 ROOT = Path(__file__).resolve().parents[3]
 
 
@@ -59,6 +61,7 @@ def main(argv=None):
             command.add_argument('--browser-path', type=Path)
         if name == 'clean':
             command.add_argument('--execute', action='store_true')
+    progress.configure(no_color=plain)
     args = parser.parse_args(argv)
     batch = environment.Batch(args.workspace, args.version, args.batch)
     if args.command == 'start':
@@ -78,4 +81,5 @@ if __name__ == '__main__':
     try:
         main()
     except (ValueError, OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
-        sys.exit(str(error))
+        progress.message(str(error), 'failed')
+        sys.exit(1)

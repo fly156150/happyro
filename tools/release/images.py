@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Build all images, then assemble a single offline deployment bundle."""
+from tools.deployment import progress
 import argparse
 import json
 from pathlib import Path
@@ -25,6 +26,7 @@ def inspect(reference):
         raise ValueError(f'{reference} must contain both amd64 and arm64')
 
 
+@progress.operation('无缓存构建五类双架构镜像')
 def build(args):
     root, output = args.workspace.resolve(), args.output.resolve()
     run(sys.executable, str(root / 'tools/resources/navigation/review.py'), 'check', '--root', str(root), '--no-color')
@@ -32,19 +34,22 @@ def build(args):
     run('skopeo', '--version')
     run('docker', 'buildx', 'inspect')
     output.mkdir(parents=True, exist_ok=False)
-    for name in NAMES:
-        archive = output / f'{name}.tar'
-        run('docker', 'buildx', 'build', '--no-cache', '--pull', '--platform',
-            'linux/amd64,linux/arm64', '--file', str(root / (f'repos/happyro-{name}/deploy/docker/Dockerfile' if name in ('api', 'admin') else f'deploy/docker/{name}/Dockerfile')),
-            '--output', f'type=oci,dest={archive}', str(root))
-        inspect(f'oci-archive:{archive}')
-        state['images'][name] = digest(archive)
+    for index, name in enumerate(NAMES, 1):
+        progress.message(f'[{index}/{len(NAMES)}] 镜像：{name}', 'stage')
+        with progress.step(f'构建并校验 {name} amd64/arm64'):
+            archive = output / f'{name}.tar'
+            run('docker', 'buildx', 'build', '--no-cache', '--pull', '--platform',
+                'linux/amd64,linux/arm64', '--file', str(root / (f'repos/happyro-{name}/deploy/docker/Dockerfile' if name in ('api', 'admin') else f'deploy/docker/{name}/Dockerfile')),
+                '--output', f'type=oci,dest={archive}', str(root))
+            inspect(f'oci-archive:{archive}')
+            state['images'][name] = digest(archive)
     if snapshot(root) != state['sources']:
         raise ValueError('Sources changed while building; discard this build')
     write_json(output / 'built.json', state)
-    print('All five images built and checked. Nothing was pushed or deployed.')
+    progress.message('All five images built and checked. Nothing was pushed or deployed.')
 
 
+@progress.operation('转换双架构镜像并组装离线包')
 def package(args):
     output, bundle = args.output.resolve(), args.bundle.resolve()
     state = json.loads((output / 'built.json').read_text())
@@ -80,4 +85,4 @@ def package(args):
     write_json(bundle / 'release-manifest.json', release)
     verify(argparse.Namespace(directory=bundle, prepared=False))
     create_zip(bundle, delivery, release)
-    print('Offline ZIP complete: configuration, resources and both image architectures.')
+    progress.message('Offline ZIP complete: configuration, resources and both image architectures.')
