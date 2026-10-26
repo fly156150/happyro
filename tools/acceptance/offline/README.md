@@ -1,6 +1,6 @@
 # 离线产物基础验收
 
-使用 `manage.py start/check/stop/clean --version VERSION --batch NAME`。不带参数只输出帮助，支持 `--no-color`；clean 默认预览，`--execute` 才停止容器并删除安装目录。
+使用 `manage.py start/check/stop/clean --version VERSION --batch NAME`。不带参数只输出帮助，支持 `--no-color`；clean 默认预览，`--execute` 才停止容器、移除网络并删除整个批次（包括数据库、报告、日志、截图和登记），随后可以复用批次名；stop 保留数据和证据。
 
 完整说明见 [happyro-doc](../../../repos/happyro-doc/docs/development/offline-acceptance.md)。按版本与批次保存安装、数据、日志和证据；release 的清理不删除验收环境。本入口不构建镜像、不推送 Docker Hub。
 

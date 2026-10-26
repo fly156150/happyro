@@ -94,19 +94,38 @@ class EnvironmentTests(unittest.TestCase):
                 env.clean(self.batch, True)
         self.assertTrue(fixture.exists())
 
-    def test_clean_stops_first_and_retains_evidence_and_other_batches(self):
+    def test_clean_deletes_batch_and_allows_reuse_without_removing_other_data(self):
         other = env.Batch(self.root, 'v9.0.0', 'other')
         other.create(self.archive)
         (self.batch.install / 'data').write_text('test database')
         (self.batch.root / 'report.json').write_text('{}')
-        with patch.object(env, 'stop_locked') as stop, redirect_stdout(io.StringIO()):
+        with patch.object(env, 'stop_locked') as stop, patch.object(self.batch, 'owned_networks', return_value=[]), redirect_stdout(io.StringIO()):
             env.clean(self.batch, True)
             stop.assert_called_once()
         self.assertFalse(self.batch.install.exists())
         self.assertTrue(other.install.exists())
-        self.assertTrue((self.batch.root / 'report.json').exists())
-        self.assertEqual(self.batch.load()['status'], 'cleaned')
+        self.assertFalse(self.batch.root.exists())
+        self.assertTrue(self.batch.lock_path.exists())
+        again = env.Batch(self.root, 'v9.0.0', 'smoke')
+        again.create(self.archive)
+        self.assertEqual(again.load()['status'], 'preparing')
         self.assertTrue(self.archive.exists())
+
+    def test_cleanup_refuses_remaining_networks_and_busy_batch(self):
+        with env.locked(self.batch), self.assertRaisesRegex(ValueError, 'active command'):
+            env.clean(self.batch, True)
+        with patch.object(env, 'stop_locked'), patch.object(self.batch, 'owned_networks', return_value=['network']):
+            with self.assertRaisesRegex(ValueError, 'networks still exist'):
+                env.clean(self.batch, True)
+        self.assertTrue(self.batch.state_path.exists())
+
+    def test_cleanup_without_installation_still_checks_docker_ownership(self):
+        self.batch.install.rmdir()
+        self.state['env_sha256'] = 'installation already removed'
+        self.batch.save(self.state)
+        with patch.object(self.batch, 'owned_containers', return_value=[]), patch.object(self.batch, 'owned_networks', return_value=[]):
+            env.clean(self.batch, True)
+        self.assertFalse(self.batch.root.exists())
 
     def test_release_clean_never_removes_acceptance_installation(self):
         layout = Layout(self.root, 'v9.0.0')

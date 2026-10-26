@@ -23,7 +23,7 @@ def help_text(plain):
     for command, description in [('start', 'Extract and start an isolated installation'),
                                  ('check', 'Verify bundle, services, HTTP and Luo An entering the game'),
                                  ('stop', 'Stop this batch, retaining data'),
-                                 ('clean', 'Preview removal; --execute stops and removes only installation')]:
+                                 ('clean', 'Preview removal; --execute deletes the entire batch, including evidence')]:
         print(color('1;32', f'  {command:8}') + description)
     print('\n' + color('1;33', 'Options'))
     print('  --version VERSION --batch NAME  Select one version and test batch')

@@ -132,6 +132,10 @@ class Batch:
                 raise ValueError('Docker project belongs to a different deployment; refusing to operate it')
         return containers
 
+    def owned_networks(self):
+        return subprocess.check_output(['docker', 'network', 'ls', '-q', '--filter',
+                                        f'label=com.docker.compose.project={self.project}'], text=True).split()
+
     def run_tool(self, action):
         # Execute the actual runtime tool delivered in the package.
         log = self.root / 'logs' / f'{now()}-{action}.log'
@@ -296,7 +300,7 @@ def start(batch, archive, gateway_port=None, admin_port=None):
 
 def stop_locked(batch, state):
     containers = batch.owned_containers()
-    if state.get('env_sha256'):
+    if state.get('env_sha256') and batch.install.exists():
         batch.check_config(state)
         log = batch.root / 'logs' / f'{now()}-stop.log'
         progress.message(f'日志：{log}')
@@ -320,21 +324,18 @@ def stop(batch):
         stop_locked(batch, state)
 
 
-@progress.operation('清理验收安装')
+@progress.operation('清理整个验收批次')
 def clean(batch, execute=False):
     with locked(batch):
         state = batch.load()
-        if state['status'] == 'cleaned':
-            progress.message('Batch installation is already cleaned; evidence remains.')
-            return
-        progress.message(f'{"Remove" if execute else "Would remove"}: {batch.install}; keep evidence, logs and report')
+        progress.message(f'{"Remove" if execute else "Would remove"}: {batch.root}; includes installation, database, reports, logs and screenshots')
         if not execute:
             return
         stop_locked(batch, state)
-        # Never follow runtime-created links outside the isolated installation.
+        if batch.owned_networks():
+            raise ValueError('Batch networks still exist; cleanup refused')
+        # Keep the lock inode outside the deleted batch directory so concurrent
+        # starts and cleanup always synchronize on the same lock.
         batch.validate()
-        if batch.install.exists():
-            with progress.step('删除测试数据库和安装文件'):
-                shutil.rmtree(batch.install)
-        state['status'] = 'cleaned'
-        batch.save(state)
+        with progress.step('删除整个批次，包括数据、报告、日志和截图'):
+            shutil.rmtree(batch.root)
