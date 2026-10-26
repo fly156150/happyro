@@ -127,7 +127,7 @@ class Layout(VersionLayout):
         self.bundle = self.artifacts / 'bundle'
         self.zip = self.artifacts / f'happyro-{version}.zip'
         self.split_paths = [self.artifacts / f'happyro-{version}-{suffix}'
-                            for suffix in ('runtimes.zip', 'images.zip', 'split.json')]
+                            for suffix in ('runtimes.zip', 'images.zip', 'split.json', 'SPLIT-README.md')]
 
     @property
     def temporary_patterns(self):

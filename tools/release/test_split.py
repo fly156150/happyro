@@ -10,7 +10,7 @@ from unittest.mock import patch
 import zipfile
 
 from tools.deployment.offline import digest
-from tools.release import split, release, workflow
+from tools.release import split, release, workflow, status
 from tools.release.lifecycle import Layout, clean_locked, version_lock
 
 
@@ -70,13 +70,47 @@ class SplitTests(unittest.TestCase):
         self.assertEqual(merged, self.payload)
         self.assertEqual(len(notes), 2)
         self.assertEqual(notes[0], notes[1])
+        self.assertEqual(paths[3].read_bytes(), notes[0])
         for value in (original_hash, self.state['run_id'], 'verify --directory .', 'initialize --directory .', 'deploy --directory .'):
             self.assertIn(value.encode(), notes[0])
         report = json.loads(paths[2].read_text())
+        self.assertEqual(report['readme'], {'name': paths[3].name,
+                         'size': paths[3].stat().st_size, 'sha256': digest(paths[3])})
         for path in paths[:2]:
             self.assertEqual(report['archives'][path.name]['sha256'], digest(path))
         self.assertEqual(digest(self.layout.zip), original_hash)
         self.assertFalse(list(self.layout.artifacts.glob('.split-*')))
+
+    def test_status_rejects_missing_or_changed_external_readme(self):
+        self.run_split()
+        note = self.layout.split_paths[3]
+        with redirect_stdout(io.StringIO()):
+            self.assertEqual(status.verify_content(self.layout, self.state)['split_archives'], 'passed')
+            note.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError, 'Missing or changed artifact'):
+                status.verify_content(self.layout, self.state)
+            note.unlink()
+            with self.assertRaisesRegex(ValueError, 'Missing or changed artifact'):
+                status.verify_content(self.layout, self.state)
+
+    def test_external_readme_alone_prevents_overwrite(self):
+        note = self.layout.split_paths[3]
+        note.write_bytes(b'keep')
+        with self.assertRaisesRegex(ValueError, 'already exist'):
+            self.run_split()
+        self.assertEqual(note.read_bytes(), b'keep')
+
+    def test_publish_failure_removes_all_new_deliveries(self):
+        original_replace = Path.replace
+        def fail_report(path, target):
+            if target == self.layout.split_paths[2]:
+                raise OSError('report publication failed')
+            return original_replace(path, target)
+        with patch.object(Path, 'replace', fail_report):
+            with self.assertRaisesRegex(OSError, 'report publication failed'):
+                self.run_split()
+        self.assertFalse(any(p.exists() for p in self.layout.split_paths))
+        self.assertEqual(digest(self.layout.zip), self.state['package']['sha256'])
 
     def test_refuses_changed_unregistered_and_existing_deliveries(self):
         self.layout.zip.write_bytes(b'changed')

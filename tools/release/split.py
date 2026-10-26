@@ -27,9 +27,9 @@ def readme(layout, source_hash, run_id):
 - {name}-runtimes.zip：resources/ 运行资源。
 - {name}-images.zip：双架构镜像、部署文件和完整部署 README。
 
-两包必须来自相同版本、相同构建批次；比较两份包中的本说明，内容必须一致。
+两包必须来自相同版本、相同构建批次；外部 README 与两份包中的本说明内容必须一致。
 不能单独部署其中一包。两份包使用相同的 {name}/ 根目录。
-发布目录中的 {name}-split.json 记录两份 ZIP 的 SHA-256，可用于传输后核验。
+发布目录中的 {name}-split.json 记录两份 ZIP 和外部 README 的大小与 SHA-256，可用于传输后核验。
 
 ## 合并并校验
 
@@ -37,8 +37,17 @@ def readme(layout, source_hash, run_id):
 
 ```bash
 unzip {name}-runtimes.zip
+```
+
+```bash
 unzip -o {name}-images.zip
+```
+
+```bash
 cd {name}
+```
+
+```bash
 python3 tools/deployment/manage.py verify --directory .
 ```
 
@@ -53,6 +62,9 @@ Windows 可使用支持 ZIP64 的解压工具将两包解压到同一目录，�
 
 ```bash
 python3 tools/deployment/manage.py import-images --directory .
+```
+
+```bash
 python3 tools/deployment/manage.py initialize --directory .
 ```
 
@@ -103,7 +115,7 @@ def split_locked(layout):
     if any(path.exists() or path.is_symlink() for path in targets):
         raise ValueError('Split outputs already exist; use offline create --rebuild --split to replace this version')
     prefix = f'happyro-{layout.version}/'
-    note_name = f'happyro-{layout.version}-SPLIT-README.md'
+    note_name = targets[3].name
     note = readme(layout, recorded['sha256'], state['run_id'])
     published = []
     # Staging is owned by the same version and cleaned after failure or rebuild.
@@ -138,12 +150,16 @@ def split_locked(layout):
                     actual.update(payload)
             if actual != expected or digest(layout.zip) != recorded['sha256']:
                 raise ValueError('Split round-trip verification failed')
-            report = {'schema': 1, 'version': layout.version, 'run_id': state['run_id'],
+            temporary[3].write_bytes(note)
+            report = {'schema': 2, 'version': layout.version, 'run_id': state['run_id'],
                       'source': recorded, 'payload_entries': len(expected),
+                      'readme': {'name': note_name, 'size': len(note),
+                                 'sha256': digest(temporary[3])},
                       'archives': {path.name: {'size': temp.stat().st_size, 'sha256': digest(temp)}
                                    for path, temp in zip(targets[:2], temporary[:2])}}
             temporary[2].write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
-            for temp, target in zip(temporary, targets):
+            for index in (0, 1, 3, 2):
+                temp, target = temporary[index], targets[index]
                 temp.replace(target)
                 published.append(target)
         except BaseException:

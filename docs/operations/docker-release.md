@@ -38,7 +38,7 @@ python3 tools/release/release.py offline split --version "$(cat deploy/docker/VE
 python3 tools/release/release.py offline create --rebuild --version "$(cat deploy/docker/VERSION)" --split
 ```
 
-一键输出位于 `artifacts/releases/<版本>/`，与下文分阶段构建共用登记、锁和状态。两份拆分 ZIP 都附带外层合并安装 README，镜像包保留完整部署 README；`happyro-<版本>-split.json` 记录批次、来源完整包及拆分 ZIP 摘要。分发两份 ZIP 及摘要报告；工具核对合并内容与完整包逐项一致。已有拆分输出拒绝覆盖，清理默认保留全部交付包及报告，`offline clean --version <版本> --include-package --execute` 才删除交付产物。
+一键输出位于 `artifacts/releases/<版本>/`，与下文分阶段构建共用登记、锁和状态。两份拆分 ZIP 都附带外层合并安装 README，镜像包保留完整部署 README；`happyro-<版本>-split.json` 记录批次、来源完整包及拆分 ZIP 摘要。另生成外部 `happyro-<版本>-SPLIT-README.md`，与两份 ZIP 内的合并说明逐字节一致，大小和 SHA-256 也纳入摘要报告。分发两份 ZIP、外部 README 及摘要报告；工具核对合并内容与完整包逐项一致。已有拆分输出拒绝覆盖，清理默认保留全部交付包及报告，`offline clean --version <版本> --include-package --execute` 才删除交付产物。
 
 上述功能不自动部署或验收，默认不推送；只有 `offline create --push` 或独立 `offline push` 才发布 Docker Hub。真实发布仍须完成本文全部验收要求。详细参数、失败处理及当前验证范围见 [happyro-doc 使用说明](../../repos/happyro-doc/docs/development/offline-package.md)。
 

@@ -72,12 +72,19 @@ def verify_content(layout, state):
         for path in layout.split_paths:
             plain_path(layout.root, path)
         report = json.loads(layout.split_paths[2].read_text())
-        if report['version'] != layout.version or report['run_id'] != state['run_id'] or report['source'] != state.get('package'):
+        if report['schema'] != 2 or report['version'] != layout.version or report['run_id'] != state['run_id'] or report['source'] != state.get('package'):
             raise ValueError('Split registration mismatch')
         if set(report['archives']) != {path.name for path in layout.split_paths[:2]}:
             raise ValueError('Incomplete split report')
+        note = layout.split_paths[3]
+        if report['readme']['name'] != note.name:
+            raise ValueError('Split README identity mismatch')
+        checked_file(layout, note, report['readme'])
         for path in layout.split_paths[:2]:
             checked_file(layout, path, report['archives'][path.name])
+            with zipfile.ZipFile(path) as archive:
+                if archive.read(note.name) != note.read_bytes():
+                    raise ValueError('Split README differs between deliveries')
         result['split_archives'] = 'passed'
     else:
         result['split_archives'] = 'missing'
