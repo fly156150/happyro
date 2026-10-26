@@ -18,8 +18,8 @@ happyro-版本/
 ├── .env.example
 ├── release-manifest.json
 ├── images/
-│   ├── amd64/                 # gateway/server/api/database.tar
-│   └── arm64/                 # gateway/server/api/database.tar
+│   ├── amd64/                 # gateway/server/api/admin/database.tar
+│   └── arm64/                 # gateway/server/api/admin/database.tar
 ├── resources/
 │   ├── manifest.json
 │   ├── kro-20211105/          # DATA.INI、GRF、AI、BGM、System、data
@@ -57,7 +57,7 @@ python3 tools/deployment/manage.py import-images --directory .
 python3 tools/deployment/manage.py initialize --directory .
 ```
 
-verify 要求 offline-ready 状态，检查配置、资源和两种架构的镜像归档。缺失镜像的 prepared-not-built 准备包会被拒绝。import-images 根据 Docker daemon 的 Linux 架构导入对应四个镜像，并核对镜像 ID；Apple Silicon 通常为 arm64，Intel 为 amd64。它不会启动容器。
+verify 要求 offline-ready 状态，检查配置、资源和两种架构的镜像归档。缺失镜像的 prepared-not-built 准备包会被拒绝。import-images 根据 Docker daemon 的 Linux 架构导入对应五个镜像，并核对镜像 ID；Apple Silicon 通常为 arm64，Intel 为 amd64。它不会启动容器。
 
 编辑 .env：
 
@@ -91,7 +91,7 @@ api-init 依次执行 Go 管理库迁移（`migrate`）、初始账号创建（`
 
 ## 服务与后台维护
 
-正常运行七个服务容器和一个完成后退出的 api-init：
+正常运行八个服务容器和一个完成后退出的 api-init：
 
 Compose 已为服务设置固定容器名（如 `happyro-api`、`happyro-gateway`、`happyro-map`），不会再追加默认的 `-1` 序号。固定容器名意味着同一台主机不能同时运行两个相同部署包实例；如需并行实例，应修改 Compose 中的容器名前缀。
 
@@ -99,14 +99,15 @@ Compose 已为服务设置固定容器名（如 `happyro-api`、`happyro-gateway
 | --- | --- |
 | Gateway（含全量 PWA 和中文覆盖） | gateway |
 | Server（PACKETVER=20211103、Renewal） | login、char、map、web-api |
-| API（含 Admin 前端） | api、api-init |
+| API（Go 接口与初始化） | api、api-init |
+| Admin（Nginx 后台前端与同源代理） | admin |
 | Database（MariaDB 10.11） | database |
 
-后台默认宿主机 8000 → 容器 8080；游戏 3338 → 3338，其余端口只在 Docker 网络内。后台资料版本固定在配置中（kro-20211105、2fe6ab3dc4d8），不是应用发布版本，不在页面修改。
+后台默认宿主机 8000 → Admin 容器 8080；游戏 3338 → 3338，其余端口只在 Docker 网络内。后台资料版本固定在配置中（kro-20211105、2fe6ab3dc4d8），不是应用发布版本，不在页面修改。
 
-API 容器由 Go 进程同时提供 API 和前端静态文件。进程以 www-data 身份运行，健康检查使用 `/api/health`；Gateway 继续压缩转发到 API 的冒险工具响应。
+Admin 容器以非 root Nginx 提供后台页面及同源 `/api` 代理，根文件系统只读，临时文件位于 `/tmp`，健康检查使用 `/healthz`。API 容器仅运行 Go 接口与初始化，进程以 www-data 身份运行，健康检查使用 `/api/health`；API 不映射宿主机端口。Gateway 继续转发冒险工具响应，Admin 与游戏入口独立。
 
-游戏依赖链是 database → login → char → map → web-api → gateway。API 等待数据库、api-init 完成和 web-api 健康。游戏不等待 API；后台停机时，依赖后台能力的冒险工具标签不可用或不显示，登录、战斗和 NPC 不依赖后台。
+游戏依赖链是 database → login → char → map → web-api → gateway。API 等待数据库、api-init 完成和 web-api 健康，Admin 等待 API 健康。游戏不等待 API；后台停机时，依赖后台能力的冒险工具标签不可用或不显示，登录、战斗和 NPC 不依赖后台。
 
 ```bash
 docker compose stop api
@@ -121,15 +122,15 @@ docker compose up -d --pull never api
 
 - 用旧版配套工具停写备份，保留旧完整包及旧 `.env`。新旧包不得同时连接同一份存档。
 - 记录 DATA_DIR、CUSTOM_DIR 的实际绝对路径及 custom 文件哈希；旧版无 custom 时使用新的专用目录。
-- 新目录复制旧 `.env`，保留数据库密码、令牌、公开 URL 和 Compose 项目名；按新版 `.env.example` 核对新增变量，仅更新版本与四个镜像引用等明确需要变更的值。
+- 新目录复制旧 `.env`，保留数据库密码、令牌、公开 URL 和 Compose 项目名；按新版 `.env.example` 核对新增变量，仅更新版本与五个镜像引用等明确需要变更的值。新增 `ADMIN_IMAGE` 指向本版独立后台镜像，不再设置 `FRONTEND_DIR`。
 - `DATA_DIR=./data` 等相对路径会随包目录改变，须改成原数据的绝对路径；`RESOURCE_DIR` 指向新包资源。若搬迁数据，需在停写状态复制完整结构，而非只复制数据库目录。
 - 固定容器名会冲突。备份完成后在旧包目录执行 `docker compose down`，再启动新版；bind mount 数据会保留。
 
 1. 保留新版完整包并执行 verify；先在旧部署目录停止写入并备份（见下节）。同一存档只能有一套游戏服务运行。
-2. 在新版包根目录复制旧 .env，保留数据库密码和控制令牌；从新版 .env.example 更新 RELEASE_VERSION 和四个 IMAGE 变量。
+2. 在新版包根目录复制旧 .env，保留数据库密码和控制令牌；从新版 .env.example 更新 RELEASE_VERSION 和五个 IMAGE 变量。
 3. 将 DATA_DIR 指向旧部署已停止写入的数据目录（建议绝对路径），CUSTOM_DIR 指向旧的自定义目录（同样建议绝对路径），RESOURCE_DIR 使用新版包内资源。不要把新的空 data/ 或 custom/ 当成旧内容。
 4. 执行 `python3 tools/deployment/manage.py initialize-custom --directory .`：首次引入自定义功能时建立目录；后续仅补齐新版新增的模板文件，已有文件不覆盖，不合并。旧版本备份需使用旧版本配套工具恢复，不能直接交给新工具。
-5. 导入本版四类镜像，等待 database 健康，再显式执行 Admin 迁移和目录导入；成功后运行 `deploy`，由工具升级游戏会话结构并启动整栈。以下命令逐条执行，任一步失败即停止。
+5. 导入本版五类镜像，等待 database 健康，再显式执行 Admin 迁移和目录导入；成功后运行 `deploy`，由工具升级游戏会话结构并启动整栈。以下命令逐条执行，任一步失败即停止。
 
 ```bash
 python3 tools/deployment/manage.py initialize-custom --directory .
@@ -143,7 +144,7 @@ python3 tools/deployment/manage.py deploy --directory .
 
 保持登录需要客户端、Gateway、login-server、web-server 与会话数据库结构配套更新，`PACKETVER` 保持 `20211103`。必须导入本版 Database 镜像，不能仅替换 Server/Gateway 镜像。升级前按上文停止旧服务；`deploy` 的失败停止机制不会替你关闭此前已运行的旧服务。
 
-已有环境不要重新运行 `initialize`，只运行 `initialize-custom` 补齐模板。升级后核对七服务健康、api-init 退出 0、角色/仓库数据、后台设置及 custom 哈希，再分别检查未覆盖 NPC 随镜像更新、覆盖文件仍优先、删除覆盖后恢复新版内置文件。只重部署同一版本应记录为流程演练。
+已有环境不要重新运行 `initialize`，只运行 `initialize-custom` 补齐模板。升级后核对八服务健康、api-init 退出 0、角色/仓库数据、后台设置及 custom 哈希，再分别检查未覆盖 NPC 随镜像更新、覆盖文件仍优先、删除覆盖后恢复新版内置文件。只重部署同一版本应记录为流程演练。
 
 上述流程显式运行 `api-init`：执行 Go 管理库迁移、初始账号创建和完整资料的原子导入。不要只凭已存在的退出容器判断本轮导入已完成。需要单独刷新自定义资料时执行容器命令 `refresh-custom-catalogs`。
 

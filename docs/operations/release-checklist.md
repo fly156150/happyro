@@ -31,7 +31,7 @@ python3 tools/deployment/images.py package --output artifacts/images/release --b
 python3 tools/deployment/manage.py verify --directory artifacts/deployment/release
 ```
 
-- [ ] 五个应用组件全部无缓存重建：完整 `--all` PWA、Gateway、Server、API（包含 Admin 前端）、Database；四类镜像均包含两种架构。
+- [ ] 六个构建组件全部无缓存重建：完整 `--all` PWA、Gateway、Server、API、Admin、Database；五类镜像均包含两种架构。
 - [ ] 所有构建成功后再执行 package；归档哈希、架构、版本、源码提交校验全部通过。
 - [ ] package 成功退出且最终 ZIP 存在；offline-ready 仅表示目录校验通过，ZIP 失败按发布手册重试，不手改清单。
 - [ ] ZIP 包含两种架构的镜像、运行资源、工具、`examples/custom/` 模板及空 `data/`。
@@ -59,7 +59,7 @@ docker compose logs api-init
 docker compose logs map gateway
 ```
 
-- [ ] 七个常驻服务正常，`api-init` 完成并以 0 退出；无迁移、目录导入、脚本加载或挂载错误。
+- [ ] 八个常驻服务正常，`api-init` 完成并以 0 退出；无迁移、目录导入、脚本加载或挂载错误。
 - [ ] 首次生成 `npc/scripts.conf`、`npc/additions/`、`npc/overrides/`、`db/`、`resources/`；数据库模板版本与当前服务端匹配。
 - [ ] 再次执行 initialize-custom，已有文件内容不改变，只补齐缺少的模板。
 - [ ] 用 `docker compose config` 和容器 inspect 确认以下挂载来源正确且只读。输出可能包含密钥，不直接公开。
@@ -175,7 +175,7 @@ python3 tools/deployment/manage.py refresh-custom-catalogs --directory .
 - [ ] 保留旧完整包及配套工具，停止旧服务写入并备份；旧版备份用旧版工具恢复。
 - [ ] 记录用户自定义文件的路径和 SHA-256，以及角色/仓库/后台设置的验收值。
 - [ ] 解压并 verify 新包；复制旧 `.env`，保留密码、令牌和 Compose 项目名；首次部署使用独立空管理库，并完成管理员初始化。
-- [ ] 从新版 `.env.example` 更新 `RELEASE_VERSION` 和四个 IMAGE 变量；`DATA_DIR`、`CUSTOM_DIR` 指向旧数据的绝对路径，`RESOURCE_DIR` 使用新包资源。
+- [ ] 从新版 `.env.example` 更新 `RELEASE_VERSION` 和五个 IMAGE 变量；`DATA_DIR`、`CUSTOM_DIR` 指向旧数据的绝对路径，`RESOURCE_DIR` 使用新包资源。
 - [ ] 不重新 initialize 已有环境；只运行 initialize-custom。旧版没有 custom 时建立新目录，已有 custom 只补缺少模板。
 
 ```bash

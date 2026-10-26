@@ -13,9 +13,9 @@
 - 资源复制、资源与模板校验清单、最终 ZIP 均排除任意层级的 `._*` 和 `.DS_Store`（包括同名目录及其内容），保留 `.env.example` 等业务文件。跨机器资源归档同样过滤这些文件，并禁用 macOS tar 自动生成 AppleDouble；不修改原始资源。旧发布包及其清单不会自动回写，后续重新准备的交付包使用此规则。
 - 拆分包统一命名为 `happyro-<VERSION>-runtimes.zip`（resources/ 运行资源）与 `happyro-<VERSION>-images.zip`（双架构镜像及其余部署文件）。两者保留完整包的同名根目录，解压到同一目录后合并使用；版本从 `deploy/docker/VERSION` 读取。
 - 六个构建仓库（根仓库、Client、Gateway、Server、Admin、API）须处于最终、干净的提交；仅在跨机器准备和构建时，要求两台机器的六个构建仓库提交完全一致。正式构建前同步最新 origin/main，禁止丢弃本地工作。
-- 四类镜像 Gateway（含完整 --all PWA）、Server、API（含 Admin 前端）、Database 全量无缓存构建，包含 linux/amd64 和 linux/arm64。不能复用旧 dist、vendor 或旧镜像。
+- 五类镜像 Gateway（含完整 --all PWA）、Server、API、Admin、Database 全量无缓存构建，包含 linux/amd64 和 linux/arm64。不能复用旧 dist、vendor 或旧镜像。
 - 全部构建成功后才允许组装离线包；全部归档校验成功才标记 offline-ready。没有镜像的准备包不可部署。
-- 镜像发布目标为 docker.io/kugarocks/happyro-{gateway,server,api,database}。用户要求推送时，全部构建及 OCI 校验成功后才从同一批归档推送双架构镜像，再组装离线包；Docker Hub 的 latest 指向同一版本，离线部署不使用 latest。Compose 使用本地版本标签且 pull_policy=never；归档 SHA-256、镜像 ID 和架构均记录到发布清单。
+- 镜像发布目标为 docker.io/kugarocks/happyro-{gateway,server,api,admin,database}。用户要求推送时，全部构建及 OCI 校验成功后才从同一批归档推送双架构镜像，再组装离线包；Docker Hub 的 latest 指向同一版本，离线部署不使用 latest。Compose 使用本地版本标签且 pull_policy=never；归档 SHA-256、镜像 ID 和架构均记录到发布清单。
 - 发布成功后更新已发布版本记录；下一次发版只修改 VERSION，环境模板、工具不再硬编码应用版本。
 
 ## 镜像体积维护
@@ -86,7 +86,7 @@ python3 tools/deployment/manage.py verify --directory artifacts/deployment/relea
 
 ## 2. 在本机构建镜像
 
-Admin 使用 Go 构建镜像和 Debian 运行镜像，具体版本及固定摘要以 `repos/happyro-api/deploy/docker/Dockerfile` 为准。构建前确认基础镜像提供 amd64 和 arm64 清单；Go 二进制按目标架构交叉编译，前端在构建机架构上全量构建。变更基础镜像必须重新构建并部署，不会自动更新已有容器或离线包。
+API 使用 Go 构建镜像和 Debian slim 运行镜像；Admin 使用 Node 构建镜像和固定摘要的 Nginx Alpine slim 运行镜像。具体版本以两仓库 `deploy/docker/Dockerfile` 为准。构建前确认基础镜像提供 amd64 和 arm64 清单；Go 二进制按目标架构交叉编译，前端在构建机架构上全量构建。变更基础镜像必须重新构建并部署，不会自动更新已有容器或离线包。
 
 构建机器需要完整源码、Python 3.11+、Docker Buildx、Skopeo，以及双架构构建能力。Linux 使用 Docker Engine，macOS 使用 OrbStack 或 Docker Desktop 的 Linux 容器。构建期间需要联网下载基础镜像和依赖；离线的是最终部署过程。
 
@@ -107,7 +107,7 @@ python3 tools/deployment/manage.py verify --directory artifacts/deployment/relea
 python3 tools/deployment/images.py build --workspace . --output artifacts/images/release
 ```
 
-构建输出固定为 gateway.tar、server.tar、api.tar、database.tar 四个双架构 OCI 归档，全部完成才写 built.json。输出目录必须不存在。构建期间不修改源码。Admin 使用已跟踪的 npm 锁文件及 Go 的 go.mod/go.sum；Client/Gateway 没有跟踪 npm 锁文件，同一提交重建可能解析到更新依赖，回退须使用已保存的原始归档。
+构建输出固定为 gateway.tar、server.tar、api.tar、admin.tar、database.tar 五个双架构 OCI 归档，全部完成才写 built.json。输出目录必须不存在。构建期间不修改源码。Admin 使用已跟踪的 npm 锁文件，API 使用 go.mod/go.sum；Client/Gateway 没有跟踪 npm 锁文件，同一提交重建可能解析到更新依赖，回退须使用已保存的原始归档。
 
 ## 3. 将镜像放入统一离线包
 
@@ -115,7 +115,7 @@ python3 tools/deployment/images.py build --workspace . --output artifacts/images
 python3 tools/deployment/images.py package --output artifacts/images/release --bundle artifacts/deployment/release
 ```
 
-package 校验 built.json、四个 OCI 哈希、双架构以及与准备包的版本和提交一致性。随后使用 Skopeo 把同一批 OCI 产物转为 Docker 可加载归档，不重新构建、不访问镜像仓库：
+package 校验 built.json、五个 OCI 哈希、双架构以及与准备包的版本和提交一致性。随后使用 Skopeo 把同一批 OCI 产物转为 Docker 可加载归档，不重新构建、不访问镜像仓库：
 
 ```text
 images/
@@ -123,15 +123,17 @@ images/
 │   ├── gateway.tar
 │   ├── server.tar
 │   ├── api.tar
+│   ├── admin.tar
 │   └── database.tar
 └── arm64/
     ├── gateway.tar
     ├── server.tar
     ├── api.tar
+    ├── admin.tar
     └── database.tar
 ```
 
-这些是最终指定位置，不能直接把双架构 OCI tar 放进去冒充 Docker-save 归档。组装失败会保留部分产物供检查。若 release-manifest.json 仍为 prepared-not-built，重试前将整个部分 images/ 内容移到包外，保留空 images/，再执行 package。若清单已写为 offline-ready 但 ZIP 创建失败，不能直接重跑 package，也不能手改状态或哈希；保留失败目录，在新的准备目录重新 prepare/verify，再用同一批已核验且版本、提交一致的 OCI 组包。输出目录与对应 ZIP 路径都必须不存在。任何源码或配置变更都需要提交后重新 prepare，并全量无缓存构建四类镜像。
+这些是最终指定位置，不能直接把双架构 OCI tar 放进去冒充 Docker-save 归档。组装失败会保留部分产物供检查。若 release-manifest.json 仍为 prepared-not-built，重试前将整个部分 images/ 内容移到包外，保留空 images/，再执行 package。若清单已写为 offline-ready 但 ZIP 创建失败，不能直接重跑 package，也不能手改状态或哈希；保留失败目录，在新的准备目录重新 prepare/verify，再用同一批已核验且版本、提交一致的 OCI 组包。输出目录与对应 ZIP 路径都必须不存在。任何源码或配置变更都需要提交后重新 prepare，并全量无缓存构建五类镜像。
 
 offline-ready 表示目录的资源和镜像已通过校验，不代表 ZIP 已生成，更不代表运行验收通过；必须等待 package 成功退出，并按下方清单验收最终 ZIP。
 
@@ -141,11 +143,11 @@ offline-ready 表示目录的资源和镜像已通过校验，不代表 ZIP 已�
 
 ### 包含自定义功能的版本
 
-1. 确认 Admin 镜像带 Server npc/conf 基线及 import-tmpl 初始化出的 import 快照；否则空库迁移成功后目录刷新仍可能失败。
-2. prepare/build 前保持六个构建仓库干净，使用不存在的输出路径。失败即停止后续 package/deploy，保留日志；修复源码并提交后重新准备，四类镜像再次全量无缓存构建，不只重建失败组件。
-3. 核对 ZIP 的 examples/custom/npc/scripts.conf、Server 当前 db 模板和包内 custom.py。catalogs.py 在 Admin 镜像内，部署端不需要安装 PyYAML。
+1. 确认 API 镜像带 Server npc/conf 基线及 import-tmpl 初始化出的 import 快照；否则空库迁移成功后目录刷新仍可能失败。
+2. prepare/build 前保持六个构建仓库干净，使用不存在的输出路径。失败即停止后续 package/deploy，保留日志；修复源码并提交后重新准备，五类镜像再次全量无缓存构建，不只重建失败组件。
+3. 核对 ZIP 的 examples/custom/npc/scripts.conf、Server 当前 db 模板和包内 custom.py。catalogs.py 在 API 镜像内，部署端不需要安装 PyYAML。
 4. ZIP 不含用户 custom、密钥和存档。独立解压后才 initialize；定制测试文件不混入发行模板。
-5. 空库验收检查七服务健康、api-init 退出 0、三类导入；再检查 NPC、数据库目录、资源更新/删除、重复初始化及精确备份恢复。
+5. 空库验收检查八服务健康、api-init 退出 0、三类导入；再检查 NPC、数据库目录、资源更新/删除、重复初始化及精确备份恢复。
 6. 升级使用新版整包、旧持久目录及原密钥。涉及新挂载或工具时不能沿用仅换镜像的旧方式；真实跨版本验收须保留旧完整包及旧工具生成的备份。
 
 文档修改不会回写已生成 ZIP，包内 README、模板和工具受清单校验。不要直接改包内文件或手工更新哈希冒充原包。下一次完整发布自动携带新源文档；已交付包的勘误单独说明，保留原 ZIP 摘要。
@@ -175,7 +177,7 @@ docker login
 bash tools/deployment/push-dockerhub.sh --push
 ```
 
-脚本需要 Bash、Python 3.11+ 和 Skopeo，先校验 `artifacts/images/release/` 中四个 OCI 归档的哈希、双架构、版本与离线包来源提交，再依次推送版本标签、更新 latest、核对远程摘要；任一步失败立即停止。不带参数仅显示帮助，支持 `--no-color`，版本始终读取 VERSION。
+脚本需要 Bash、Python 3.11+ 和 Skopeo，先校验 `artifacts/images/release/` 中五个 OCI 归档的哈希、双架构、版本与离线包来源提交，再依次推送版本标签、更新 latest、核对远程摘要；任一步失败立即停止。不带参数仅显示帮助，支持 `--no-color`，版本始终读取 VERSION。
 
 ### zsh 的 `atest` 仓库名问题
 
@@ -185,7 +187,7 @@ bash tools/deployment/push-dockerhub.sh --push
 
 ### 1. 从已校验的双架构 OCI 归档推送版本标签
 
-先确认全部构建完成、`built.json` 的版本与 VERSION 一致、四个 OCI 归档 SHA-256 与 built.json 一致，并且每个归档同时包含 `linux/amd64` 和 `linux/arm64`。使用同一批最终产物；不得用 Docker 本地单架构镜像替代。下列命令保存本地和远程原始 index，并逐字节比较，任意失败立即停止，不能继续更新 latest。
+先确认全部构建完成、`built.json` 的版本与 VERSION 一致、五个 OCI 归档 SHA-256 与 built.json 一致，并且每个归档同时包含 `linux/amd64` 和 `linux/arm64`。使用同一批最终产物；不得用 Docker 本地单架构镜像替代。下列命令保存本地和远程原始 index，并逐字节比较，任意失败立即停止，不能继续更新 latest。
 
 ```sh
 (
@@ -193,7 +195,7 @@ bash tools/deployment/push-dockerhub.sh --push
   release_version=$(cat deploy/docker/VERSION)
   check_dir="work/dockerhub/${release_version}"
   mkdir -p "${check_dir}"
-  for name in gateway server api database; do
+  for name in gateway server api admin database; do
     source_ref="oci-archive:artifacts/images/release/${name}.tar"
     target_ref="docker://docker.io/kugarocks/happyro-${name}:${release_version}"
     printf '%s -> %s\n' "${source_ref}" "${target_ref}"
@@ -209,13 +211,13 @@ bash tools/deployment/push-dockerhub.sh --push
 
 ### 2. 将全部已核验的版本标签复制为 latest
 
-四个版本标签全部通过上一步核验后执行。版本标签已经正确上传、只需要修复 latest 时，从本步开始，无需重建或重新上传 OCI 归档。`--all` 保留所有架构，`--preserve-digests` 要求保留摘要；失败时查明原因，不通过去掉这些选项绕过。
+五个版本标签全部通过上一步核验后执行。版本标签已经正确上传、只需要修复 latest 时，从本步开始，无需重建或重新上传 OCI 归档。`--all` 保留所有架构，`--preserve-digests` 要求保留摘要；失败时查明原因，不通过去掉这些选项绕过。
 
 ```sh
 (
   set -eu
   release_version=$(cat deploy/docker/VERSION)
-  for name in gateway server api database; do
+  for name in gateway server api admin database; do
     source_ref="docker://docker.io/kugarocks/happyro-${name}:${release_version}"
     target_ref="docker://docker.io/kugarocks/happyro-${name}:latest"
     printf '%s -> %s\n' "${source_ref}" "${target_ref}"
@@ -240,7 +242,7 @@ import subprocess
 version = Path("deploy/docker/VERSION").read_text().strip()
 output = Path("work/dockerhub") / version
 output.mkdir(parents=True, exist_ok=True)
-for name in ("gateway", "server", "api", "database"):
+for name in ("gateway", "server", "api", "admin", "database"):
     results = []
     for tag in (version, "latest"):
         reference = f"docker://docker.io/kugarocks/happyro-{name}:{tag}"
@@ -262,10 +264,10 @@ for name in ("gateway", "server", "api", "database"):
 PYTHON
 ```
 
-四个仓库全部输出 OK 后才记录 Docker Hub 发布成功。修复错误仓库名后，`happyro-gatewayatest`、`happyro-serveratest`、`happyro-adminatest`、`happyro-databaseatest` 不会自动消失；核实没有使用者后可单独删除，删除不属于上述推送流程。
+五个仓库全部输出 OK 后才记录 Docker Hub 发布成功。修复错误仓库名后，`happyro-gatewayatest`、`happyro-serveratest`、`happyro-adminatest`、`happyro-databaseatest` 不会自动消失；核实没有使用者后可单独删除，删除不属于上述推送流程。
 
 ## Go Admin 独立浏览器验收
 
-重写开发时可对本地测试镜像运行 `tools/deployment/test_api_backup.py`，使用 `HAPPYRO_GO_API_TEST_IMAGE` 与 `HAPPYRO_GO_DATABASE_TEST_IMAGE` 指定镜像。测试使用临时 Compose 项目和数据库，不替换现有服务。
+重写开发时可对本地测试镜像运行 `tools/deployment/test_api_backup.py`，使用 `HAPPYRO_GO_API_TEST_IMAGE` 与 `HAPPYRO_GO_DATABASE_TEST_IMAGE` 指定镜像；启用浏览器验收时另以 `HAPPYRO_ADMIN_TEST_IMAGE` 指定独立后台前端镜像。测试使用临时 Compose 项目和数据库，不替换现有服务。
 
 设置 `HAPPYRO_GO_BROWSER_PROBE` 为 `tools/deployment/api_browser_probe.cjs` 的绝对路径，可同时检查浏览器登录、账号列表、刷新后的会话和物品列表。需要安装 `playwright-core`，并通过 `NODE_PATH` 指向其所在的 node_modules；`HAPPYRO_GO_CHROME_BINARY` 指定本机 Chrome/Chromium 可执行文件。此模式仅向回环地址开放临时端口，使用临时管理库的 admin/admin；可用 `HAPPYRO_GO_BROWSER_SCREENSHOT` 指定 work/ 下的截图路径。测试结束自动删除临时容器和数据库。组件验收不能替代正式离线包发布流程。

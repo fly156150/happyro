@@ -65,7 +65,14 @@ class AdminGoBackupTest(unittest.TestCase):
                     listener.bind(('127.0.0.1', 0))
                     port = listener.getsockname()[1]
                 browser_url = f'http://127.0.0.1:{port}'
-                config['services']['api']['ports'] = [f'127.0.0.1:{port}:8080']
+                frontend_image = os.environ.get('HAPPYRO_ADMIN_TEST_IMAGE')
+                self.assertTrue(frontend_image, 'Browser verification requires HAPPYRO_ADMIN_TEST_IMAGE')
+                config['services']['admin'] = {
+                    'image': frontend_image, 'pull_policy': 'never',
+                    'read_only': True, 'tmpfs': ['/tmp'],
+                    'cap_drop': ['ALL'], 'security_opt': ['no-new-privileges:true'],
+                    'ports': [f'127.0.0.1:{port}:8080'],
+                }
                 config['services']['api']['environment']['APP_URL'] = browser_url
             (root / 'compose.yaml').write_text(json.dumps(config))
             (root / '.env').write_text('# isolated round-trip environment\n')
@@ -104,8 +111,6 @@ class AdminGoBackupTest(unittest.TestCase):
 base='http://localhost:8080'
 jar=http.cookiejar.CookieJar()
 client=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
-for route in ['/','/user/login','/user/login/']:
- with client.open(base+route) as r: assert b'<html' in r.read().lower()
 client.open(base+'/api/auth/csrf').close()
 csrf=next(c.value for c in jar if c.name=='XSRF-TOKEN')
 request=urllib.request.Request(base+'/api/auth/login',data=json.dumps({'username':'admin','password':'admin'}).encode(),headers={'Content-Type':'application/json','Origin':origin,'X-XSRF-TOKEN':urllib.parse.unquote(csrf)})
@@ -116,6 +121,7 @@ with client.open(base+'/api/game-data/items?perPage=1') as r: assert len(json.lo
                 probe = 'origin=' + repr(config['services']['api']['environment']['APP_URL']) + '\n' + probe
                 compose('exec', '-T', 'api', 'python3', '-c', probe)
                 if browser_probe:
+                    compose('up', '-d', 'admin')
                     subprocess.run(['node', browser_probe, browser_url], check=True, timeout=120)
                 # Stop the API before intentionally replacing backed-up rows.
                 compose('stop', 'api')

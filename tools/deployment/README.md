@@ -2,7 +2,7 @@
 
 - `manage.py`：准备统一版本离线包、校验全包、导入本机架构镜像、生成密钥、部署、备份/恢复。
 - `images.py`：在构建机器全量无缓存构建双架构 OCI；package 转为 Docker-save 归档，放入包内 images/amd64 和 images/arm64，并生成 `.zip` 离线交付包，不重新构建、不推送。
-- `push-dockerhub.sh`：校验已完成的离线包清单与四个双架构 OCI 归档，推送版本标签和 latest，并核对远程完整 index 与子 manifest；不带参数只显示帮助，支持 `--no-color`。
+- `push-dockerhub.sh`：校验已完成的离线包清单与五个双架构 OCI 归档，推送版本标签和 latest，并核对远程完整 index 与子 manifest；不带参数只显示帮助，支持 `--no-color`。
 - `offline.py`：包内共享校验模块，不直接执行。
 
 版本唯一来源：deploy/docker/VERSION。prepare 和 build 读取同一版本；package 要求五仓库提交也完全一致。默认交付完整 ZIP，包含镜像与资源；只有明确要求时才从同一个已校验完整包生成可合并的拆分包。无镜像时使用 verify --prepared 检查准备包；正常 verify、initialize 和 deploy 均拒绝缺失镜像的包。

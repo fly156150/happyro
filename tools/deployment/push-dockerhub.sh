@@ -27,7 +27,7 @@ bundle=json.loads(Path('artifacts/deployment/release/release-manifest.json').rea
 assert state['version']==bundle['version']==version
 assert state['commits']==bundle['commits']
 assert bundle['status']=='offline-ready'
-assert set(state['images'])=={'gateway','server','api','database'}
+assert set(state['images'])=={'gateway','server','api','admin','database'}
 for name,expected in state['images'].items():
     path=Path('artifacts/images/release')/(name+'.tar')
     with path.open('rb') as stream: actual=hashlib.file_digest(stream,'sha256').hexdigest()
@@ -35,14 +35,14 @@ for name,expected in state['images'].items():
     raw=subprocess.check_output(['skopeo','inspect','--raw','oci-archive:'+str(path)])
     platforms={(m.get('platform',{}).get('os'),m.get('platform',{}).get('architecture')) for m in json.loads(raw).get('manifests',[])}
     assert {('linux','amd64'),('linux','arm64')}<=platforms,(name,'missing architecture')
-print('Verified all four OCI archives, both architectures, version and source commits')
+print('Verified all five OCI archives, both architectures, version and source commits')
 CHECK
 (
   set -eu
   release_version=$(cat deploy/docker/VERSION)
   check_dir="work/dockerhub/${release_version}"
   mkdir -p "${check_dir}"
-  for name in gateway server api database; do
+  for name in gateway server api admin database; do
     source_ref="oci-archive:artifacts/images/release/${name}.tar"
     target_ref="docker://docker.io/kugarocks/happyro-${name}:${release_version}"
     printf '%s -> %s\n' "${source_ref}" "${target_ref}"
@@ -58,7 +58,7 @@ CHECK
 (
   set -eu
   release_version=$(cat deploy/docker/VERSION)
-  for name in gateway server api database; do
+  for name in gateway server api admin database; do
     source_ref="docker://docker.io/kugarocks/happyro-${name}:${release_version}"
     target_ref="docker://docker.io/kugarocks/happyro-${name}:latest"
     printf '%s -> %s\n' "${source_ref}" "${target_ref}"
@@ -77,7 +77,7 @@ import subprocess
 version = Path("deploy/docker/VERSION").read_text().strip()
 output = Path("work/dockerhub") / version
 output.mkdir(parents=True, exist_ok=True)
-for name in ("gateway", "server", "api", "database"):
+for name in ("gateway", "server", "api", "admin", "database"):
     results = []
     for tag in (version, "latest"):
         reference = f"docker://docker.io/kugarocks/happyro-{name}:{tag}"

@@ -232,7 +232,7 @@ def deploy(args):
         raise ValueError('Run initialize and edit .env public URLs before deploying')
     release = verify(args)
     config = json.loads(compose(root, 'config', '--format', 'json', capture_output=True, text=True).stdout)
-    services = {'gateway': 'gateway', 'api': 'api', 'api-init': 'api',
+    services = {'gateway': 'gateway', 'admin': 'admin', 'api': 'api', 'api-init': 'api',
                 'database': 'database', 'login': 'server', 'char': 'server',
                 'map': 'server', 'web-api': 'server'}
     if set(config['services']) != set(services):

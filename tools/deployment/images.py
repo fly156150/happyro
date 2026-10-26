@@ -32,14 +32,14 @@ def build(args):
     for name in NAMES:
         archive = output / f'{name}.tar'
         run('docker', 'buildx', 'build', '--no-cache', '--pull', '--platform',
-            'linux/amd64,linux/arm64', '--file', str(root / ('repos/happyro-api/deploy/docker/Dockerfile' if name == 'api' else f'deploy/docker/{name}/Dockerfile')),
+            'linux/amd64,linux/arm64', '--file', str(root / (f'repos/happyro-{name}/deploy/docker/Dockerfile' if name in ('api', 'admin') else f'deploy/docker/{name}/Dockerfile')),
             '--output', f'type=oci,dest={archive}', str(root))
         inspect(f'oci-archive:{archive}')
         state['images'][name] = digest(archive)
     if commits(root) != state['commits']:
         raise ValueError('Sources changed while building; discard this build')
     write_json(output / 'built.json', state)
-    print('All four images built and checked. Nothing was pushed or deployed.')
+    print('All five images built and checked. Nothing was pushed or deployed.')
 
 
 def package(args):
@@ -54,7 +54,7 @@ def package(args):
     verify(argparse.Namespace(directory=bundle, prepared=True))
     validate_zip_target(bundle, delivery)
     if set(state['images']) != set(NAMES):
-        raise ValueError('Build must contain all four images')
+        raise ValueError('Build must contain all five images')
     for name in NAMES:
         archive = output / f'{name}.tar'
         if digest(archive) != state['images'][name]:
@@ -95,7 +95,7 @@ def main():
     builder.add_argument('--workspace', type=Path, required=True)
     builder.add_argument('--output', type=Path, required=True)
     packager = commands.add_parser('package')
-    packager.add_argument('--output', type=Path, required=True, help='Directory containing built.json and four OCI archives')
+    packager.add_argument('--output', type=Path, required=True, help='Directory containing built.json and five OCI archives')
     packager.add_argument('--bundle', type=Path, required=True)
     args = parser.parse_args(argv)
     {'build': build, 'package': package}[args.command](args)

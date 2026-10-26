@@ -7,7 +7,7 @@ import subprocess
 import tarfile
 import tempfile
 
-NAMES = ('gateway', 'server', 'api', 'database')
+NAMES = ('gateway', 'server', 'api', 'admin', 'database')
 ARCHES = ('amd64', 'arm64')
 REPOS = ('.', 'repos/happyro-client', 'repos/happyro-gateway',
          'repos/happyro-server', 'repos/happyro-admin', 'repos/happyro-api')

@@ -115,7 +115,7 @@ class OfflineTests(unittest.TestCase):
         (self.root / 'release-manifest.json').write_text(json.dumps(release))
         with patch('manage.daemon_architecture', return_value='arm64'), patch('manage.subprocess.run') as run, patch('manage.verify_loaded') as loaded:
             manage.import_images(argparse.Namespace(directory=self.root))
-            self.assertEqual(run.call_count, 4)
+            self.assertEqual(run.call_count, len(NAMES))
             self.assertTrue(all('/images/arm64/' in call.args[0][-1] for call in run.call_args_list))
             loaded.assert_called_once_with(release, 'arm64')
 
@@ -134,7 +134,7 @@ class OfflineTests(unittest.TestCase):
         release = self.bundle()
         (self.root / '.env').write_text('fixture')
         services = {name: {'image': 'old:version', 'pull_policy': 'never'} for name in
-                    ['gateway', 'api', 'api-init', 'database', 'login', 'char', 'map', 'web-api']}
+                    ['gateway', 'admin', 'api', 'api-init', 'database', 'login', 'char', 'map', 'web-api']}
         with patch('manage.verify', return_value=release), patch('manage.compose') as compose:
             compose.return_value.stdout = json.dumps({'services': services})
             with self.assertRaisesRegex(ValueError, 'Update .env'):
@@ -145,7 +145,7 @@ class OfflineTests(unittest.TestCase):
     def test_schema_failure_prevents_starting_game_services(self):
         release = {'version': 'v9.0.0'}
         (self.root / '.env').write_text('fixture')
-        names = {'gateway': 'gateway', 'api': 'api', 'api-init': 'api',
+        names = {'gateway': 'gateway', 'admin': 'admin', 'api': 'api', 'api-init': 'api',
                  'database': 'database', 'login': 'server', 'char': 'server',
                  'map': 'server', 'web-api': 'server'}
         config = {'services': {service: {'image': reference(image, release['version']),
