@@ -203,7 +203,7 @@ python3 tools/deployment/manage.py backup --directory . --output ../backups/cust
 
 - [ ] 备份包含数据库、服务端设置、`custom-files.tar`、`.env`、部署清单和 `checksums.json`。妥善保管密钥，不提交到 Git。
 - [ ] 保留匹配版本完整包。在隔离恢复环境准备数据目录，复制备份 `.env` 并修正目录和地址，保留原数据库凭据与游戏控制令牌，不重新 initialize。
-- [ ] initialize-custom 建立挂载目录，导入匹配镜像，仅启动 database，然后恢复：
+- [ ] 在实际 `DATA_DIR` 下准备 `database`、`control-socket`、`server-settings`、`server-logs`、`gateway-logs` 五个目录；包内 `./data` 已包含这些空目录，外部新目录须另行创建。`initialize-custom` 只建立 `CUSTOM_DIR`；随后导入匹配镜像，仅启动 database，再恢复：
 
 ```bash
 python3 tools/deployment/manage.py initialize-custom --directory .

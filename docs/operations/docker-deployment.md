@@ -65,7 +65,7 @@ verify 要求 offline-ready 状态，检查配置、资源和两种架构的镜�
 - ADMIN_CSRF_ORIGIN_CHECK_ENABLED：默认 `false`，关闭来源校验但保留 CSRF Token 校验；设为 `true` 时仅信任 ADMIN_PUBLIC_URL 对应来源。
 - ADMIN_PUBLIC_URL：默认 `http://127.0.0.1:8000`，局域网访问时改为主机 IP。
 - SOCKET_PROXY_URL：默认留空并使用当前页面同源的 `/ws/`；WebSocket 使用独立域名时填写完整前缀，例如 `wss://happyro-ws.example.com/ws/`。
-- GATEWAY_PORT、ADMIN_PORT：默认 3338、8000。修改端口时同步 URL。
+- GATEWAY_PORT、ADMIN_PORT：默认 3338、8000，在宿主机所有接口发布端口。支持 `宿主机地址:端口`；仅本机访问时，在 `.env` 设置 `GATEWAY_PORT=127.0.0.1:3338`、`ADMIN_PORT=127.0.0.1:8000`，然后重新创建对应容器。公开 URL 不限制监听范围；修改端口时同步 URL。不要直接修改受哈希校验的 `compose.yaml`。
 - RESOURCE_DIR、DATA_DIR：默认 ./resources、./data。自定义时先复制资源、创建 data/ 中所有子目录，挂载不自动创建缺失路径。
 - CUSTOM_DIR：默认 ./custom，建议改为版本目录外的专用绝对路径，例如 `/srv/happyro/custom`；修改后运行 `python3 tools/deployment/manage.py initialize-custom --directory .`。只填宿主机路径，不填容器内 `/opt/happyro/custom`。
 - 本模板默认局域网 HTTP。Admin 后台使用 HTTPS 时设置 SESSION_SECURE_COOKIE=true，并确保反向代理传递原始协议。
@@ -161,7 +161,18 @@ python3 tools/deployment/manage.py backup --directory . --output ../backups/befo
 
 普通备份完成后可运行 deploy 恢复服务；准备升级时保持停写。备份包含三个数据库（happyro、happyro_log、happyro_admin）、server-settings、整个 CUSTOM_DIR（脚本、数据库扩展、资源）、.env 和部署清单。备份含密钥，应复制到异机；无 checksums.json 的部分备份不可恢复。备份输出目录必须不存在，示例路径用过后须换新目录。完整离线包另行保存，备份不会重复复制镜像和资源。
 
-恢复优先使用匹配版本的完整包及新的宿主机数据目录。复制备份 .env、核对 DATA_DIR、CUSTOM_DIR、资源路径和地址，保留原数据库密码和控制令牌，不重新 initialize。先执行 initialize-custom 建立容器需要的挂载目录，再恢复：
+恢复优先使用匹配版本的完整包及新的宿主机数据目录。复制备份 .env、核对 DATA_DIR、CUSTOM_DIR、资源路径和地址，保留原数据库密码和控制令牌，不重新 initialize。`initialize-custom` 只准备 `CUSTOM_DIR`，不会创建 `DATA_DIR`。若使用新建的外部数据目录，先在 `.env` 设置其实际路径，再创建全部五个数据子目录；Compose 的 bind mount 不会自动创建缺失路径。
+
+以下示例中的 `/srv/happyro/restore-data` 必须替换为 `.env` 中 `DATA_DIR` 指定的同一目录。使用全新解压包自带的 `./data` 时，这五个空子目录已包含在包中。
+
+```bash
+restore_data_dir=/srv/happyro/restore-data
+mkdir -p "${restore_data_dir}/database" "${restore_data_dir}/control-socket" \
+  "${restore_data_dir}/server-settings" "${restore_data_dir}/server-logs" \
+  "${restore_data_dir}/gateway-logs"
+```
+
+目录准备完成后，初始化自定义目录、导入镜像并恢复：
 
 ```bash
 python3 tools/deployment/manage.py initialize-custom --directory .
