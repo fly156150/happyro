@@ -38,11 +38,14 @@ ENV NODE_ENV=production \
 
 WORKDIR /opt/gateway
 COPY repos/happyro-gateway/package.json ./
-RUN npm install --omit=dev --ignore-scripts
-COPY repos/happyro-gateway/ ./
-COPY --from=client-builder /src/client/dist/Web /opt/robrowser
+RUN npm install --omit=dev --ignore-scripts \
+    && npm cache clean --force \
+    && rm -rf /root/.npm \
+    && chown -R node:node /opt/gateway
+COPY --chown=node:node repos/happyro-gateway/ ./
+COPY --from=client-builder --chown=node:node /src/client/dist/Web /opt/robrowser
 COPY localization/client/data/ /opt/overrides/
-COPY deploy/docker/gateway/entrypoint.sh /usr/local/bin/happyro-gateway
+COPY --chmod=755 deploy/docker/gateway/entrypoint.sh /usr/local/bin/happyro-gateway
 
 RUN mkdir -p /opt/gateway/resources /opt/overrides /opt/gateway/logs \
     && rm -rf /opt/gateway/resources /opt/gateway/AI /opt/gateway/BGM /opt/gateway/System \
@@ -50,8 +53,7 @@ RUN mkdir -p /opt/gateway/resources /opt/overrides /opt/gateway/logs \
     && ln -s /resources/kro-20211105/AI /opt/gateway/AI \
     && ln -s /resources/kro-20211105/BGM /opt/gateway/BGM \
     && ln -s /resources/kro-20211105/System /opt/gateway/System \
-    && chown -R node:node /opt/gateway /opt/robrowser \
-    && chmod 755 /usr/local/bin/happyro-gateway
+    && chown node:node /opt/gateway/logs
 ENTRYPOINT ["/usr/local/bin/happyro-gateway"]
 EXPOSE 3338
 CMD ["node", "start-prod.js"]
