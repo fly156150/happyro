@@ -197,7 +197,7 @@ python3 tools/deployment/manage.py deploy --directory .
 停止游戏及后台写入，确保 api-init 已完成，并暂停宿主机 custom 编辑，仅保留数据库运行。备份输出目录使用尚不存在的路径：
 
 ```bash
-docker compose stop gateway api web-api map char login
+docker compose stop gateway admin api web-api map char login
 python3 tools/deployment/manage.py backup --directory . --output ../backups/custom-review
 ```
 

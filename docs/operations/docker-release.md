@@ -268,6 +268,8 @@ PYTHON
 
 ## Go Admin 独立浏览器验收
 
-重写开发时可对本地测试镜像运行 `tools/deployment/test_api_backup.py`，使用 `HAPPYRO_GO_API_TEST_IMAGE` 与 `HAPPYRO_GO_DATABASE_TEST_IMAGE` 指定镜像；启用浏览器验收时另以 `HAPPYRO_ADMIN_TEST_IMAGE` 指定独立后台前端镜像。测试使用临时 Compose 项目和数据库，不替换现有服务。
+重写开发时可对本地测试镜像运行 `tools/deployment/test_api_backup.py`，使用 `HAPPYRO_GO_API_TEST_IMAGE`、`HAPPYRO_GO_DATABASE_TEST_IMAGE` 和 `HAPPYRO_ADMIN_TEST_IMAGE` 指定三类本地镜像。测试复用正式 Compose 的代理网络、地址池及信任配置，通过 Admin 登录并核对数据库记录的来源 IP，同时验证客户端伪造的转发头被覆盖。测试使用临时 Compose 项目和数据库，不替换现有服务。
 
 设置 `HAPPYRO_GO_BROWSER_PROBE` 为 `tools/deployment/api_browser_probe.cjs` 的绝对路径，可同时检查浏览器登录、账号列表、刷新后的会话和物品列表。需要安装 `playwright-core`，并通过 `NODE_PATH` 指向其所在的 node_modules；`HAPPYRO_GO_CHROME_BINARY` 指定本机 Chrome/Chromium 可执行文件。此模式仅向回环地址开放临时端口，使用临时管理库的 admin/admin；可用 `HAPPYRO_GO_BROWSER_SCREENSHOT` 指定 work/ 下的截图路径。测试结束自动删除临时容器和数据库。组件验收不能替代正式离线包发布流程。
+
+代理网络回归可单独运行，无需构建产品镜像：使用本机已有且包含 `sleep`、`true` 的 Linux 镜像设置 `HAPPYRO_NETWORK_TEST_IMAGE`，执行 `python3 -m unittest discover -s tools/deployment -p 'test_proxy_network.py'`。测试按正式依赖顺序启动 API 与 Admin 占位容器，并重建 API，验证动态地址不占用固定代理地址；不验证产品 HTTP 行为。两类测试均创建独立 Compose 项目并自动清理，不使用生产数据。若本机已占用默认代理网段，通过 `HAPPYRO_TEST_ADMIN_PROXY_SUBNET`、`HAPPYRO_TEST_ADMIN_PROXY_DYNAMIC_RANGE`、`HAPPYRO_TEST_ADMIN_PROXY_IP` 三项配套指定隔离测试网段。

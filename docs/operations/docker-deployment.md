@@ -116,7 +116,7 @@ docker compose up -d --pull never api
 
 后台初始化失败时，整栈启动可能报错；检查 ps -a 和 logs，只有确认本轮 deploy 已成功执行会话 SQL 后，才可单独启动游戏链：docker compose up -d --pull never --no-build gateway；会话 SQL 失败时先修复并重新运行 deploy。停止 Admin 不要停止共享数据库。API 和 Server 共享 data/server-settings，battle_conf.txt 的运营变更须备份；不能改成单文件挂载。
 
-Docker 为 Admin 与 API 建立专用 `admin-proxy` 网络；`ADMIN_PROXY_SUBNET` 默认 `172.30.81.0/29`，`ADMIN_PROXY_IP` 默认 `172.30.81.2`。API 的 `HTTP_TRUSTED_PROXIES` 只信任该 Admin 地址，Nginx 覆盖客户端传入的转发头，使登录限流、登录记录和操作审计使用代理收到的来源 IP。若与宿主机路由或已有 Docker 网段冲突，须同时调整子网与其中可用的 Admin 地址，并重新创建网络和容器。外层反向代理的真实 IP 信任链须另行配置，默认不会信任外部传入的转发头。
+Docker 为 Admin 与 API 建立专用 `admin-proxy` 网络；`ADMIN_PROXY_SUBNET` 默认 `172.30.81.0/29`，`ADMIN_PROXY_DYNAMIC_RANGE` 默认 `172.30.81.4/30`，`ADMIN_PROXY_IP` 默认 `172.30.81.2`。动态地址池用于 API 等临时端点，不包含 Admin 固定地址，避免 API 先启动时占用该地址。API 的 `HTTP_TRUSTED_PROXIES` 只信任该 Admin 地址，Nginx 覆盖客户端传入的转发头，使登录限流、登录记录和操作审计使用代理收到的来源 IP。若与宿主机路由或已有 Docker 网段冲突，须同时调整子网、子网内的动态地址池和池外可用的 Admin 固定地址，并重新创建网络和容器。外层反向代理的真实 IP 信任链须另行配置，默认不会信任外部传入的转发头。
 
 ## 升级
 
@@ -155,7 +155,7 @@ python3 tools/deployment/manage.py deploy --directory .
 先确认 api-init 已完成，再停止游戏及后台写入，并暂停宿主机 custom 文件编辑，仅保留 database 运行。数据库含非事务表，不能在有写入时仅凭 single-transaction 获得一致备份。
 
 ```bash
-docker compose stop gateway api web-api map char login
+docker compose stop gateway admin api web-api map char login
 python3 tools/deployment/manage.py backup --directory . --output ../backups/before-upgrade
 ```
 
