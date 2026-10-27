@@ -259,7 +259,7 @@ python3 tools/deployment/manage.py deploy --directory .
 - [ ] 文档站截图对应当前 UI，来源、视口与哈希已记录；截图操作不充当最终发行包的功能验收。
 - [ ] 版本摘要按当前生产功能维护，不添加工作流状态标签；只在交付和验收完成后填写发布日期、下载地址与 SHA-256，并同步资源下载页、快速开始、根 README 及 AGENTS 的已发布版本记录；Docker Hub 仅在实际推送并核对远端摘要后记录成功。
 
-当前公开离线包：[happyro-v0.6.0.zip](https://pan.baidu.com/s/1p2m0YHljHGjb_n0-QEWG2g?pwd=59p4)，提取码 `59p4`。本地文件为 `artifacts/releases/v0.6.0/happyro-v0.6.0.zip`，4,254,554,420 字节，SHA-256：`3e09911db25b4d80ce6b8ec4c3fe299728d8c1475ef694da3e33001e8d274ab7`。包内包含 Gateway、Server、API、Admin、Database 五组双架构镜像；来源见包内 `release-manifest.json`。下方历史验收及 Docker Hub 记录不作为当前包的验收或推送凭据。
+当前公开离线包：[happyro-v0.6.0.zip](https://pan.baidu.com/s/1p2m0YHljHGjb_n0-QEWG2g?pwd=59p4)，提取码 `59p4`。本地文件为 `artifacts/releases/v0.6.0/happyro-v0.6.0.zip`，4,254,554,420 字节，SHA-256：`3e09911db25b4d80ce6b8ec4c3fe299728d8c1475ef694da3e33001e8d274ab7`。包内包含 Gateway、Server、API、Admin、Database 五组双架构镜像；来源见包内 `release-manifest.json`。本次离线包验收通过。下方历史验收及 Docker Hub 记录不作为当前包的验收或推送凭据。
 
 ### 历史交付记录（2026-10-26 较早批次）
 
