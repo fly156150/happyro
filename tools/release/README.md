@@ -44,7 +44,7 @@ python3 tools/release/release.py offline clean --version "$(cat deploy/docker/VE
 
 输出统一位于 `artifacts/releases/<版本>/`，登记和日志位于 `work/releases/<版本>/`。`offline create` 默认不推送，只有显式 `--push` 或 `offline push` 才发布 Docker Hub。独立推送按版本定位原始 OCI 和 bundle，不再接受 --images/--bundle 路径。推送前必须保留这些中间产物，只有 ZIP 不能直接推送。
 
-拆分交付包含两个 ZIP、`happyro-<版本>-SPLIT-README.md` 和 `split.json`。外部 README 与两个 ZIP 内的说明来自同一模板，内容一致；报告记录归档和外部说明的大小与 SHA-256，status --verify 同时核对三份说明。默认 clean 保留这些交付文件，--include-package 才全部删除。
+拆分交付包含两个 ZIP、`happyro-<版本>-SPLIT-README.md` 和 `happyro-<版本>-split.json`。外部 README 与两个 ZIP 内的说明来自同一模板，内容一致；报告记录归档和外部说明的大小与 SHA-256，status --verify 同时核对三份说明。默认 clean 保留这些交付文件，--include-package 才全部删除。
 
 ## 资源传输
 
